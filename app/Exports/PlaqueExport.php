@@ -6,60 +6,45 @@ use App\Models\Plaque;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\WithColumnWidths;
+use Maatwebsite\Excel\Events\AfterSheet;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 
-class PlaqueExport implements FromCollection,WithHeadings,WithStyles,WithColumnWidths
+class PlaqueExport implements FromCollection, WithHeadings, ShouldAutoSize, WithEvents
 {
     use Exportable;
 
     public function collection()
     {
-        return Plaque::all();
+        return Plaque::select('cities.name as city_name', 'code_plaque')
+            ->join('cities', 'cities.id', '=', 'plaques.city_id')
+            ->where('plaques.deleted_at', null)
+            ->get();
     }
 
     public function headings(): array
     {
         return [
-            'plaque',
-            'Ville',
-            'Client',
-            'Technicien',
-            'Status',
-            'Date de création',
+            'Ville', 'plaque',
         ];
     }
-
-    public function map($plaque) : array
+    public function registerEvents(): array
     {
         return [
-            $plaque->code_plaque,
-            $plaque->city->name,
-            $plaque->clients->count(),
-            $plaque->techniciens->count(),
-            $plaque->status,
-            $plaque->created_at,
-        ];
-    }
+            AfterSheet::class => function (AfterSheet $event) {
+                $lastRow = $event->sheet->getHighestRow();
 
-    public function styles($sheet) : array
-    {
-        return [
-            'A:F' => ['font' => ['size' => 12]],
-        ];
-    }
-
-    public function columnWidths(): array
-    {
-        return [
-            'A' => 18,
-            'B' => 25,
-            'C' => 50,
-            'D' => 25,
-            'E' => 20,
-            'F' => 15,
-            'G' => 15,
-            'H' => 25,
+                $event->sheet->getStyle('A1:B1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+                $event->sheet->getStyle('A1:B1')->getFont()->setBold(true);
+                $event->sheet->getStyle('A1:B1')->getFont()->getColor()->setARGB(\PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE);
+                $event->sheet->getStyle('A1:B1')->getFill()->getStartColor()->setARGB('002060');
+                $event->sheet->getStyle('A1:B' . $lastRow)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+                $event->sheet->getStyle('A1:B' . $lastRow)->getFont()->setSize(10);
+                $event->sheet->getStyle('A1:B' . $lastRow)->getFont()->setName('Calibri');
+                $event->sheet->getStyle('A1:B' . $lastRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                $event->sheet->getStyle('A1:B' . $lastRow)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+            },
         ];
     }
 }

@@ -4,17 +4,20 @@ namespace App\Http\Livewire\Backoffice;
 
 use App\Exports\PlaqueExport;
 use App\Models\City;
+use App\Models\Client;
 use App\Models\Plaque;
 use App\Models\Technicien;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\DB;
+
 
 class PlaquesPage extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
 
-    public $status, $plaque_name = "", $plaque_id, $deleteList = [], $city, $plaque;
+    public $status, $plaque_name = "",$is_ppi, $plaque_id, $deleteList = [], $city, $plaque;
     public $technicien_affectation;
 
     public function updatingSearch()
@@ -38,6 +41,7 @@ class PlaquesPage extends Component
         Plaque::create([
             'code_plaque' => $this->plaque,
             'city_id' => $this->city,
+            'is_ppi' => $this->is_ppi,
         ]);
 
         $this->city = $this->plaque = '';
@@ -52,9 +56,11 @@ class PlaquesPage extends Component
             'city' => 'required',
         ]);
 
+
         Plaque::find($this->plaque_id)->update([
             'code_plaque' => $this->plaque,
             'city_id' => $this->city,
+            'is_ppi' => $this->is_ppi,
         ]);
 
         $this->city = $this->plaque = '';
@@ -67,19 +73,53 @@ class PlaquesPage extends Component
         $this->plaque_id = $plaque->id;
         $this->plaque = $plaque->code_plaque;
         $this->city = $plaque->city_id;
+        $this->is_ppi = $plaque->is_ppi;
     }
 
     public function delete()
     {
-        Plaque::find($this->plaque_id)->delete();
-        $this->emit('success');
-        $this->dispatchBrowserEvent('contentChanged', ['item' => 'Plaque supprimé avec succès.']);
+        
+        try {
+            DB::beginTransaction();
+            $clients = Client::where('plaque_id', $this->plaque_id)->get();
+
+            foreach ($clients as $item) {
+                $item->update([
+                    'plaque_id' => 114,
+                    'city_id' => 12,
+                ]);
+            }
+            Plaque::find($this->plaque_id)->update([
+                'city_id' => 12,
+                'is_ppi' => 0,
+            ]);
+            DB::commit();
+            $this->emit('success');
+            $this->dispatchBrowserEvent('contentChanged', ['item' => 'Plaque supprimé avec succès.']);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            dd($th);
+            $this->emit('error');
+            $this->dispatchBrowserEvent('contentChanged', ['item' => 'Erreur lors de la suppression de la plaque.']);
+        }
     }
 
     public function deleteAll()
     {
         foreach ($this->deleteList as $item) {
-            Plaque::find($item)->delete();
+            $clients = Client::where('plaque_id', $item)->get();
+
+            foreach ($clients as $item) {
+                $item->update([
+                    'plaque_id' => 114,
+                    'city_id' => 12,
+                ]);
+            }
+            
+            Plaque::find($item)->update([
+                'city_id' => 12,
+                'is_ppi' => 0,
+            ]);
         }
         $this->emit('success');
         $this->dispatchBrowserEvent('contentChanged', ['item' => 'Plaques supprimés avec succès.']);
@@ -103,19 +143,44 @@ class PlaquesPage extends Component
         return (new PlaqueExport())->download('Plaques_' . now()->format('d_m_Y_H_i_s') . '.xlsx');
         $this->emit('success');
     }
+    
+    public function sync()
+    {
+        $clients = Client::where('city_id', 12)->get();
+        $plaques = Plaque::with('city')->get();
+
+        try {
+            DB::beginTransaction();
+            foreach ($clients as $item) {
+                preg_match('/\d{2}\.\d\.\d{2}/', $item->address, $plaq_sp);
+                foreach ($plaques as $p) {
+                    if ($p->code_plaque == $plaq_sp[0]) {
+                        Client::find($item->id)->update([
+                            'plaque_id' => $p->id,
+                            'city_id' => $p->city_id,
+                        ]);
+                    }
+                }
+            }
+            DB::commit();
+            $this->emit('success');
+            $this->dispatchBrowserEvent('contentChanged', ['item' => 'Plaque Synchroniser avec succès.']);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            dd($th);
+        }
+    }
 
     public function render()
     {
-        $plaques = Plaque::with(['city', 'clients', 'techniciens'])
-            ->when($this->status != "", function ($query) {
-                $query->where('status', $this->status);
+        $plaques = Plaque::withCount('clients')->with('city')
+            ->where('code_plaque', 'LIKE', '%' . $this->plaque_name . '%')->orWhereHas('city',function($query){
+                $query->where('name','LIKE','%' . $this->plaque_name . '%');
             })
-            ->where('code_plaque', 'LIKE', '%' . $this->plaque_name . '%')
             ->paginate(25);
 
-        $techniciens = Technicien::with('user')->get();
         $cities = City::get(['name', 'id']);
-        return view('livewire.backoffice.plaques-page', compact('plaques', 'techniciens', 'cities'))->layout('layouts.app', [
+        return view('livewire.backoffice.plaques-page', compact('plaques', 'cities'))->layout('layouts.app', [
             'title' => 'Plaques',
         ]);
     }

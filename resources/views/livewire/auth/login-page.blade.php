@@ -2,8 +2,8 @@
     <div class="row justify-content-center">
         <div class="col-xxl-4 col-lg-5">
             <div class="card">
-                <div class="card-header py-4 text-center bg-dark">
-                    <img src="{{ asset('assets/images/logo.png') }}" alt="logo" height="22">
+                <div class="card-header py-4 text-center bg-white">
+                    <img src="{{ asset('assets/images/NEWERACONNECT.png') }}" alt="logo" height="120">
                 </div>
                 <div class="card-body p-4">                   
                     <div class="text-center w-100 m-auto">

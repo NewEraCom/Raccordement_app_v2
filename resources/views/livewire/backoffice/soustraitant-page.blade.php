@@ -12,16 +12,16 @@
             <div class="card">
                 <div class="card-header border-bottom d-flex">
                     <h5 class="text-muted fw-bold">Filtrage</h5>
-                    <div class="ms-auto">
-                        <button class="btn btn-warning btn-sm shadow-none" data-bs-toggle="modal"
+                 <!--   <div class="ms-auto">
+                       <button class="btn btn-warning btn-sm shadow-none" data-bs-toggle="modal"
                             data-bs-target="#add-modal">
                             <i class="uil-plus me-2"></i> Ajouter
-                        </button>
-                    </div>
+                        </button> 
+                    </div> -->
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-xl-6">
+                        <div class="col-xl-12">
                             <div class="form-floating">
                                 <input type="text" class="form-control" id="floatingInput"
                                     placeholder="Ex : Neweracom" wire:model="name" />
@@ -35,10 +35,14 @@
     </div>
 
     <div class="row">
-        @if ($soustraitant->count() > 0)
-            @foreach ($soustraitant as $item)
-                <div class="col-xl-4 col-lg-12">
-                    <a href="{{ route('admin.soustraitant.profile',$item) }}">
+        @forelse ($soustraitant as $item)
+            <div class="col-12 col-sm-12 col-lg-12 col-xl-6 col-xxl-4">
+                @role('admin')
+                    <a href="{{ route('admin.soustraitant.profile', $item) }}">
+                    @endrole
+                    @role('supervisor')
+                        <a href="{{ route('supervisor.soustraitant.profile', $item) }}">
+                        @endrole
                         <div class="card">
                             <div class="card-body">
                                 <span class="float-start m-2 me-4">
@@ -64,9 +68,8 @@
                             </div>
                         </div>
                     </a>
-                </div>
-            @endforeach
-        @else
+            </div>
+        @empty
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
@@ -79,7 +82,7 @@
                     </div>
                 </div>
             </div>
-        @endif
+        @endforelse
     </div>
 
     <div id="add-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="importation-modalLabel"

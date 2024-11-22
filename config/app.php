@@ -67,7 +67,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Africa/Casablanca',
 
     /*
     |--------------------------------------------------------------------------
@@ -120,7 +120,7 @@ return [
     */
 
     'key' => env('APP_KEY'),
-
+    'charset' => 'UTF-8',
     'cipher' => 'AES-256-CBC',
 
     /*
@@ -161,12 +161,15 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
-
+        
         /*
          * Package Service Providers...
          */
         Spatie\Permission\PermissionServiceProvider::class,
         Berkayk\OneSignal\OneSignalServiceProvider::class,
+        Webklex\IMAP\Providers\LaravelServiceProvider::class,
+        Ladumor\OneSignal\OneSignalServiceProvider::class,
+        Barryvdh\DomPDF\ServiceProvider::class,
         /*
          * Application Service Providers...
          */
@@ -230,8 +233,10 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-        'OneSignal' => Berkayk\OneSignal\OneSignalFacade::class
-
+        'OneSignal' => Berkayk\OneSignal\OneSignalFacade::class,
+        'Client' => Webklex\IMAP\Facades\Client::class,
+        'OneSignal' => \Ladumor\OneSignal\OneSignal::class,
+        'PDF' => Barryvdh\DomPDF\Facade::class,
     ],
 
     'author' => 'Ayoub Chahid',

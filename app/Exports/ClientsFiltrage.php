@@ -8,17 +8,32 @@ use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\WithColumnWidths;
-use Maatwebsite\Excel\Concerns\WithMultipleSheets;
-use Maatwebsite\Excel\Concerns\WithTitle;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Events\AfterSheet;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 
-class ClientsFiltrage implements FromCollection, WithHeadings, withMapping, WithStyles, WithColumnWidths,WithTitle
+
+class ClientsFiltrage implements FromCollection, WithHeadings, ShouldAutoSize,WithEvents
 {
     use Exportable;
 
     protected $client_name, $client_sip, $client_status, $technicien, $start_date, $end_date;
+
+    public function headings() : array
+    {
+        return [
+            'Compte SIP',
+            'Login internet',
+            'Nom de client',
+            'Adresse',
+            'Ville',
+            'Numéro de téléphone',
+            'Type',
+            'Débit',
+            'Date de creation',
+        ];
+    }
 
     public function __construct($client_name, $client_sip, $client_status, $technicien, $start_date, $end_date)
     {
@@ -30,72 +45,31 @@ class ClientsFiltrage implements FromCollection, WithHeadings, withMapping, With
         $this->end_date = $end_date;
     }
 
-    public function headings(): array
+      public function collection()
     {
-        return [
-            'SIP',
-            'Nom de client',
-            'Adresse',
-            'Ville',
-            'Numero de telephone',
-            'Type',
-            'Status',
-            'Date de création',
-        ];
+        return Client::select('sip','client_id','clients.name','address','cities.name as city_name','phone_no','type','debit','clients.created_at')->join('cities','cities.id','=','clients.city_id')
+        ->orderBy('clients.created_at','desc')
+        ->get();
     }
 
-    public function collection()
-    {
-        return ClientsService::getClients($this->client_name, $this->client_sip, $this->client_status,$this->technicien, $this->start_date, $this->end_date)->get();
-    }
-   
-    public function map($client): array
+    public function registerEvents(): array
     {
         return [
-            $client->sip,
-            $client->name,
-            $client->address,
-            $client->city_name,
-            $client->phone_no,
-            $client->type,
-            $client->status,
-            $client->created_at,
+            AfterSheet::class => function(AfterSheet $event) {
+                $lastRow = $event->sheet->getHighestRow();
+
+                $event->sheet->getStyle('A1:I1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+                $event->sheet->getStyle('A1:I1')->getFont()->setBold(true);
+                $event->sheet->getStyle('A1:I1')->getFont()->getColor()->setARGB(\PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE);
+                $event->sheet->getStyle('A1:I1')->getFill()->getStartColor()->setARGB('002060');
+
+                $event->sheet->getStyle('A1:I'.$lastRow)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+                $event->sheet->getStyle('A1:I'.$lastRow)->getFont()->setSize(10);
+                $event->sheet->getStyle('A1:I'.$lastRow)->getFont()->setName('Calibri');
+                $event->sheet->getStyle('A1:I'.$lastRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                $event->sheet->getStyle('A1:I'.$lastRow)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+            },
         ];
     }
-
-    public function styles($sheet)
-    {
-        return [
-            'A:H' => ['font' => ['size' => 12]],
-        ];
-    }
-
-    public function columnWidths(): array
-    {
-        return [
-            'A' => 18,
-            'B' => 25,
-            'C' => 50,
-            'D' => 25,
-            'E' => 20,
-            'F' => 15,
-            'G' => 15,
-            'H' => 25,
-        ];
-    }
-
-    public function title(): string
-    {
-        switch ($this->client_status) {
-            case 'Saisie':
-                return 'Nouveaux clients';
-                break;
-            case 'Blocage':
-                return 'Clients bloqués';
-                break;
-            default:
-                return 'Tous les clients';
-                break;
-        }
-    }
+    
 }

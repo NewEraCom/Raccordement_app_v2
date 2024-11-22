@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\Affectation;
 use App\Models\Blocage;
+use App\Models\Declaration;
 
 class BlocageObserver
 {
@@ -15,10 +16,22 @@ class BlocageObserver
      */
     public function created(Blocage $blocage)
     {
+        
+ 
+$checkDeclaration = Declaration::where('affectation_id', $blocage->affectation_id)->first();
+
+if ($checkDeclaration) {
+    Blocage::where("affectation_id", $blocage->affectation_id)->update([
+        'declared' => 'Déclaré',
+    ]);
+}
+
+
         Affectation::find($blocage->affectation_id)->update([
-            'status' => 'Bloqué',
+            'status' => "Bloqué"
         ]);
     }
+
 
 
     /**

@@ -19,7 +19,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-      $schedule->command('delete:affectations')->everyMinute();
+      $schedule->command('importation:auto')->hourly()->between('8:00','21:00');
+      $schedule->command('send:recap')->dailyAt('10:00');
+      $schedule->command('clean:logs')->dailyAt('8:35');
     }
 
     /**

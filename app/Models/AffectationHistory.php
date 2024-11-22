@@ -12,6 +12,7 @@ class AffectationHistory extends Model
     protected $fillable = [
         'affectation_id',
         'technicien_id',
+        'soustraitant_id',
         'status',
         'cause',
         'created_by',
@@ -26,6 +27,9 @@ class AffectationHistory extends Model
     public function affectation(){
         return $this->belongsTo(Affectation::class);
     }
+    public function soustraitant(){
+        return $this->belongsTo(Soustraitant::class);
+    }
 
     public function getStatusColor(){
         $data = 'success';
@@ -33,6 +37,9 @@ class AffectationHistory extends Model
             case 'En cours':
                 $data = 'primary';
                 break;
+            case 'Affecté':
+                    $data = 'warning';
+                    break;
             case 'Planifié':
                 $data = 'warning';
                 break;

@@ -19,9 +19,15 @@
     <!-- Icons css -->
     <link href="{{ asset('assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
     @livewireStyles
+    <style>
+        .auth-background {
+            background: rgb(141, 87, 159);
+            background: linear-gradient(90deg, rgba(141, 87, 159, 1) 0%, rgba(117, 115, 179, 1) 33%, rgba(100, 134, 193, 1) 63%, rgba(73, 165, 215, 1) 100%);
+        }
+    </style>
 </head>
 
-<body>
+<body class="auth-background">
     @php($dev = Config::get('app.author'))
     <!-- Pre-loader -->
     <div id="preloader">
@@ -39,7 +45,7 @@
         {{ $slot }}
     </div>
 
-    <footer class="footer footer-alt">
+    <footer class="footer footer-alt text-white">
         <script>
             document.write(new Date().getFullYear())
         </script> © Neweracom - Developed By {{ $dev }}

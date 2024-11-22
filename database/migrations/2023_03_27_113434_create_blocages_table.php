@@ -19,6 +19,8 @@ class CreateBlocagesTable extends Migration
             $table->foreignId('affectation_id')->nullable()->constrained('affectations')->onDelete('cascade')->onUpdate('cascade');
             $table->string('cause',250);
             $table->string('justification',1000)->nullable();
+            $table->string('lat')->nullable();
+            $table->string('lng')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

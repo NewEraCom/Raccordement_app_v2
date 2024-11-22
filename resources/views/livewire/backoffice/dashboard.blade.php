@@ -9,9 +9,9 @@
     </div>
 
     <div class="row">
-        <div class="col-12 col-sm-6 col-xl-3">
+        <div class="col-12 col-sm-6 col-xl-4 col-xxl-3">
             <div class="card widget-flat">
-                <a href="">
+                <a href="{{ route('admin.clients') }}">
                     <div class="card-body">
                         <div class="float-end">
                             <i class="uil-envelope-add widget-icon"></i>
@@ -22,7 +22,7 @@
                 </a>
             </div>
         </div>
-        <div class="col-12 col-sm-6 col-xl-3">
+        <div class="col-12 col-sm-6 col-xl-4 col-xxl-3">
             <div class="card widget-flat">
                 <a href="{{ route('admin.clients') }}">
                     <div class="card-body">
@@ -35,9 +35,9 @@
                 </a>
             </div>
         </div>
-        <div class="col-12 col-sm-6 col-xl-3">
+        <div class="col-12 col-sm-6 col-xl-4 col-xxl-3">
             <div class="card widget-flat">
-                <a href="">
+                <a href="{{ route('admin.affectations') }}">
                     <div class="card-body">
                         <div class="float-end">
                             <i class="uil-link-alt widget-icon"></i>
@@ -48,9 +48,9 @@
                 </a>
             </div>
         </div>
-        <div class="col-12 col-sm-6 col-xl-3">
+        <div class="col-12 col-sm-6 col-xl-4 col-xxl-3">
             <div class="card widget-flat">
-                <a href="">
+                <a href="{{ route('admin.affectations') }}">
                     <div class="card-body">
                         <div class="float-end">
                             <i class="uil-link widget-icon"></i>
@@ -62,9 +62,9 @@
                 </a>
             </div>
         </div>
-        <div class="col-12 col-sm-6 col-xl-3">
+        <div class="col-12 col-sm-6 col-xl-4 col-xxl-3">
             <div class="card widget-flat">
-                <a href="">
+                <a href="{{ route('admin.clients') }}">
                     <div class="card-body">
                         <div class="float-end">
                             <i class="uil-check-circle widget-icon"></i>
@@ -75,9 +75,9 @@
                 </a>
             </div>
         </div>
-        <div class="col-12 col-sm-6 col-xl-3">
+        <div class="col-12 col-sm-6 col-xl-4 col-xxl-3">
             <div class="card widget-flat">
-                <a href="">
+                <a href="{{ route('admin.affectations') }}">
                     <div class="card-body">
                         <div class="float-end">
                             <i class="uil-times-circle widget-icon"></i>
@@ -88,9 +88,9 @@
                 </a>
             </div>
         </div>
-        <div class="col-12 col-sm-6 col-xl-3">
+        <div class="col-12 col-sm-6 col-xl-6 col-xxl-3">
             <div class="card widget-flat">
-                <a href="">
+                <a href="{{ route('admin.affectations') }}">
                     <div class="card-body">
                         <div class="float-end">
                             <i class="uil-schedule widget-icon"></i>
@@ -101,7 +101,7 @@
                 </a>
             </div>
         </div>
-        <div class="col-12 col-sm-6 col-xl-3">
+        <div class="col-12 col-sm-6 col-xl-6 col-xxl-3">
             <div class="card widget-flat">
                 <a href="">
                     <div class="card-body">
@@ -117,7 +117,7 @@
     </div>
 
     <div class="row">
-        <div class="col-12 col-xl-6">
+        <div class="col-12 col-xl-12 col-xxl-6">
             <div class="card">
                 <div class="card-header">
                     <h4 class="fw-bold">Clients par ville</h4>
@@ -127,13 +127,27 @@
                 </div>
             </div>
         </div>
-        <div class="col-12 col-xl-6">
+        <div class="col-12 col-xl-12 col-xxl-6">
             <div class="card">
                 <div class="card-header">
                     <h4 class="fw-bold">Blocage par type ({{ now()->month . '-' . now()->year }}) </h4>
                 </div>
                 <div class="card-body">
                     {!! $chart2->container() !!}
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <h4 class="fw-bold">
+                                <span>{{ $kpisData['blocage_technique'] }}</span>
+                            </h4>
+                            <p class="text-muted mb-0 fw-bold">Blocage Technique</p>
+                        </div>
+                        <div class="col-6">
+                            <h4 class="fw-bold">
+                                <span>{{ $kpisData['blocage_client'] }}</span>
+                            </h4>
+                            <p class="text-muted mb-0 fw-bold">Blocage Client</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

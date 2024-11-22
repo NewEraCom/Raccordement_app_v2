@@ -14,6 +14,7 @@ class Plaque extends Model
         'city_id',
         'code_plaque',
         'status',
+        'is_ppi',
         'created_at',
         'updated_at',
     ];

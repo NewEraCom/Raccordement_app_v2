@@ -18,8 +18,11 @@ class CreateRouteursTable extends Migration
             $table->string('uuid')->unique();
             $table->string('sn_gpon');
             $table->string('sn_mac');
-            $table->boolean('status');
+            $table->integer('status')->default(0);
+            $table->foreignId('client_id')->nullable()->constrained('clients')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('technicien_id')->nullable()->constrained('techniciens')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

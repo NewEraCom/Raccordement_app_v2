@@ -13,25 +13,41 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 
 class LoginService
-{    
+{
     static public function login($email, $password)
     {
         if (Auth::attempt(['email' => $email, 'password' => $password], true)) {
             switch (Auth::user()->roles->first()->name) {
                 case 'admin':
+                    Auth::user()->update(['is_online' => true]);
                     return redirect()->route('admin.dashboard');
                     break;
                 case 'superadmin':
                     // TODO return redirect()->route('supervisor.dashboard');
                     break;
                 case 'supervisor':
-                    // TODO return redirect()->route('supervisor.dashboard');
+                    Auth::user()->update(['is_online' => true]);
+                    return redirect()->route('supervisor.dashboard');
                     break;
                 case 'soustraitant':
-                    // TODO return redirect()->route('supervisor.dashboard');
+                    Auth::user()->update(['is_online' => true]);
+                    return redirect()->route('soustraitant.dashboard');
                     break;
                 case 'controller':
-                    // TODO return redirect()->route('supervisor.dashboard');
+                    Auth::user()->update(['is_online' => true]);
+                    return redirect()->route('controller.dashboard');
+                    break;
+                case 'sales':
+                    Auth::user()->update(['is_online' => true]);
+                    return redirect()->route('sales.dashboard');
+                    break;
+                case 'sav':
+                    Auth::user()->update(['is_online' => true]);
+                    return redirect()->route('sav.dashboard');
+                    break;
+                case 'technicien':
+                    Auth::logout();
+                    abort(401, 'Unauthorized action.');
                     break;
                 default:
                     return redirect()->route('login');
@@ -46,17 +62,30 @@ class LoginService
             case 'admin':
                 return redirect()->route('admin.dashboard');
                 break;
+            case 'sav':
+                return redirect()->route('sav.dashboard');
+                break;
             case 'superadmin':
                 // TODO return redirect()->route('supervisor.dashboard');
                 break;
             case 'supervisor':
-                // TODO return redirect()->route('supervisor.dashboard');
+                return redirect()->route('supervisor.dashboard');
                 break;
             case 'soustraitant':
-                // TODO return redirect()->route('supervisor.dashboard');
+                return redirect()->route('soustraitant.dashboard');
                 break;
             case 'controller':
-                // TODO return redirect()->route('supervisor.dashboard');
+                return redirect()->route('controller.dashboard');
+                break;
+            case 'storekeeper':
+                return redirect()->route('storekeeper.dashboard');
+                break;
+            case 'sales':
+                return redirect()->route('supervisor.dashboard');
+                break;
+            case 'technicien':
+                Auth::logout();
+                abort(401, 'Unauthorized action.');
                 break;
             default:
                 return redirect()->route('login');
@@ -66,6 +95,7 @@ class LoginService
 
     static public function logout()
     {
+        Auth::user()->update(['is_online' => false]);
         Auth::logout();
         return redirect()->route('login');
     }
@@ -76,7 +106,7 @@ class LoginService
 
         if ($status == Password::RESET_LINK_SENT) {
             return redirect()->route('check-your-email')->with('status', __($status));
-        } else {
+        } else {    
             return redirect()->route('login')->with('error', __($status));
         }
     }

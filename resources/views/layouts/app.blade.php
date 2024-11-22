@@ -8,7 +8,7 @@
     <meta content="Ayoub chahid" name="author" />
 
     <!-- App favicon -->
-    <link rel="shortcut icon" href="{{ asset('assets/images/logo-sm.png') }}">
+    <link rel="shortcut icon" href="{{ asset('assets/images/NEWERACONNECT.png') }}">
     @stack('styles')
 
     <!-- Theme Config Js -->
@@ -19,21 +19,12 @@
 
     <!-- Icons css -->
     <link href="{{ asset('assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
+    <link rel='stylesheet' href='https://unpkg.com/leaflet@1.8.0/dist/leaflet.css' crossorigin='' />
     @livewireStyles
 </head>
 
 <body>
-    <!-- Pre-loader -->
-    <div id="preloader">
-        <div id="status">
-            <div class="bouncing-loader">
-                <div></div>
-                <div></div>
-                <div></div>
-            </div>
-        </div>
-    </div>
-    <!-- End Preloader-->
+    
 
     <!-- Begin page -->
     <div class="wrapper">
@@ -46,9 +37,10 @@
                     <!-- Topbar Brand Logo -->
                     <div class="logo-topbar">
                         <!-- Logo light -->
-                        <a href="index.html" class="logo-light">
+                        <a href="{{ route('admin.dashboard') }}" class="logo-light">
                             <span class="logo-lg">
-                                <img src="{{ asset('assets/images/logo.png') }}" alt="logo">
+                                <img src="{{ asset('assets/images/NEWERACONNECT_LOGO.png') }}"
+                                    style="height:40px !important" alt="logo">
                             </span>
                             <span class="logo-sm">
                                 <img src="{{ asset('assets/images/logo-sm.png') }}" alt="small logo">
@@ -56,12 +48,14 @@
                         </a>
 
                         <!-- Logo Dark -->
-                        <a href="index.html" class="logo-dark">
+                        <a href="{{ route('admin.dashboard') }}" class="logo-dark">
                             <span class="logo-lg">
-                                <img src="{{ asset('assets/images/logo-dark.png') }}" alt="dark logo">
+                                <img src="{{ asset('assets/images/NEWERACONNECT_LOGO.png') }}"
+                                    style="height:40px !important" alt="dark logo">
                             </span>
                             <span class="logo-sm">
-                                <img src="{{ asset('assets/images/logo-dark-sm.png') }}" alt="small logo">
+                                <img src="{{ asset('assets/images/logo-dark-sm.png') }}" height="120px"
+                                    alt="small logo">
                             </span>
                         </a>
                     </div>
@@ -137,22 +131,26 @@
         <div class="leftside-menu">
 
             <!-- Brand Logo Light -->
-            <a href="#" class="logo logo-light">
+            <a href="{{ route('admin.dashboard') }}" class="logo logo-light">
                 <span class="logo-lg">
-                    <img src="{{ asset('assets/images/logo.png') }}" alt="logo">
+                    <img src="{{ asset('assets/images/NEWERACONNECT_LOGO.png') }}" style="height:50px !important"
+                        alt="logo">
                 </span>
                 <span class="logo-sm">
-                    <img src="{{ asset('assets/images/logo-sm.png') }}" alt="small logo">
+                    <img src="{{ asset('assets/images/logo-sm.png') }}" style="height:30px !important"
+                        alt="small logo">
                 </span>
             </a>
 
             <!-- Brand Logo Dark -->
-            <a href="#" class="logo logo-dark">
+            <a href="{{ route('admin.dashboard') }}" class="logo logo-dark">
                 <span class="logo-lg">
-                    <img src="{{ asset('assets/images/logo-dark.png') }}" alt="dark logo">
+                    <img src="{{ asset('assets/images/NEWERACONNECT_LOGO.png') }}" style="height:50px !important"
+                        alt="logo">
                 </span>
                 <span class="logo-sm">
-                    <img src="{{ asset('assets/images/logo-dark-sm.png') }}" alt="small logo">
+                    <img src="{{ asset('assets/images/logo-dark-sm.png') }}" style="height:30px !important"
+                        alt="small logo">
                 </span>
             </a>
 
@@ -174,96 +172,280 @@
                 <ul class="side-nav">
 
                     <li class="side-nav-title">Navigation</li>
+                    @role('admin')
+                        <li class="side-nav-item">
+                            <a href="{{ route('admin.dashboard') }}" class="side-nav-link fw-bold">
+                                <i class="uil-home-alt"></i>
+                                <span> Dashboard </span>
+                            </a>
+                        </li>
 
+                        <li class="side-nav-item">
+                            <a href="{{ route('admin.clients') }}" class="side-nav-link fw-bold">
+                                <i class="uil-users-alt"></i>
+                                <span> Clients </span>
+                            </a>
+                        </li>
+
+                        <li class="side-nav-item">
+                            <a href="{{ route('admin.affectations') }}" class="side-nav-link fw-bold">
+                                <i class="uil-clipboard-alt"></i>
+                                <span> Affectations </span>
+                            </a>
+                        </li>
+
+                        <li class="side-nav-item">
+                            <a href="{{ route('admin.routeurs') }}" class="side-nav-link fw-bold">
+                                <i class="uil-technology"></i>
+                                <span> Routeurs </span>
+                            </a>
+                        </li>
+
+                        <li class="side-nav-item">
+                            <a href="{{ route('admin.soustraitant') }}" class="side-nav-link fw-bold">
+                                <i class="uil-package"></i>
+                                <span> Soustraitant </span>
+                            </a>
+                        </li>
+
+                        <li class="side-nav-item">
+                            <a href="{{ route('admin.techniciens') }}" class="side-nav-link fw-bold">
+                                <i class="uil-constructor"></i>
+                                <span> Techniciens </span>
+                            </a>
+                        </li>
+
+                        <li class="side-nav-item">
+                            <a href="{{ route('admin.cities') }}" class="side-nav-link fw-bold">
+                                <i class="uil-map-pin-alt"></i>
+                                <span> Villes </span>
+                            </a>
+                        </li>
+
+                        <li class="side-nav-item">
+                            <a href="{{ route('admin.plaques') }}" class="side-nav-link fw-bold">
+                                <i class="uil-label"></i>
+                                <span> Plaques </span>
+                            </a>
+                        </li>
+
+                        <li class="side-nav-item">
+                            <a data-bs-toggle="collapse" href="#sidebarStcok" aria-expanded="false"
+                                aria-controls="sidebarStcok" class="side-nav-link fw-bold">
+                                <i class="uil-clipboard-alt"></i>
+                                <span> Stock </span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <div class="collapse" id="sidebarStcok">
+                                <ul class="side-nav-second-level">
+                                    <li>
+                                        <a href="{{ route('admin.stock') }}">Stock</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('admin.stock.demande') }}">Demande de stock</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('admin.stock.historic') }}">Historique de stock</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        <li class="side-nav-item">
+                            <a href="{{ route('admin.logs') }}" class="side-nav-link fw-bold">
+                                <i class="uil-bookmark"></i>
+                                <span> Logs </span>
+                            </a>
+                        </li>
+                    @endrole()
+
+                    @role('sav')
                     <li class="side-nav-item">
-                        <a href="{{ route('admin.dashboard') }}" class="side-nav-link fw-bold">
+                        <a href="{{ route('sav.dashboard') }}" class="side-nav-link fw-bold">
                             <i class="uil-home-alt"></i>
                             <span> Dashboard </span>
                         </a>
                     </li>
-
                     <li class="side-nav-item">
-                        <a href="{{ route('admin.clients') }}" class="side-nav-link fw-bold">
-                            <i class="uil-users-alt"></i>
-                            <span> Clients </span>
+                        <a href="{{ route('sav.clientsav') }}" class="side-nav-link fw-bold">
+                            <i class="uil-user"></i>
+                            <span> Client </span>
                         </a>
                     </li>
-
-
                     <li class="side-nav-item">
-                        <a data-bs-toggle="collapse" href="#sidebarTasks" aria-expanded="false"
-                            aria-controls="sidebarTasks" class="side-nav-link fw-bold">
+                        <a href="{{ route('sav.savaffectation') }}" class="side-nav-link fw-bold">
                             <i class="uil-clipboard-alt"></i>
-                            <span> Affectations </span>
-                            <span class="menu-arrow"></span>
-                        </a>
-                        <div class="collapse" id="sidebarTasks">
-                            <ul class="side-nav-second-level">
-                                <li>
-                                    <a href="{{ route('admin.affectations') }}">Toutes les affectations</a>
-                                </li>
-                                <li>
-                                    <a href="{{ route('admin.affectations.map') }}">Map</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-
-                    <li class="side-nav-item">
-                        <a href="apps-chat.html" class="side-nav-link fw-bold">
-                            <i class="uil-technology"></i>
-                            <span> Routeurs </span>
+                            <span> Affectation </span>
                         </a>
                     </li>
-
                     <li class="side-nav-item">
-                        <a href="{{ route('admin.soustraitant') }}" class="side-nav-link fw-bold">
-                            <i class="uil-package"></i>
-                            <span> Soustraitant </span>
-                        </a>
-                    </li>
-
-                    <li class="side-nav-item">
-                        <a href="#" class="side-nav-link fw-bold">
+                        <a href="{{ route('sav.techniciens') }}" class="side-nav-link fw-bold">
                             <i class="uil-constructor"></i>
-                            <span> Techniciens </span>
+                            <span> Technicien </span>
                         </a>
                     </li>
-
                     <li class="side-nav-item">
-                        <a href="#" class="side-nav-link fw-bold">
-                            <i class="uil-map-pin-alt"></i>
-                            <span> Villes </span>
+                        <a href="{{ route('sav.soustraitant') }}" class="side-nav-link fw-bold">
+                            <i class="uil-package"></i>
+                            <span> Sous-traitants </span>
                         </a>
                     </li>
-
                     <li class="side-nav-item">
-                        <a href="{{ route('admin.plaques') }}" class="side-nav-link fw-bold">
-                            <i class="uil-label"></i>
-                            <span> Plaques </span>
-                        </a>
-                    </li>
-
-                    <li class="side-nav-item">
-                        <a href="apps-chat.html" class="side-nav-link fw-bold">
+                        <a href="{{ route('sav.stock') }}" class="side-nav-link fw-bold">
                             <i class="uil-box"></i>
                             <span> Stock </span>
                         </a>
                     </li>
+                @endrole
+
+                    @role('supervisor')
+                        <li class="side-nav-item">
+                            <a href="{{ route('supervisor.dashboard') }}" class="side-nav-link fw-bold">
+                                <i class="uil-home-alt"></i>
+                                <span> Dashboard </span>
+                            </a>
+                        </li>
+
+                        <li class="side-nav-item">
+                            <a href="{{ route('supervisor.clients') }}" class="side-nav-link fw-bold">
+                                <i class="uil-users-alt"></i>
+                                <span> Clients </span>
+                            </a>
+                        </li>
+
+                        <li class="side-nav-item">
+                            <a href="{{ route('supervisor.soustraitant') }}" class="side-nav-link fw-bold">
+                                <i class="uil-package"></i>
+                                <span> Soustraitant </span>
+                            </a>
+                        </li>
+
+                        <li class="side-nav-item">
+                            <a href="{{ route('supervisor.cities') }}" class="side-nav-link fw-bold">
+                                <i class="uil-map-pin-alt"></i>
+                                <span> Villes </span>
+                            </a>
+                        </li>
+
+
+                        <li class="side-nav-item">
+                            <a data-bs-toggle="collapse" href="#sidebarStcok" aria-expanded="false"
+                                aria-controls="sidebarStcok" class="side-nav-link fw-bold">
+                                <i class="uil-clipboard-alt"></i>
+                                <span> Stock </span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <div class="collapse" id="sidebarStcok">
+                                <ul class="side-nav-second-level">
+                                    <li>
+                                        <a href="{{ route('supervisor.stock') }}">Stock</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('supervisor.stock.demande') }}">Demande de stock</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('supervisor.stock.historic') }}">Historique de stock</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    @endrole
+
+                    @role('controller')
+                        <li class="side-nav-item">
+                            <a href="{{ route('controller.dashboard') }}" class="side-nav-link fw-bold">
+                                <i class="uil-home-alt"></i>
+                                <span> Dashboard </span>
+                            </a>
+                        </li>
+                        <li class="side-nav-item">
+                            <a href="{{ route('controller.affectations') }}" class="side-nav-link fw-bold">
+                                <i class="uil-users-alt"></i>
+                                <span> Clients </span>
+                            </a>
+                        </li>
+                        <li class="side-nav-item">
+                            <a href="{{ route('controller.planification') }}" class="side-nav-link fw-bold">
+                                <i class="uil-calendar-alt"></i>
+                                <span> Planification </span>
+                            </a>
+                        </li>
+                        <li class="side-nav-item">
+                            <a href="{{ route('controller.reports') }}" class="side-nav-link fw-bold">
+                                <i class="uil-file-question-alt"></i>
+                                <span> Rapports </span>
+                            </a>
+                        </li>
+                    @endrole
+
+                    @role('soustraitant')
+                        <li class="side-nav-item">
+                            <a href="{{ route('soustraitant.dashboard') }}" class="side-nav-link fw-bold">
+                                <i class="uil-home-alt"></i>
+                                <span> Dashboard </span>
+                            </a>
+                        </li>
+                        <li class="side-nav-item">
+                            <a href="{{ route('soustraitant.affectations') }}" class="side-nav-link fw-bold">
+                                <i class="uil-users-alt"></i>
+                                <span> Clients </span>
+                            </a>
+                        </li>
+                        <li class="side-nav-item">
+                            <a href="{{ route('soustraitant.stock') }}" class="side-nav-link fw-bold">
+                                <i class="uil-clipboard-alt"></i>
+                                <span> Stock </span>
+                            </a>
+                        </li>
+                    @endrole
+
+                    @role('responsable')
+                        <li class="side-nav-item">
+                            <a href="{{ route('admin.clients.controle') }}" class="side-nav-link fw-bold">
+                                <i class="uil-bolt"></i>
+                                <span> Controle Qualité </span>
+                            </a>
+                        </li> 
+                        <li class="side-nav-item">
+                            <a href="{{ route('admin.clients.reports') }}" class="side-nav-link fw-bold">
+                                <i class="uil-folder"></i>
+                                <span> Rapports </span>
+                            </a>
+                        </li>                
+                    @endrole
+
+                    @role('storekeeper')
+                        <li class="side-nav-item">
+                            <a href="{{ route('storekeeper.dashboard') }}" class="side-nav-link fw-bold">
+                                <i class="uil-home-alt"></i>
+                                <span> Dashboard </span>
+                            </a>
+                        </li> 
+
+                        <li class="side-nav-item">
+                            <a href="{{ route('storekeeper.demandes') }}" class="side-nav-link fw-bold">
+                                <i class="uil-fast-mail"></i>
+                                <span> Demandes </span>
+                            </a>
+                        </li> 
+
+                        <li class="side-nav-item">
+                            <a href="{{ route('storekeeper.stock') }}" class="side-nav-link fw-bold">
+                                <i class="uil-clipboard-alt"></i>
+                                <span> Stock </span>
+                            </a>
+                        </li>             
+                    @endrole
+
+                    @role('sales')
+                        <li class="side-nav-item">
+                            <a href="{{ route('sales.dashboard') }}" class="side-nav-link fw-bold">
+                                <i class="uil-home-alt"></i>
+                                <span> Dashboard </span>
+                            </a>
+                        </li>             
+                    @endrole
                 </ul>
-                <!--- End Sidemenu -->
-
-                <div class="help-box text-white text-center m-2">
-                    <div class="d-grid">
-                        <button type="button" class="btn btn-sm btn-primary mb-1" data-bs-toggle="modal"
-                            data-bs-target="#standard-modal">Importer B2C</button>
-                        <button type="button" class="btn btn-sm btn-primary mb-1">Importer B2B</button>
-                        <button type="button" class="btn btn-sm btn-primary mb-1">Importer PIPE</button>
-                        <button type="button" class="btn btn-sm btn-success mb-1">Importer listes de
-                            Routeurs</button>
-                    </div>
-                </div>
-
                 <div class="clearfix"></div>
             </div>
         </div>
@@ -273,29 +455,47 @@
         <div class="content-page">
             <div class="content">
                 {{ $slot }}
+                <div wire:offline>
+                    You are now offline.
+                </div>
             </div>
         </div>
     </div>
     <!-- END wrapper -->
 
     @stack('scripts')
+    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" defer></script>
+    <script>
+        window.OneSignal = window.OneSignal || [];
+        OneSignal.push(function() {
+            OneSignal.init({
+                appId: "9d7161b3-0c5e-4dd0-93fa-67e6b57fe2dd",
+            });
+        });
+    </script>
     @livewireScripts
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        var mymap = L.map('”mapid”', {
-            center: [51.505, -0.09],
-            zoom: 13
-        });
-    </script>
-    <script>
         window.livewire.on('success', () => {
-            $('#exportation-modal').modal('hide');
-            $('#delete-modal').modal('hide');
-            $('#delete-all-modal').modal('hide');
-            $('#affecter-modal').modal('hide');
-            $('#edit-modal').modal('hide');
-            $('#importation-modal').modal('hide');
             $('#add-modal').modal('hide');
+            $('#relance-modal').modal('hide');
+            $('#edit-modal').modal('hide');
+            $('#associer-modal').modal('hide');
+            $('#refresh-modal').modal('hide');
+            $('#desactive-modal').modal('hide');
+            $('#delete-all-modal').modal('hide');
+            $('#delete-modal').modal('hide');
+            $('#exportation-modal').modal('hide');
+            $('#affecter-modal').modal('hide');
+            $('#sync-modal').modal('hide');
+            $('#planifier-modal').modal('hide');
+            $('#feedback-modal').modal('hide');
+            $('#planifier-modal').modal('hide');
+            $('#feedback-modal').modal('hide');
+            $('#valider-modal').modal('hide');
+            $('#refuser-modal').modal('hide');
+            $('#get-localisation-modal').modal('hide');
+            $('#livre-modal').modal('hide');
         });
         window.addEventListener('contentChanged', e => {
             const Toast = Swal.mixin({
@@ -303,23 +503,28 @@
                 position: 'bottom-end',
                 showConfirmButton: false,
                 timer: 15000,
-                timerProgressBar: false,
+                timerProgressBar: true,
                 didOpen: (toast) => {
                     toast.addEventListener('mouseenter', Swal.stopTimer)
                     toast.addEventListener('mouseleave', Swal.resumeTimer)
                 }
             })
             Toast.fire({
-                icon: 'success',
+                icon: event.detail.item === 'Une erreur est survenue.' ? 'error' : 'success',
                 title: event.detail.item,
             })
         })
+        
     </script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <!-- Vendor js -->
     <script src="{{ asset('assets/js/vendor.min.js') }}"></script>
 
     <!-- App js -->
     <script src="{{ asset('assets/js/app.min.js') }}"></script>
+
+
+    
 
 </body>
 

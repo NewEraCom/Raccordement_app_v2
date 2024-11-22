@@ -9,6 +9,8 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Support\Str;
+use App\Models\Affectation;
+
 
 class User extends Authenticatable
 {
@@ -20,7 +22,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'uuid',        
+        'uuid',
         'first_name',
         'last_name',
         'phone_no',
@@ -29,6 +31,20 @@ class User extends Authenticatable
         'status',
         'email',
         'password',
+        'technicien_id',
+        'soustraitant_id',
+        'is_online',
+    ];
+
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $appends = [
+        'counter'
+
     ];
 
     /**
@@ -50,11 +66,29 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function getFullname(){
+    public function getFullname()
+    {
         return $this->first_name . ' ' . $this->last_name;
     }
 
-    public function getUserRole(){
+    public function getUserRole()
+    {
         return Str::upper($this->roles->first()->name);
+    }
+
+    public function getCounterAttribute()
+    {
+        return Affectation::where("technicien_id", $this->technicien_id)->where("status", "En cours")->count();
+    }
+
+    public function technicien()
+    {
+        return $this->hasOne(Technicien::class);
+    }
+
+    public function returnPhoneNumber()
+    {
+        $input = $this->phone_no;
+        return substr($input, 0, 2) . ' ' . substr($input, 2, 2) . ' ' . substr($input, 4, 2) . ' ' . substr($input, 6, 2) . ' ' . substr($input, 8, 2);
     }
 }

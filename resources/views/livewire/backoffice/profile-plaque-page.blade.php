@@ -44,4 +44,37 @@
         </div>
     </div>
 
+    <div class="card">
+        <div class="card-body">
+            <div id="map" style="height:550px"></div>
+        </div>
+    </div>
+
+    @push('scripts')
+        <script src='https://unpkg.com/leaflet@1.8.0/dist/leaflet.js' crossorigin=''></script>
+        <script>
+            let map, markers = [];
+            /* ----------------------------- Initialize Map ----------------------------- */
+            function initMap() {
+                map = L.map('map', {
+                    center: {
+                        lat: 33.954993,
+                        lng: -6.873693,
+                    },
+                    zoom: 14
+                });
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© Neweraconnect'
+                }).addTo(map);
+
+                var marker = L.marker([33.954993, -6.873693]).addTo(map);
+
+                map.on('click', mapClicked);
+                initMarkers();
+            }
+            initMap();
+        </script>
+    @endpush
+
 </div>

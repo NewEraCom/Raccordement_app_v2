@@ -13,12 +13,31 @@ class Blocage extends Model
     protected $fillable = [
         'uuid',
         'affectation_id',
+        'sav_ticket_id',
         'cause',
+        'lat',
+        'lng',
+        'justification',
+        'resolue'
     ];
 
     public function affectation()
     {
         return $this->belongsTo(Affectation::class);
+    }
+    public function savTicket()
+    {
+        return $this->belongsTo(SavTicket::class);
+    }
+
+    public function blocagePictures()
+    {
+        return $this->hasMany(BlocagePicture::class);
+    }
+
+    public function client()
+    {
+        return $this->hasOneThrough(Client::class, Affectation::class);
     }
 
 

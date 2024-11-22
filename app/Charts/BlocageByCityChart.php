@@ -18,8 +18,10 @@ class BlocageByCityChart
     public function build(): \ArielMejiaDev\LarapexCharts\DonutChart
     {
         $results = Blocage::select('cause', DB::raw('count(*) as count'))
+            ->where('resolue',0)
             ->groupBy('cause')
-            ->whereDate('created_at', now())
+            ->whereMonth('created_at', now()->month)->whereYear('created_at',now()->year)
+            ->where('deleted_at',null)
             ->get();
 
         foreach ($results as $value) {
@@ -29,6 +31,7 @@ class BlocageByCityChart
 
         return $this->chart->donutChart()
             ->addData($data ?? [])
-            ->setLabels($causes ?? []);
+            ->setLabels($causes ?? [])
+            ->setColors(['#FF7900','#6A4C28','#9028F1','#4B25BE','#0EBE75','#F8C5A0','#E84E58','#FECA39','#8DD9D4']);
     }
 }

@@ -4,6 +4,8 @@ namespace App\Console\Commands;
 
 use App\Models\Affectation;
 use Illuminate\Console\Command;
+use App\Services\web\ClientsService;
+
 
 class DeleteAffectation extends Command
 {
@@ -38,7 +40,7 @@ class DeleteAffectation extends Command
      */
     public function handle()
     {
-        Affectation::whereDate('created_at', now()->subDays(2))->delete();
+        ClientsService::importAuto();
 
         return 1;
     }

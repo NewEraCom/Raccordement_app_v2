@@ -8,4 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class BlocagePicture extends Model
 {
     use HasFactory;
+
+
+    protected $fillable = [
+        'uuid',
+        'image',
+        'image_data' ,
+        'blocage_id'
+    ];
 }

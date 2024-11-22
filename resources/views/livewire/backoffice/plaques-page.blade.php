@@ -3,6 +3,11 @@
     <div class="row">
         <div class="col-12">
             <div class="page-title-box">
+                  <div class="page-title-right">
+                        <button class="btn btn-success btn-sm shadow-none mb-1" data-bs-toggle="modal"
+                            data-bs-target="#sync-modal"> <i class="uil-sync me-2"></i> Synchroniser Auto
+                        </button>
+                    </div>
                 <h4 class="page-title">Plaques</h4>
             </div>
         </div>
@@ -27,28 +32,15 @@
                         <button class="btn btn-danger btn-sm shadow-none" data-bs-toggle="modal"
                             data-bs-target="#delete-all-modal"> <i class="uil-trash me-2"></i> Supprimer
                         </button>
-                        <button class="btn btn-secondary btn-sm shadow-none" data-bs-toggle="modal"
-                            data-bs-target="#affecter-modal"> <i class="uil-label me-2"></i> Affecter
-                        </button>
                     </div>
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-xl-6">
+                        <div class="col-xl-12">
                             <div class="form-floating">
                                 <input type="text" class="form-control" id="floatingInput"
                                     placeholder="Ex : 01.18.56" wire:model="plaque_name" />
-                                <label for="floatingInput">Code Plaque</label>
-                            </div>
-                        </div>
-                        <div class="col-xl-6">
-                            <div class="form-floating">
-                                <select class="form-select" id="floatingSelect" wire:model="status">
-                                    <option value="" selected>Tous</option>
-                                    <option value="1">Actif</option>
-                                    <option value="0">Inactif</option>
-                                </select>
-                                <label for="floatingSelect">Statut du plaque</label>
+                                <label for="floatingInput">Code Plaque Ou ville</label>
                             </div>
                         </div>
                     </div>
@@ -65,12 +57,11 @@
                         <thead class="table-dark">
                             <tr>
                                 <th></th>
-                                <th>Plaque</th>
-                                <th>Ville</th>
-                                <th>Client</th>
-                                <th>Technicien</th>
-                                <th>Statut</th>
-                                <th></th>
+                                <th class="text-center">Plaque</th>
+                                <th class="text-center">Ville</th>
+                                <th class="text-center">Client</th>
+                                <th class="text-center">PPI</th>
+                                <th class="text-end"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -81,15 +72,17 @@
                                             <input type="checkbox" class="form-check-input" value="{{ $item->id }}"
                                                 wire:model="deleteList">
                                         </td>
-                                        <td>{{ $item->code_plaque }}</td>
-                                        <td>{{ $item->city->name }}</td>
-                                        <td>{{ $item->clients->count() }} Clients</td>
-                                        <td>{{ $item->techniciens->count() }} Technicien</td>
-                                        <td class="fw-bold">
+                                        <td class="text-center">{{ $item->code_plaque }}</td>
+                                        <td class="text-center">{{ $item->city ? $item->city->name : 'Hors Plaque' }}</td>
+                                        <td class="text-center">
                                             <span
-                                                class="badge badge-{{ $item->status ? 'success' : 'danger' }}-lighten">{{ $item->status ? 'Actif' : 'Inactif' }}</span>
+                                            class="badge badge-warning-lighten rounded-pill p-2 font-12">{{ $item->clients_count }}
+                                            Clients</span>
                                         </td>
                                         <td class="text-center">
+                                            <i class="mdi mdi-circle me-1 text-{{ $item->is_ppi ? 'success' : 'warning' }}"></i> {{ $item->is_ppi ? 'Plaque PPI' : 'Plaque normal' }}
+                                        </td>
+                                        <td class="text-end">
                                             <a
                                                 class="btn btn-primary btn-sm shadow-none"href="{{ route('admin.plaques.profile', $item) }}"><i
                                                     class="uil-eye"></i>
@@ -138,76 +131,6 @@
                         <button type="submit" class="btn btn-danger shadow-none">
                             <span wire:loading.remove wire:target="delete">Oui, supprimez-le</span>
                             <span wire:loading wire:target="delete">
-                                <span class="spinner-border spinner-border-sm me-2" role="status"
-                                    aria-hidden="true"></span>
-                                Chargement...
-                            </span>
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div id="delete-all-modal" class="modal fade" tabindex="-1" role="dialog"
-        aria-labelledby="importation-modalLabel" aria-hidden="true" wire:ignore.self>
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form wire:submit.prevent="deleteAll">
-                    <div class="modal-header">
-                        <h4 class="modal-title" id="importation-modalLabel">Supprimer des plaques</h4>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                            aria-hidden="true"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p class="fw-bold f-16">Voulez-vous vraiment supprimer les plaques ?</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-light shadow-none"
-                            data-bs-dismiss="modal">Fermer</button>
-                        <button type="submit" class="btn btn-danger shadow-none">
-                            <span wire:loading.remove wire:target="deleteAll">Oui, supprimez-le</span>
-                            <span wire:loading wire:target="deleteAll">
-                                <span class="spinner-border spinner-border-sm me-2" role="status"
-                                    aria-hidden="true"></span>
-                                Chargement...
-                            </span>
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div id="affecter-modal" class="modal fade" tabindex="-1" role="dialog"
-        aria-labelledby="importation-modalLabel" aria-hidden="true" wire:ignore.self>
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form wire:submit.prevent="affectation">
-                    <div class="modal-header">
-                        <h4 class="modal-title" id="importation-modalLabel">Affectation des clients</h4>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                            aria-hidden="true"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-floating">
-                            <select class="form-select" id="floatingSelect"
-                                aria-label="Floating label select example" wire:model="technicien_affectation"
-                                required>
-                                <option selected>Sélectionnez un technicien</option>
-                                @foreach ($techniciens as $item)
-                                    <option value="{{ $item->id }}">{{ $item->user->getFullname() }}</option>
-                                @endforeach
-                            </select>
-                            <label for="floatingSelect">Technicien </label>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-light shadow-none"
-                            data-bs-dismiss="modal">Fermer</button>
-                        <button type="submit" class="btn btn-primary shadow-none">
-                            <span wire:loading.remove wire:target="affectation">Affecter</span>
-                            <span wire:loading wire:target="affectation">
                                 <span class="spinner-border spinner-border-sm me-2" role="status"
                                     aria-hidden="true"></span>
                                 Chargement...
@@ -275,6 +198,12 @@
                             </select>
                             <label for="floatingSelect">Ville </label>
                         </div>
+                        <div class="form-floating mt-3">
+                            <div class="form-check form-switch">
+                                <input type="checkbox" class="form-check-input"  value="1" id="customSwitch1" wire:model='is_ppi'>
+                                <label class="form-check-label" for="customSwitch1">Plaque PPI</label>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light shadow-none"
@@ -299,7 +228,7 @@
             <div class="modal-content">
                 <form wire:submit.prevent="edit">
                     <div class="modal-header">
-                        <h4 class="modal-title" id="importation-modalLabel">Affectation des clients</h4>
+                        <h4 class="modal-title" id="importation-modalLabel">Modification de plaque</h4>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                             aria-hidden="true"></button>
                     </div>
@@ -318,13 +247,49 @@
                             </select>
                             <label for="floatingSelect">Ville </label>
                         </div>
+                        <div class="form-floating mt-3">
+                            <div class="form-check form-switch">
+                                <input type="checkbox" class="form-check-input"  value="1" id="customSwitch1" wire:model='is_ppi'>
+                                <label class="form-check-label" for="customSwitch1">Plaque PPI</label>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light shadow-none"
                             data-bs-dismiss="modal">Fermer</button>
                         <button type="submit" class="btn btn-primary shadow-none">
-                            <span wire:loading.remove wire:target="add">Ajouter</span>
+                            <span wire:loading.remove wire:target="add">Modifier</span>
                             <span wire:loading wire:target="add">
+                                <span class="spinner-border spinner-border-sm me-2" role="status"
+                                    aria-hidden="true"></span>
+                                Chargement...
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div id="sync-modal" class="modal fade" tabindex="-1" role="dialog"
+        aria-labelledby="importation-modalLabel" aria-hidden="true" wire:ignore.self>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form wire:submit.prevent="sync">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="importation-modalLabel">Synchronisation</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-hidden="true"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="fw-bold f-16">Êtes-vous sûr de vouloir exécuter une synchronisation automatique?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light shadow-none"
+                            data-bs-dismiss="modal">Fermer</button>
+                        <button type="submit" class="btn btn-primary shadow-none">
+                            <span wire:loading.remove wire:target="sync">Oui, Synchroniser</span>
+                            <span wire:loading wire:target="sync">
                                 <span class="spinner-border spinner-border-sm me-2" role="status"
                                     aria-hidden="true"></span>
                                 Chargement...

@@ -1,0 +1,96 @@
+@push('scripts')
+    <script src='https://unpkg.com/leaflet@1.8.0/dist/leaflet.js' crossorigin=''></script>
+    <script>
+        let map, markers = [];
+            /* ----------------------------- Initialize Map ----------------------------- */
+            function initMap() {
+                map = L.map('map', {
+                    center: {
+                        lat: {{ $technicien->logs->last()->lat ?? 33.960331 }},
+                        lng: {{ $technicien->logs->last()->lng ?? -6.870604 }},
+                    },
+                    zoom: 12
+                });
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© Neweraconnect'
+                }).addTo(map);
+
+                var blueIcon = L.icon({
+                    iconUrl: '../../assets/images/blue-icon.png',
+                    iconSize: [30, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowSize: [41, 41],
+                    shadowAnchor: [12, 41]
+                });
+
+                var redIcon = L.icon({
+                    iconUrl: '../../assets/images/red-icon.png',
+                    iconSize: [30, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowSize: [41, 41],
+                    shadowAnchor: [12, 41]
+                });
+
+                var greenIcon = L.icon({
+                    iconUrl: '../../assets/images/green-icon.png',
+                    iconSize: [30, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowSize: [41, 41],
+                    shadowAnchor: [12, 41]
+                });
+
+                var orangeIcon = L.icon({
+                    iconUrl: '../../assets/images/orange-icon.png',
+                    iconSize: [30, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowSize: [41, 41],
+                    shadowAnchor: [12, 41]
+                });
+
+                var marronIcon = L.icon({
+                    iconUrl: '../../assets/images/maron-icon.png',
+                    iconSize: [30, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowSize: [41, 41],
+                    shadowAnchor: [12, 41]
+                });
+
+                @foreach($technicien->declarations as $declaration)
+                 L.marker([{{ $declaration->lat }}, {{ $declaration->lng }}], {
+                        icon: blueIcon
+                    }).setIcon(blueIcon).addTo(map);
+                @endforeach
+                @foreach($technicien->blocages as $blocages)
+                 L.marker([{{ $blocages->lat }}, {{ $blocages->lng }}], {
+                        icon: redIcon
+                    }).setIcon(redIcon).addTo(map);               
+                @endforeach
+
+                @foreach($technicien->clientSaisie as $affectation)
+                 L.marker([{{ $affectation->client->lat }}, {{ $affectation->client->lng }}], {
+                        icon: greenIcon
+                    }).setIcon(greenIcon).addTo(map);                
+                @endforeach
+
+                @foreach($technicien->planifications as $planification)
+                    L.marker([{{ $planification->client->lat }}, {{ $planification->client->lng }}], {
+                            icon: orangeIcon
+                    }).setIcon(orangeIcon).addTo(map);
+                @endforeach   
+
+                @if($localisation)
+                L.marker([{{ $localisation->lat }}, {{ $localisation->lng }}], {
+                        icon: marronIcon
+                    }).setIcon(marronIcon).addTo(map)
+                .bindPopup('Dernier emplacement connu')
+                .openPopup();
+                @endif
+          }
+        initMap();
+    </script>
+    @endpush

@@ -8,9 +8,12 @@
         "php": "^7.3|^8.0",
         "arielmejiadev/larapex-charts": "^5.2",
         "asantibanez/livewire-charts": "^2.5",
+        "barryvdh/laravel-dompdf": "^2.0",
+        "bayareawebpro/laravel-dom-pipeline": "^1.0",
         "berkayk/onesignal-laravel": "^2.0",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
+        "ladumor/one-signal": "^0.4.4",
         "laravel/framework": "^8.75",
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
@@ -18,11 +21,10 @@
         "maatwebsite/excel": "^3.1",
         "spatie/laravel-enum": "^3.0",
         "spatie/laravel-permission": "^5.9",
-        "staudenmeir/eloquent-has-many-deep": "^1.7"
+        "staudenmeir/eloquent-has-many-deep": "^1.7",
+        "webklex/laravel-imap": "^4.1"
     },
     "require-dev": {
-        "barryvdh/laravel-debugbar": "^3.7",
-        "beyondcode/laravel-query-detector": "^1.7",
         "facade/ignition": "^2.5",
         "fakerphp/faker": "^1.9.1",
         "laravel/sail": "^1.0.1",

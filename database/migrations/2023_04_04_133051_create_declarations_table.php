@@ -16,24 +16,27 @@ class CreateDeclarationsTable extends Migration
         Schema::create('declarations', function (Blueprint $table) {
             $table->id();
             $table->string('uuid')->unique();
-            $table->foreignId('affection_id')->constrained('affectations')->onDelete('cascade')->onUpdate('cascade');
-            $table->string('test_signal');
-            $table->binary('image_test_signal');
-            $table->binary('image_pbo_before');
-            $table->binary('image_pbo_after');
-            $table->binary('image_pbi_after');
-            $table->binary('image_pbi_before');
-            $table->binary('image_splitter');
-            $table->string('type_passage');
-            $table->binary('image_passage_1');
-            $table->binary('image_passage_2');
-            $table->binary('image_passage_3');
-            $table->string('sn_telephone');
-            $table->string('nbr_jarretieres');
-            $table->string('cable_metre');
-            $table->string('pto');
+            $table->foreignId('affectation_id')->constrained('affectations')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('routeur_id')->constrained('routeurs')->onDelete('cascade')->onUpdate('cascade');
+            $table->string('test_signal');
+            $table->binary('image_test_signal')->nullable();
+            $table->binary('image_pbo_before')->nullable();
+            $table->binary('image_pbo_after')->nullable();
+            $table->binary('image_pbi_after')->nullable();
+            $table->binary('image_pbi_before')->nullable();
+            $table->binary('image_splitter')->nullable();
+            $table->string('type_passage')->nullable();
+            $table->binary('image_passage_1')->nullable();
+            $table->binary('image_passage_2')->nullable();
+            $table->binary('image_passage_3')->nullable();
+            $table->string('sn_telephone')->nullable();
+            $table->string('nbr_jarretieres')->nullable();
+            $table->string('cable_metre')->nullable();
+            $table->string('pto');
+            $table->string('lat')->nullable();
+            $table->string('lng')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

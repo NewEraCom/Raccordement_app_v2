@@ -17,7 +17,7 @@ class CreatePlaqueSoustraitantsTable extends Migration
             $table->id();
             $table->foreignId('plaque_id')->constrained('plaques')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('soustraitant_id')->constrained('soustraitants')->onDelete('cascade')->onUpdate('cascade');
-            $table->timestamps();            
+            $table->timestamps();
         });
     }
 
