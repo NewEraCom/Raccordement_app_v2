@@ -65,6 +65,7 @@ class AffectationObserver
     $affectationHistory = AffectationHistory::create([
         'affectation_id' => $affectation->id,
         'technicien_id' => $affectation->technicien_id,
+        'soustraitant_id' => $affectation->soustraitant_id,
         'status' => 'Affecté',
         'cause' => $text,
     ]);

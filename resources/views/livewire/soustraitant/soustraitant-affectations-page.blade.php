@@ -64,13 +64,15 @@
                         Filtrage
                     </h5>
                     <div class="ms-auto">
-                        <div class="d-none d-sm-none d-md-none d-lg-inline d-xl-inline d-xxl-inline">
+                        <div>
                             <button class="btn btn-success btn-sm shadow-none mb-1" data-bs-toggle="modal"
-                                data-bs-target="#exportation-modal"> <i class="uil-export me-2"></i> Exproter
+                                data-bs-target="#exportation-modal"> 
+                                <i class="uil-export me-2"></i> Exproter
                             </button>
                             <button class="btn btn-secondary btn-sm shadow-none mb-1" data-bs-toggle="modal"
-                            data-bs-target="#affecter-modal"> <i class="uil-label me-2"></i> Affecter
-                        </button>
+                                data-bs-target="#affecter-modal"> 
+                                <i class="uil-label me-2"></i> Affecter
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -344,7 +346,18 @@
                                             <div class="col-6">
                                                 <div class="mb-3">
                                                     <label class="form-label">Position GPS</label>
-                                                    <p class="fw-bold">{{ $client->lat }} , {{ $client->lng }}</p>
+                                                    @if($client->lat && $client->lng)
+                                                        <p class="fw-bold">
+                                                            <a href="https://www.google.com/maps/search/{{ $client->lat }}+{{ $client->lng }}" 
+                                                               target="_blank" 
+                                                               class="text-primary">
+                                                                <i class="uil-map-pin-alt me-2"></i>
+                                                                {{ number_format($client->lat, 6) }} , {{ number_format($client->lng, 6) }}
+                                                            </a>
+                                                        </p>
+                                                    @else
+                                                        <p class="fw-bold">Aucune position GPS</p>
+                                                    @endif
                                                 </div>
                                             </div>
                                             <div class="col-6">

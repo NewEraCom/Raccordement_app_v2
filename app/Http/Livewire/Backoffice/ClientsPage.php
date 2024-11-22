@@ -362,30 +362,43 @@ class ClientsPage extends Component
         $problem = 0;
         switch (Auth::user()->roles->first()->name) {
             case 'admin':
-              //  $clients = ClientsService::getClients($this->client_name, $this->client_sip, $this->client_status, $this->technicien, $this->start_date, $this->end_date,$this->client_id)->paginate(15);
-              $clients = ClientsService::getClients($this->search_term, $this->client_status, $this->technicien, $this->start_date, $this->end_date, $this->client_id)->paginate(15); 
-              break;
+                $clients = ClientsService::getClients(
+                    $this->search_term, 
+                    $this->client_status, 
+                    $this->technicien, 
+                    $this->start_date, 
+                    $this->end_date, 
+                    null  // Retirez $this->client_id ici pour éviter la perte de données
+                )->paginate(15);
+                break;
             case 'supervisor':
                 $clientsCount = ClientsSupervisorService::countClient($this->start_date, $this->end_date);
                 $clients = ClientsSupervisorService::index($this->start_date, $this->end_date, $this->search, $this->client_status)->paginate(15);
                 $problem = ClientsSupervisorService::blocage($this->start_date, $this->end_date);
                 break;
             default:
-                $clients = ClientsService::getClients($this->client_name, $this->client_sip, $this->client_status, $this->technicien, $this->start_date, $this->end_date,$this->affectation)->paginate(15);
+                $clients = ClientsService::getClients(
+                    $this->client_name, 
+                    $this->client_sip, 
+                    $this->client_status, 
+                    $this->technicien, 
+                    $this->start_date, 
+                    $this->end_date,
+                    $this->affectation
+                )->paginate(15);
                 break;
         }
-
+    
         $data = ClientsService::getClientsStatistic();
-       // $techniciens = Technicien::with('user')->get();
-       $techniciens = Technicien::with('user')
-       ->whereHas('user', function ($query) {
-           $query->where('status', 1); // Ensure that the user's status is 1
-       })
-       ->get();
-       $this->soustraitants = Soustraitant::get(['id', 'name']);
+        $techniciens = Technicien::with('user')
+            ->whereHas('user', function ($query) {
+                $query->where('status', 1);
+            })
+            ->get();
+        $this->soustraitants = Soustraitant::get(['id', 'name']);
         $cities = City::get(['id', 'name']);
-
         $blocages = Blocage::groupBy('cause')->get('cause');
+    
         return view('livewire.backoffice.clients-page', [
             'clients' => $clients,
             'techniciens' => $techniciens,
@@ -399,6 +412,7 @@ class ClientsPage extends Component
             'title' => 'Clients',
         ]);
     }
+
 
     // public function selectTechnician($id)
     // {
