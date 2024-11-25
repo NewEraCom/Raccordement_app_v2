@@ -36,8 +36,9 @@ class AffectationController extends Controller
 
 
 
-    public function setAffectation(){
-        $client = Client::where('status','Saisie')->where('client_id')->first();
+    public function setAffectation()
+    {
+        $client = Client::where('status', 'Saisie')->where('client_id')->first();
     }
 
 
@@ -47,26 +48,45 @@ class AffectationController extends Controller
 
         $affectation =  $this->affectationService->getAffectationApi($id);
 
-        return response()->json(['Affectations' => $affectation], 200);
+        return response()->json(
+            [
+                'success' => true,
+                'message' => 'The data has been successfully returned.',
+                'affectations' => $affectation
+            ],
+            200
+
+
+        );
     }
-    
-   public function getAffectationPromoteurApi($id)
+
+    public function getAffectationPromoteurApi($id)
     {
 
         $affectation =  $this->affectationService->getAffectationPromoteurService($id);
 
         return response()->json(['Affectations' => $affectation], 200);
     }
-    
-    
-    
-    
+
+
+
+
     public function getAffectationPlanifier($id)
     {
 
         $affectation =  $this->affectationService->getAffectationPlanifierApi($id);
 
-        return response()->json(['Affectations' => $affectation], 200);
+        return response()->json(
+
+
+            [
+                'success' => true,
+                'message' => 'The data has been successfully returned.',
+                'affectations' => $affectation
+            ],
+
+            200
+        );
     }
     public function getAffectationValider($id)
     {
@@ -113,9 +133,9 @@ class AffectationController extends Controller
                 'status' => 'En cours',
                 'lat' =>  $request->input('lat'),
                 'lng' =>  $request->input('lng'),
-                
-                
-                
+
+
+
             ]
         );
 
@@ -155,58 +175,59 @@ class AffectationController extends Controller
                 'planification_date' => Carbon::parse($request->input('planification_date'))->format('Y-m-d H:i:s'),
                 'nb_modification_planification' => $checkNbModification->nb_modification_planification + 1,
             ]);
-        }else {
+        } else {
             if ($check->planification_count > $affectationCount) {
                 $affectation =    Affectation::find($request->input('id'))->update([
                     'status' => 'Planifié',
                     'planification_date' => Carbon::parse($request->input('planification_date'))->format('Y-m-d H:i:s'),
                     'nb_modification_planification' => $checkNbModification->nb_modification_planification + 1,
                 ]);
-            }else{
+            } else {
                 return response()->json(['Affectations' =>  ''], 409);
             }
         }
 
         return response()->json(['Affectations' =>  $affectation], 200);
     }
-    
-    
-    public function setAffectationAuto(Request $request){
-        try{
-            $client = Client::where(DB::raw('TRIM(client_id)'), 'LIKE', '%'.trim($request->input('id_client')).'%')->where(DB::raw('TRIM(phone_no)'), 'LIKE', '%'.trim($request->input('phoneNumber')).'%')->where('status','Saisie')
+
+
+    public function setAffectationAuto(Request $request)
+    {
+        try {
+            $client = Client::where(DB::raw('TRIM(client_id)'), 'LIKE', '%' . trim($request->input('id_client')) . '%')->where(DB::raw('TRIM(phone_no)'), 'LIKE', '%' . trim($request->input('phoneNumber')) . '%')->where('status', 'Saisie')
                 ->first();
-            if($client != null){
-            DB::beginTransaction();
-            $client->update([
-                'type_affectation' => 'Affectation Par App',
-            ]);  
-            $affectation = Affectation::firstOrCreate([
+            if ($client != null) {
+                DB::beginTransaction();
+                $client->update([
+                    'type_affectation' => 'Affectation Par App',
+                ]);
+                $affectation = Affectation::firstOrCreate([
                     'client_id' => $client->id,
                 ], [
                     'uuid' => Str::uuid(),
                     'client_id' => $client->id,
-                    'technicien_id' =>$request->input('id_technicien'),
+                    'technicien_id' => $request->input('id_technicien'),
                     'status' => 'En cours',
                 ]);
-            if ($affectation->wasRecentlyCreated) {
-                $affectation->load('client');
-                $affectation->refresh('client');
-                DB::commit();
-                return response()->json([
-                    'message' => $affectation
-                ], 200);
+                if ($affectation->wasRecentlyCreated) {
+                    $affectation->load('client');
+                    $affectation->refresh('client');
+                    DB::commit();
+                    return response()->json([
+                        'message' => $affectation
+                    ], 200);
+                } else {
+                    DB::rollBack();
+                    return response()->json([
+                        'message' => 'Already exist',
+                    ], 401);
+                }
             } else {
-                DB::rollBack();
                 return response()->json([
-                    'message' => 'Already exist',
-                ], 401);
+                    'message' => 'Client not found',
+                ], 404);
             }
-        }else{
-            return response()->json([
-                'message' => 'Client not found',
-            ], 404);
-        }
-        }catch (\Throwable $th) {
+        } catch (\Throwable $th) {
             DB::rollBack();
             return response()->json([
                 'message' => $th->getMessage()

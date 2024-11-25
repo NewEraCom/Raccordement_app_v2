@@ -17,9 +17,7 @@ class AuthService
     static public function loginApi($email, $password)
     {
         if (Auth::attempt(['email' => $email, 'password' => $password], true)) {
-
-            $user = User::with('technicien')->find(Auth::id());
-            return $user;
+            return User::with('technicien')->find(Auth::id());
         }
     }
 
