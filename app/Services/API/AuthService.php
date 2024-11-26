@@ -14,11 +14,40 @@ use Illuminate\Support\Str;
 
 class AuthService
 {
-    static public function loginApi($email, $password)
+    static public function loginApi($request)
     {
-        if (Auth::attempt(['email' => $email, 'password' => $password], true)) {
-            return User::with('technicien')->find(Auth::id());
+        // if (Auth::attempt(['email' => $email, 'password' => $password], true)) {
+        //     return User::with('technicien')->find(Auth::id());
+        // }
+
+
+        // Validate the request data (email and password)
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        // Attempt to authenticate the user
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            // Retrieve authenticated user
+            $user = Auth::user();
+
+            // Create and return a Bearer token
+            $token = $user->createToken('YourAppName')->plainTextToken;
+
+
+            return response()->json([
+                'success' => true,
+                'message' => 'User authenticated successfully',
+                'user' => $user,
+                'token' => $token,
+            ]);
         }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Unauthorized'
+        ], 401);
     }
 
 

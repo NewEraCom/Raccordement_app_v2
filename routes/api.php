@@ -36,7 +36,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/loginApi', 'App\Http\Controllers\API\AuthController@loginApi');
 Route::get('/getCurrentUser/{id}', 'App\Http\Controllers\API\AuthController@getCurrentUser');
 
-Route::get('/gettest', function() {
+Route::get('/gettest', function () {
     return 'test';
 });
 Route::post('/registerApi', 'App\Http\Controllers\API\AuthController@registerpi');
@@ -74,9 +74,9 @@ Route::get('/chectechnicienIsBlocked/{userId}', 'App\Http\Controllers\API\UserCo
 Route::get('/getClients/{id}/{nbBuild}', 'App\Http\Controllers\API\ClientController@getClients');
 Route::get('/getClients/{id}', 'App\Http\Controllers\API\ClientController@getClients');
 // Route::get('/getClientThecnicien/{id}', 'App\Http\Controllers\API\ClientController@getClientThecnicien');
-Route::get('/getClientsThecnicien/{id}', [ClientController::class,'getClientsThecnicien']);
-Route::get('/getSavTickets/{id}', [SavTicketController::class,'getAllTicket'] );
-Route::get('/getPlanifiedTicket/{id}', [SavTicketController::class,'getPlanifiedTicket'] );
+Route::get('/getClientsThecnicien/{id}', [ClientController::class, 'getClientsThecnicien']);
+Route::get('/getSavTickets/{id}', [SavTicketController::class, 'getAllTicket']);
+Route::get('/getPlanifiedTicket/{id}', [SavTicketController::class, 'getPlanifiedTicket']);
 /*
 |
 */
@@ -108,11 +108,11 @@ Route::post('/addPlanned', 'App\Http\Controllers\API\FeedbackController@addPlann
 |*/
 
 
-Route::post('/validationAffectation', [ValidationController::class,'validation']);
-Route::post('/updateValidation', [ValidationController::class,'updateValidation']);
+Route::post('/validationAffectation', [ValidationController::class, 'validation']);
+Route::post('/updateValidation', [ValidationController::class, 'updateValidation']);
 // Route::get('/getClientThecnicien/{id}', 'App\Http\Controllers\API\ClientController@getClientThecnicien');
 
-Route::get('/validation/{id}', [ValidationController::class,'getValidation']);
+Route::get('/validation/{id}', [ValidationController::class, 'getValidation']);
 
 
 
@@ -128,7 +128,7 @@ Route::get('/validation/{id}', [ValidationController::class,'getValidation']);
 |*/
 
 
-Route::post('/deblocage', [DeblocageController::class,'deblocage']);
+Route::post('/deblocage', [DeblocageController::class, 'deblocage']);
 // Route::get('/getClientThecnicien/{id}', 'App\Http\Controllers\API\ClientController@getClientThecnicien');
 
 
@@ -159,9 +159,9 @@ Route::get('/notifications/{id}', [NotificationController::class, 'index']);
 |*/
 
 
-Route::get('/getRouteurs', [RouteurController::class,'getRouteurs']);
+Route::get('/getRouteurs', [RouteurController::class, 'getRouteurs']);
 
-Route::post('/addRouteur', [RouteurController::class,'addRouteurs']);
+Route::post('/addRouteur', [RouteurController::class, 'addRouteurs']);
 
 
 
@@ -180,7 +180,7 @@ Route::get('/getAffectationPlanifier/{id}', 'App\Http\Controllers\API\Affectatio
 Route::get('/getAffectationValider/{id}', 'App\Http\Controllers\API\AffectationController@getAffectationValider');
 Route::get('/getAffectationDeclarer/{id}', 'App\Http\Controllers\API\AffectationController@getAffectationDeclarer');
 Route::get('/getAffectationBlocage/{id}', 'App\Http\Controllers\API\AffectationController@getAffectationBlocage');
-Route::get('/getAffectationBlocageAfterDeclared/{id}', 'App\Http\Controllers\API\AffectationController@getAffectationBlocageAfterDeclared'); 
+Route::get('/getAffectationBlocageAfterDeclared/{id}', 'App\Http\Controllers\API\AffectationController@getAffectationBlocageAfterDeclared');
 Route::post('/createAffectation', 'App\Http\Controllers\API\AffectationController@createAffectation');
 Route::post('/createLogTechnicien', 'App\Http\Controllers\API\AffectationController@createLogTechnicien');
 
@@ -191,12 +191,18 @@ Route::post('/declarationAffectation', 'App\Http\Controllers\API\DeclartionContr
 
 Route::get('/declaration/{id}', 'App\Http\Controllers\API\DeclartionController@getDeclaration');
 
-Route::post('/setAffectationAuto',[AffectationController::class,'setAffectationAuto']);
-
+Route::post('/setAffectationAuto', [AffectationController::class, 'setAffectationAuto']);
 
 
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+    return response()->json($request->user());
+});
+
+Route::middleware('auth:sanctum')->post('/logout', function (Request $request) {
+    // Delete the currently authenticated user's token
+    $request->user()->currentAccessToken()->delete();
+
+    return response()->json(['message' => 'Successfully logged out.'], 200);
 });

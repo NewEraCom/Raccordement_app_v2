@@ -13,6 +13,20 @@ use Illuminate\Support\Facades\Auth;
 class UserService
 {
 
+
+
+    public static function getUser($id)
+    {
+        $user = User::find($id);
+
+        if ($user) {
+            return $user; // Return the user if found
+        }
+
+        return null; // Return null if the user is not found
+    }
+
+
     static public function updateDeviseKey($id, $deviseKey)
     {
 
@@ -77,8 +91,8 @@ class UserService
 
 
         $isBlocked = User::where('id', $userId)->whereNull("device_key")->exists();
-        
-        
+
+
         return $isBlocked;
     }
 

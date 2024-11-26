@@ -23,26 +23,28 @@ class AuthController extends Controller
 
     public function loginApi(Request $request)
     {
-        $user = $this->loginService->loginApi(
-            $request->input('email'),
-            $request->input('password')
+        // $user = $this->loginService->loginApi(
+        //     $request
+        // );
+
+        // if (!$user) {
+        //     return response()->json([
+        //         'success' => false,
+        //         'message' => 'User authentication failed.',
+        //         'user' => [],
+
+        //     ], 401);
+        // }
+
+        // return response()->json([
+        //     'success' => true,
+        //     'message' => 'User authentication succeeded.',
+        //     'user' =>  $user,
+        //     // Renamed to lowercase to align with common JSON key conventions
+        // ], 200);
+        return    $this->loginService->loginApi(
+            $request
         );
-
-        if (!$user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'User authentication failed.',
-                'user' => [],
-
-            ], 401);
-        }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'User authentication succeeded.',
-            'user' =>  $user,
-            // Renamed to lowercase to align with common JSON key conventions
-        ], 200);
     }
 
     public function getCurrentUser(Request $request)
