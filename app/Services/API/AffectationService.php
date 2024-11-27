@@ -45,14 +45,14 @@ class AffectationService
     public function getAffectationBlocageApi($id)
     {
         $affectation = Blocage::whereHas('affectation', function ($query)  use ($id) {
-                $query->where('technicien_id', $id)->where('status', "Bloqué");
-            })->with(
-                'affectation',
-                function ($query) {
-                    $query->with(['client']);
-                }
+            $query->where('technicien_id', $id)->where('status', "Bloqué");
+        })->with(
+            'affectation',
+            function ($query) {
+                $query->with(['client']);
+            }
 
-            )
+        )
 
 
 
@@ -64,19 +64,19 @@ class AffectationService
     public function getAffectationBlocageAfterDeclaredApi($id)
     {
         $affectation = Blocage::whereHas('affectation', function ($query)  use ($id) {
-                $query->where('technicien_id', $id);
-            })->with(
-                'affectation',
-                function ($query) {
-                    $query->with(
-                        'client',
-                        function ($query) {
-                            $query->with(['blocages']);
-                        }
-                    );
-                }
+            $query->where('technicien_id', $id);
+        })->with(
+            'affectation',
+            function ($query) {
+                $query->with(
+                    'client',
+                    function ($query) {
+                        $query->with(['blocages']);
+                    }
+                );
+            }
 
-            )
+        )
             ->where('declared', 'Déclaré')->orderBy('id', 'desc')->get();
         return  $affectation;
     }

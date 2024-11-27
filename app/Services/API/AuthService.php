@@ -33,7 +33,7 @@ class AuthService
             $user = Auth::user();
 
             // Create and return a Bearer token
-            $token = $user->createToken('YourAppName')->plainTextToken;
+            $token = $user->createToken('neweraconnect')->plainTextToken;
 
 
             return response()->json([

@@ -170,34 +170,37 @@ Route::post('/addRouteur', [RouteurController::class, 'addRouteurs']);
 /*
 |
 */
+Route::middleware('auth:sanctum')->group(
+    function () {
+
+        Route::get('/getAffectation/{id}', 'App\Http\Controllers\API\AffectationController@getAffectation');
 
 
-Route::get('/getAffectation/{id}', 'App\Http\Controllers\API\AffectationController@getAffectation');
+        Route::get('/getAffectationPromoteurApi/{id}', 'App\Http\Controllers\API\AffectationController@getAffectationPromoteurApi');
+        Route::get('/getAffectationPlanifier/{id}', 'App\Http\Controllers\API\AffectationController@getAffectationPlanifier');
+        Route::get('/getAffectationValider/{id}', 'App\Http\Controllers\API\AffectationController@getAffectationValider');
+        Route::get('/getAffectationDeclarer/{id}', 'App\Http\Controllers\API\AffectationController@getAffectationDeclarer');
+        Route::get('/getAffectationBlocage/{id}', 'App\Http\Controllers\API\AffectationController@getAffectationBlocage');
+        Route::get('/getAffectationBlocageAfterDeclared/{id}', 'App\Http\Controllers\API\AffectationController@getAffectationBlocageAfterDeclared');
+        Route::post('/createAffectation', 'App\Http\Controllers\API\AffectationController@createAffectation');
+        Route::post('/createLogTechnicien', 'App\Http\Controllers\API\AffectationController@createLogTechnicien');
+
+        Route::post('/planifierAffectation', 'App\Http\Controllers\API\AffectationController@planifierAffectation');
+        Route::post('/updateDeclaration', 'App\Http\Controllers\API\DeclartionController@updateDeclaration');
+        Route::post('/declarationAffectation', 'App\Http\Controllers\API\DeclartionController@declarationAffectation');
 
 
-Route::get('/getAffectationPromoteurApi/{id}', 'App\Http\Controllers\API\AffectationController@getAffectationPromoteurApi');
-Route::get('/getAffectationPlanifier/{id}', 'App\Http\Controllers\API\AffectationController@getAffectationPlanifier');
-Route::get('/getAffectationValider/{id}', 'App\Http\Controllers\API\AffectationController@getAffectationValider');
-Route::get('/getAffectationDeclarer/{id}', 'App\Http\Controllers\API\AffectationController@getAffectationDeclarer');
-Route::get('/getAffectationBlocage/{id}', 'App\Http\Controllers\API\AffectationController@getAffectationBlocage');
-Route::get('/getAffectationBlocageAfterDeclared/{id}', 'App\Http\Controllers\API\AffectationController@getAffectationBlocageAfterDeclared');
-Route::post('/createAffectation', 'App\Http\Controllers\API\AffectationController@createAffectation');
-Route::post('/createLogTechnicien', 'App\Http\Controllers\API\AffectationController@createLogTechnicien');
+        Route::get('/declaration/{id}', 'App\Http\Controllers\API\DeclartionController@getDeclaration');
 
-Route::post('/planifierAffectation', 'App\Http\Controllers\API\AffectationController@planifierAffectation');
-Route::post('/updateDeclaration', 'App\Http\Controllers\API\DeclartionController@updateDeclaration');
-Route::post('/declarationAffectation', 'App\Http\Controllers\API\DeclartionController@declarationAffectation');
-
-
-Route::get('/declaration/{id}', 'App\Http\Controllers\API\DeclartionController@getDeclaration');
-
-Route::post('/setAffectationAuto', [AffectationController::class, 'setAffectationAuto']);
-
-
+        Route::post('/setAffectationAuto', [AffectationController::class, 'setAffectationAuto']);
+    }
+);
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return response()->json($request->user());
+
+    $user = auth()->user();
+    return response()->json($user);
 });
 
 Route::middleware('auth:sanctum')->post('/logout', function (Request $request) {
