@@ -198,8 +198,9 @@ Route::middleware('auth:sanctum')->group(
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-
-    $user = auth()->user();
+    $user = cache()->remember('user_' . auth()->id(), 60, function () {
+        return auth()->user();
+    });
     return response()->json($user);
 });
 

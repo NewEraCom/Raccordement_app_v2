@@ -1,0 +1,11 @@
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/newera22/repositories/Raccordement_app_v2/
+    - /bin/cp -R * $DEPLOYPATH
+    - /bin/cp -R .env $DEPLOYPATH
+    - cd $DEPLOYPATH
+    - composer install --no-dev --optimize-autoloader
+    - php artisan cache:clear
+    - php artisan config:cache
+    - php artisan route:cache
+    - php artisan view:cache
