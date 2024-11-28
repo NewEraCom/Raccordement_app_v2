@@ -54,26 +54,32 @@ class AllClientExport implements FromCollection, WithHeadings, ShouldAutoSize, W
             // Troisième affectation (Feedback Technicien)
             'Feedback 3 - Date',
             'Feedback 3 - Status',
-            'Affectation 3 - Cause',
+            'Feedback 3 - Cause',
             'Affectation 3 - Technicien',
             'Affectation 3 - Soustraitant',
             // Quatrième affectation (Si reaffectation nécessaire)
-            'Affectation 4 - Date',
-            'Affectation 4 - Status',
-            'Affectation 4 - Cause',
+            'Feedback 4 - Date',
+            'Feedback 4 - Status',
+            'Feedback 4 - Cause',
             'Affectation 4 - Soustraitant',
             'Affectation 4 - Technicien',
             // Cinquième affectation
-            'Affectation 5 - Date',
-            'Affectation 5 - Status',
-            'Affectation 5 - Cause',
+            'Feedback 5 - Date',
+            'Feedback 5 - Status',
+            'Feedback 5 - Cause',
             'Affectation 5 - Soustraitant',
             'Affectation 5 - Technicien',
+            // Sixième affectation
+            'Feedback 6 - Date',
+            'Feedback 6 - Status',
+            'Feedback 6 - Cause',
+            'Affectation 6 - Soustraitant',
+            'Affectation 6 - Technicien',
         ];
     }
 
     public function collection()
-    {
+    {   
         return Client::select([
             DB::raw('DATE_FORMAT(clients.created_at, "%d-%m-%Y %H:%i") as created_at'),
             'st_initial.name as soustraitant_name',
@@ -100,20 +106,26 @@ class AllClientExport implements FromCollection, WithHeadings, ShouldAutoSize, W
             DB::raw('MAX(CASE WHEN hist_rank.rank = 3 THEN DATE_FORMAT(affectation_histories.created_at, "%d-%m-%Y %H:%i") END) as affectation3_date'),
             DB::raw('MAX(CASE WHEN hist_rank.rank = 3 THEN affectation_histories.status END) as affectation3_status'),
             DB::raw('MAX(CASE WHEN hist_rank.rank = 3 THEN affectation_histories.cause END) as affectation3_cause'),
-            DB::raw('MAX(CASE WHEN hist_rank.rank = 3 THEN CONCAT(user3.first_name, " ", user3.last_name) END) as affectation3_technicien'),
+            DB::raw('MAX(CASE WHEN hist_rank.rank = 3 THEN CONCAT(users3.first_name, " ", users3.last_name) END) as affectation3_technicien'),
             DB::raw('MAX(CASE WHEN hist_rank.rank = 3 THEN st3.name END) as affectation3_soustraitant'),
             // Affectation 4
             DB::raw('MAX(CASE WHEN hist_rank.rank = 4 THEN DATE_FORMAT(affectation_histories.created_at, "%d-%m-%Y %H:%i") END) as affectation4_date'),
             DB::raw('MAX(CASE WHEN hist_rank.rank = 4 THEN affectation_histories.status END) as affectation4_status'),
             DB::raw('MAX(CASE WHEN hist_rank.rank = 4 THEN affectation_histories.cause END) as affectation4_cause'),
             DB::raw('MAX(CASE WHEN hist_rank.rank = 4 THEN st4.name END) as affectation4_soustraitant'),
-            DB::raw('MAX(CASE WHEN hist_rank.rank = 4 THEN CONCAT(user4.first_name, " ", user4.last_name) END) as affectation4_technicien'),
+            DB::raw('MAX(CASE WHEN hist_rank.rank = 4 THEN CONCAT(users4.first_name, " ", users4.last_name) END) as affectation4_technicien'),
             // Affectation 5
             DB::raw('MAX(CASE WHEN hist_rank.rank = 5 THEN DATE_FORMAT(affectation_histories.created_at, "%d-%m-%Y %H:%i") END) as affectation5_date'),
             DB::raw('MAX(CASE WHEN hist_rank.rank = 5 THEN affectation_histories.status END) as affectation5_status'),
             DB::raw('MAX(CASE WHEN hist_rank.rank = 5 THEN affectation_histories.cause END) as affectation5_cause'),
             DB::raw('MAX(CASE WHEN hist_rank.rank = 5 THEN st5.name END) as affectation5_soustraitant'),
-            DB::raw('MAX(CASE WHEN hist_rank.rank = 5 THEN CONCAT(user5.first_name, " ", user5.last_name) END) as affectation5_technicien')
+            DB::raw('MAX(CASE WHEN hist_rank.rank = 5 THEN CONCAT(users5.first_name, " ", users5.last_name) END) as affectation5_technicien'),
+            // Affectation 6
+            DB::raw('MAX(CASE WHEN hist_rank.rank = 6 THEN DATE_FORMAT(affectation_histories.created_at, "%d-%m-%Y %H:%i") END) as affectation6_date'),
+            DB::raw('MAX(CASE WHEN hist_rank.rank = 6 THEN affectation_histories.status END) as affectation6_status'),
+            DB::raw('MAX(CASE WHEN hist_rank.rank = 6 THEN affectation_histories.cause END) as affectation6_cause'),
+            DB::raw('MAX(CASE WHEN hist_rank.rank = 6 THEN st6.name END) as affectation6_soustraitant'),
+            DB::raw('MAX(CASE WHEN hist_rank.rank = 6 THEN CONCAT(users6.first_name, " ", users6.last_name) END) as affectation6_technicien')
         ])
         ->join('cities', 'cities.id', '=', 'clients.city_id')
         ->leftJoin('techniciens', 'clients.technicien_id', '=', 'techniciens.id')
@@ -163,26 +175,30 @@ class AllClientExport implements FromCollection, WithHeadings, ShouldAutoSize, W
             $join->on('affectation_histories.soustraitant_id', '=', 'st5.id')
                 ->whereRaw('hist_rank.rank = 5');
         })
-        ->leftJoin('users as user1', function($join) {
-            $join->on('affectation_histories.technicien_id', '=', 'user1.id')
-                ->whereRaw('hist_rank.rank = 1');
-        })
-        ->leftJoin('users as user2', function($join) {
-            $join->on('affectation_histories.technicien_id', '=', 'user2.id')
-                ->whereRaw('hist_rank.rank = 2');
-        })
-        ->leftJoin('users as user3', function($join) {
-            $join->on('affectation_histories.technicien_id', '=', 'user3.id')
+        ->leftJoin('techniciens as tech3', function($join) {
+            $join->on('affectation_histories.technicien_id', '=', 'tech3.id')
                 ->whereRaw('hist_rank.rank = 3');
         })
-        ->leftJoin('users as user4', function($join) {
-            $join->on('affectation_histories.technicien_id', '=', 'user4.id')
+        ->leftJoin('users as users3', 'tech3.user_id', '=', 'users3.id')
+        ->leftJoin('techniciens as tech4', function($join) {
+            $join->on('affectation_histories.technicien_id', '=', 'tech4.id')
                 ->whereRaw('hist_rank.rank = 4');
         })
-        ->leftJoin('users as user5', function($join) {
-            $join->on('affectation_histories.technicien_id', '=', 'user5.id')
+        ->leftJoin('users as users4', 'tech4.user_id', '=', 'users4.id')
+        ->leftJoin('techniciens as tech5', function($join) {
+            $join->on('affectation_histories.technicien_id', '=', 'tech5.id')
                 ->whereRaw('hist_rank.rank = 5');
         })
+        ->leftJoin('users as users5', 'tech5.user_id', '=', 'users5.id')
+        ->leftJoin('soustraitants as st6', function($join) {
+            $join->on('affectation_histories.soustraitant_id', '=', 'st6.id')
+                ->whereRaw('hist_rank.rank = 6');
+        })
+        ->leftJoin('techniciens as tech6', function($join) {
+            $join->on('affectation_histories.technicien_id', '=', 'tech6.id')
+                ->whereRaw('hist_rank.rank = 6');
+        })
+        ->leftJoin('users as users6', 'tech6.user_id', '=', 'users6.id')
         ->where('clients.deleted_at', null)
         ->when($this->start_date && $this->end_date, function ($query) {
             return $query->whereBetween('clients.created_at', [
@@ -214,7 +230,7 @@ class AllClientExport implements FromCollection, WithHeadings, ShouldAutoSize, W
         return [
             AfterSheet::class => function (AfterSheet $event) {
                 $lastRow = $event->sheet->getHighestRow();
-                $lastColumn = 'AJ'; // 36 colonnes
+                $lastColumn = 'AO'; // 36 colonnes + 6 nouvelles colonnes
 
                 // Fonction helper pour générer les lettres des colonnes
                 $getColumnName = function($num) {
