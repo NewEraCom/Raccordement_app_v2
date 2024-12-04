@@ -174,8 +174,6 @@ Route::middleware('auth:sanctum')->group(
     function () {
 
         Route::get('/getAffectation/{id}', 'App\Http\Controllers\API\AffectationController@getAffectation');
-
-
         Route::get('/getAffectationPromoteurApi/{id}', 'App\Http\Controllers\API\AffectationController@getAffectationPromoteurApi');
         Route::get('/getAffectationPlanifier/{id}', 'App\Http\Controllers\API\AffectationController@getAffectationPlanifier');
         Route::get('/getAffectationValider/{id}', 'App\Http\Controllers\API\AffectationController@getAffectationValider');
@@ -184,7 +182,7 @@ Route::middleware('auth:sanctum')->group(
         Route::get('/getAffectationBlocageAfterDeclared/{id}', 'App\Http\Controllers\API\AffectationController@getAffectationBlocageAfterDeclared');
         Route::post('/createAffectation', 'App\Http\Controllers\API\AffectationController@createAffectation');
         Route::post('/createLogTechnicien', 'App\Http\Controllers\API\AffectationController@createLogTechnicien');
-
+        Route::post('/uploadImages', 'App\Http\Controllers\API\AffectationController@uploadImages');
         Route::post('/planifierAffectation', 'App\Http\Controllers\API\AffectationController@planifierAffectation');
         Route::post('/updateDeclaration', 'App\Http\Controllers\API\DeclartionController@updateDeclaration');
         Route::post('/declarationAffectation', 'App\Http\Controllers\API\DeclartionController@declarationAffectation');

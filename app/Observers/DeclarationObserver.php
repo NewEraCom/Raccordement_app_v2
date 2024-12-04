@@ -39,23 +39,23 @@ class DeclarationObserver
         ]);
 
         // // DECREMENT STOCK
-        $soustraitant = SoustraitantStock::where('soustraitant_id',$affectation->technicien->soustraitant_id)->first();
+        $soustraitant = SoustraitantStock::where('soustraitant_id', $affectation->technicien->soustraitant_id)->first();
         $soustraitant->decrement('pto', $declaration->pto); // Decrement the value by 1
-        $soustraitant->decrement('cable',$declaration->cable_metre); // Decrement the value by 1
-        if($declaration->sn_telephone != null){
-            $soustraitant->decrement('fix',1); 
+        $soustraitant->decrement('cable', $declaration->cable_metre); // Decrement the value by 1
+        if ($declaration->sn_telephone != null) {
+            $soustraitant->decrement('fix', 1);
         }
-        $soustraitant->decrement('jarretiere',1); // Decrement the value by 1
-       
-        if ($affectation->client->routeur_type == 'ZTE F6600') {
-            $soustraitant->decrement('f6600',1);
-        }else{
-            $soustraitant->decrement('f680',1);
-        }       
-        $soustraitant->save();
-        
+        $soustraitant->decrement('jarretiere', 1); // Decrement the value by 1
 
-        
+        if ($affectation->client->routeur_type == 'ZTE F6600') {
+            $soustraitant->decrement('f6600', 1);
+        } else {
+            $soustraitant->decrement('f680', 1);
+        }
+        $soustraitant->save();
+
+
+
         if ($affectation->client->sip != 'TEST') {
             Mail::to(MailList::where([['type', 'orange'], ['status', 1]])->get('email'))->cc(MailList::where([['type', 'declaration'], ['status', 1]])->get('email'))->send(new DeclarationMail($declaration));
         }

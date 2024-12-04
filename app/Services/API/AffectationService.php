@@ -5,6 +5,7 @@ namespace App\Services\API;
 use App\Models\Affectation;
 use App\Models\Technicien;
 use App\Models\Blocage;
+use Illuminate\Http\Request;
 
 
 class AffectationService
@@ -19,9 +20,9 @@ class AffectationService
 
     public function getAffectationPromoteurService($id)
     {
-        $affectation = Affectation::with(['client'])->where('technicien_id', $id)->where('status', 'En cours')->whereHas('client', function ($query) {
+        $affectation = Affectation::with(['client'])->where('status', 'En cours')->whereHas('client', function ($query) {
             $query->where('promoteur', 1);
-        })->get();
+        })->limit(10)->get();
         return  $affectation;
     }
 

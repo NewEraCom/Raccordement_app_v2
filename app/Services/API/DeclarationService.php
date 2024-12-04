@@ -24,64 +24,68 @@ class DeclarationService
         return  $Declaration;
     }
 
-    static public function declaration(Request $request)
+    public static function declaration(Request $request)
     {
+        try {
+            // Validate the request
+            $validated = $request->validate([
+                'image_test_signal_url' => 'image|mimes:jpeg,png,jpg|max:10240',
+                'image_pbo_before_url' => 'image|mimes:jpeg,png,jpg|max:10240',
+                'image_pbo_after_url' => 'image|mimes:jpeg,png,jpg|max:10240',
+                'image_pbi_after_url' => 'image|mimes:jpeg,png,jpg|max:10240',
+                'image_pbi_before_url' => 'image|mimes:jpeg,png,jpg|max:10240',
+                'image_splitter_url' => 'image|mimes:jpeg,png,jpg|max:10240',
+                'image_passage_1_url' => 'image|mimes:jpeg,png,jpg|max:10240',
+                'image_passage_2_url' => 'image|mimes:jpeg,png,jpg|max:10240',
+                'image_passage_3_url' => 'image|mimes:jpeg,png,jpg|max:10240',
+            ]);
 
+            // Process uploaded images and store their URLs
+            $imagePaths = [];
+            foreach ($validated as $fieldName => $file) {
+                if ($request->hasFile($fieldName)) {
+                    $imagePaths[$fieldName] = $request->file($fieldName)->store('uploads', 'public');
+                }
+            }
 
+            // Create the declaration with the stored image URLs
+            $declaration = Declaration::create([
+                'uuid' => Str::uuid(),
+                'affectation_id' => $request->input('affectation_id'),
+                'pto' => $request->input('pto'),
+                'routeur_id' => $request->routeur_id,
+                'test_signal' => $request->input('test_signal'),
+                'image_test_signal_url' => $imagePaths['image_test_signal_url'] ?? null,
+                'image_pbo_before_url' => $imagePaths['image_pbo_before_url'] ?? null,
+                'image_pbo_after_url' => $imagePaths['image_pbo_after_url'] ?? null,
+                'image_pbi_after_url' => $imagePaths['image_pbi_after_url'] ?? null,
+                'image_pbi_before_url' => $imagePaths['image_pbi_before_url'] ?? null,
+                'image_splitter_url' => $imagePaths['image_splitter_url'] ?? null,
+                'type_passage' => $request->input('type_passage'),
+                'image_passage_1_url' => $imagePaths['image_passage_1_url'] ?? null,
+                'image_passage_2_url' => $imagePaths['image_passage_2_url'] ?? null,
+                'image_passage_3_url' => $imagePaths['image_passage_3_url'] ?? null,
+                'sn_telephone' => $request->input('sn_telephone'),
+                'nbr_jarretieres' => $request->input('nbr_jarretieres'),
+                'cable_metre' => $request->input('cable_metre'),
+                'lat' => $request->input('lat'),
+                'lng' => $request->input('lng'),
+            ]);
 
-        // $validator = Validator::make($request->all(), [
-        //     'id' => 'required',
-        // ]);
-        // if ($validator->fails()) {
-        //     return response()->json(['error' => $validator->errors()], 401);
-        // }
+            $declaration->affectation->client->routeur_type = $request->input('routeur_type');
+            $declaration->save();
 
-        // $blocage = new Blocage;
-        // // $userRating = ($request->input('user_rating') + ($user->user_rating * $user->nb_rating)) / $user->nb_rating + 1;
-
-        // $blocage->uuid = Str::uuid();
-        // $blocage->affectation_id = $request->input('affectation_id');
-        // $blocage->cause =  $request->input('cause');
-
-
-
-        $declaration = Declaration::create([
-
-            'uuid' => Str::uuid(),
-            'affectation_id' => $request->input('affectation_id'),
-            'pto' =>  $request->input('pto'),
-
-            'routeur_id' =>  $request->routeur_id,
-
-            'test_signal' =>  $request->input('test_signal'),
-            'image_test_signal' =>  $request->input('image_test_signal'),
-            'image_pbo_before' =>  $request->input('image_pbo_before'),
-            'image_pbo_after' =>  $request->input('image_pbo_after'),
-            'image_pbi_after' =>  $request->input('image_pbi_after'),
-            'image_pbi_before' =>  $request->input('image_pbi_before'),
-           'image_splitter' =>  $request->input('image_splitter'),
-            'type_passage' =>  $request->input('type_passage'),
-            'image_passage_1' =>  $request->input('image_passage_1'),
-            'image_passage_2' =>  $request->input('image_passage_2'),
-            'image_passage_3' =>  $request->input('image_passage_3'),
-            'sn_telephone' =>  $request->input('sn_telephone'),
-            'nbr_jarretieres' =>  $request->input('nbr_jarretieres'),
-            'cable_metre' =>  $request->input('cable_metre'),
-            'lat' =>  $request->input('lat'),
-            'lng' =>  $request->input('lng')
-        ]);
-        $declaration->affectation->client->routeur_type =  $request->input('routeur_type');
-
-
-
-
-
-        $declaration->save();
-
-
-
-        return $declaration;
+            return response()->json($declaration, 201);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Return validation errors in JSON format
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $e->errors(),
+            ], 422);
+        }
     }
+
+
 
 
 
@@ -90,8 +94,8 @@ class DeclarationService
 
         $declaration = Declaration::find($request->input('id'));
         $declaration->update([
-        
-          
+
+
 
 
             'pto' =>  $request->input('pto'),

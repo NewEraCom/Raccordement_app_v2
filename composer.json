@@ -2,10 +2,13 @@
     "name": "laravel/laravel",
     "type": "project",
     "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "keywords": [
+        "framework",
+        "laravel"
+    ],
     "license": "MIT",
     "require": {
-        "php": "^7.3|^8.0",
+        "php": "^7.3|^8.0|^8.3",
         "arielmejiadev/larapex-charts": "^5.2",
         "asantibanez/livewire-charts": "^2.5",
         "barryvdh/laravel-dompdf": "^2.0",

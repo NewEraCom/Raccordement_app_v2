@@ -65,7 +65,12 @@ class AffectationController extends Controller
 
         $affectation =  $this->affectationService->getAffectationPromoteurService($id);
 
-        return response()->json(['Affectations' => $affectation], 200);
+        return response()->json([
+
+            'success' => true,
+            'message' => 'The data has been successfully returned.',
+            'affectations' => $affectation
+        ], 200);
     }
 
 
@@ -112,10 +117,8 @@ class AffectationController extends Controller
             [
                 'success' => true,
                 'message' => 'The data has been successfully returned.',
-                'affectations' => $affectation
+                'blocages' => $affectation
             ],
-
-
             200
         );
     }
@@ -242,6 +245,44 @@ class AffectationController extends Controller
             return response()->json([
                 'message' => $th->getMessage()
             ], 500);
+        }
+    }
+
+
+    public function uploadImages(Request $request)
+    {
+        try {
+            // Validate the input
+            $validated = $request->validate([
+                'image_1' => 'required|image|mimes:jpeg,png,jpg|max:10048',
+                'image_2' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                'image_3' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                'image_4' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                'image_5' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                'image_6' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                'image_7' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                'image_8' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                'image_9' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            ]);
+
+            // Process the images
+            $paths = [];
+            foreach (['image_1', 'image_2', 'image_3', 'image_4', 'image_5', 'image_6', 'image_7', 'image_8', 'image_9'] as $imageField) {
+                if ($request->hasFile($imageField)) {
+                    $paths[$imageField] = $request->file($imageField)->store('uploads', 'public');
+                }
+            }
+
+            return response()->json([
+                'message' => 'Images uploaded successfully',
+                'paths' => $paths,
+            ], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // If validation fails, return error messages
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $e->errors(), // Contains detailed validation error messages for each field
+            ], 422);
         }
     }
 }
