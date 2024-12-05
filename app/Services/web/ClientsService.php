@@ -55,40 +55,73 @@ class ClientsService
     // }
 
   
-    static public function getClients($search_term, $client_status, $technicien, $start_date, $end_date, $client_id)
+//     static public function getClients($search_term, $client_status, $technicien, $start_date, $end_date, $client_id)
+// {
+//     return Client::with('city', 'technicien.user')
+//         ->where(function ($q) use ($search_term) {
+//             $q->when($search_term, function ($q) use ($search_term) {
+//                 $q->where('name', 'like', '%' . $search_term . '%')
+//                     ->orWhere('sip', 'like', '%' . $search_term . '%')
+//                     ->orWhere('phone_no', 'like', '%' . $search_term . '%')
+//                     ->orWhereHas('city', function ($q) use ($search_term) {
+//                         $q->where('name', 'like', '%' . $search_term . '%');
+//                     })
+//                     ->orWhereHas('plaque', function ($q) use ($search_term) {
+//                         $q->where('code_plaque', 'like', '%' . $search_term . '%');
+//                     })
+//                     ->orWhere('address', 'like', '%' . $search_term . '%')
+//                     ->orWhere('client_id', 'like', '%' . $search_term . '%');
+//             });
+      
+//         })
+//         ->when($client_id, function ($q) use ($client_id) {
+//             // Exact match for client_id to avoid issues with numeric fields
+//             $q->where('client_id', $client_id);
+//         })
+//         ->when($client_status, function ($q, $client_status) {
+//             $q->where('status', $client_status);
+//         })
+//         ->when($start_date && $end_date, function ($q) use ($start_date, $end_date) {
+//             $q->whereBetween('created_at', [Carbon::parse($start_date)->startOfDay(), Carbon::parse($end_date)->endOfDay()]);
+//         })
+//         ->when($technicien, function ($q, $technicien) {
+//             $q->where('technicien_id', $technicien);
+//         })
+//         ->where('status', '!=', '-')
+//         ->orderByDesc('created_at');
+// }
+public static function getClients($search_term, $client_status, $technicien, $start_date, $end_date, $affectation)
 {
-    return Client::with('city', 'technicien.user')
-        ->where(function ($q) use ($search_term) {
-            $q->when($search_term, function ($q) use ($search_term) {
+    return Client::query()
+        ->when($search_term, function ($query) use ($search_term) {
+            $query->where(function ($q) use ($search_term) {
                 $q->where('name', 'like', '%' . $search_term . '%')
                     ->orWhere('sip', 'like', '%' . $search_term . '%')
-                    ->orWhere('phone_no', 'like', '%' . $search_term . '%')
-                    ->orWhereHas('city', function ($q) use ($search_term) {
-                        $q->where('name', 'like', '%' . $search_term . '%');
-                    })
-                    ->orWhereHas('plaque', function ($q) use ($search_term) {
-                        $q->where('code_plaque', 'like', '%' . $search_term . '%');
-                    })
-                    ->orWhere('address', 'like', '%' . $search_term . '%')
-                    ->orWhere('client_id', 'like', '%' . $search_term . '%');
+                    ->orWhere('client_id', 'like', '%' . $search_term . '%')
+                    ->orWhere('phone_no', 'like', '%' . $search_term . '%');
             });
-      
         })
-        ->when($client_id, function ($q) use ($client_id) {
-            // Exact match for client_id to avoid issues with numeric fields
-            $q->where('client_id', $client_id);
+        ->when($client_status, function ($query) use ($client_status) {
+            if ($client_status === 'Bloqué') {
+                return $query->whereHas('affectations', function ($q) {
+                    $q->where('status', 'Bloqué');
+                });
+            } else {
+                return $query->where('status', $client_status);
+            }
         })
-        ->when($client_status, function ($q, $client_status) {
-            $q->where('status', $client_status);
+        ->when($technicien, function ($query) use ($technicien) {
+            return $query->where('technicien_id', $technicien);
         })
-        ->when($start_date && $end_date, function ($q) use ($start_date, $end_date) {
-            $q->whereBetween('created_at', [Carbon::parse($start_date)->startOfDay(), Carbon::parse($end_date)->endOfDay()]);
+        ->when($start_date && $end_date, function ($query) use ($start_date, $end_date) {
+            return $query->whereBetween('created_at', [
+                Carbon::parse($start_date)->startOfDay(),
+                Carbon::parse($end_date)->endOfDay()
+            ]);
         })
-        ->when($technicien, function ($q, $technicien) {
-            $q->where('technicien_id', $technicien);
-        })
-        ->where('status', '!=', '-')
-        ->orderByDesc('created_at');
+        ->where('deleted_at', null)
+        ->whereNull('statusSav')
+        ->orderBy('created_at', 'DESC');
 }
 
     static public function getClientsStatistic()
@@ -256,7 +289,7 @@ class ClientsService
             $countClient = 0;
             $cityIds = [];
             $oClient = ClientIMAP::account('default')->connect();
-            $inbox = $oClient->getFolder('Racco');
+            $inbox = $oClient->getFolder('RaccoB2B');
             $messages = $inbox->query()->unseen()->text('Installation Fibre Optique')->get();
             if (count($messages) > 0) {
                 foreach ($messages as $message) {
@@ -322,8 +355,8 @@ class ClientsService
                     $message->setFlag('Seen');
                 }
             }
-
-            /*$messagesB2B = $inbox->query()->unseen()->text("Passage à l'étape Installation")->get();
+//B2B 
+            $messagesB2B = $inbox->query()->unseen()->text("Passage à l'étape Installation")->get();
             if (count($messagesB2B) > 0) {
                 foreach ($messagesB2B as $ms) {
                     $tech = null;
@@ -391,7 +424,7 @@ class ClientsService
                     $ms->move('INBOX.RaccoArchive');
                     $ms->setFlag('Seen');
                 }
-            }*/
+            }
 
             /* $techniciens = Technicien::whereHas('cities', function ($query) use ($cityIds) {
                 $query->whereIn('city_id', $cityIds);
@@ -544,13 +577,14 @@ class ClientsService
                     'client_id' => $item,
                   //'technicien_id' => $data['technicien_affectation'],
                     'soustraitant_id' => $data['soustraitant_affectation'],
-                    'status' => 'En cours',
+                    'status' => 'Affecté',
                     'affected_by' => Auth::user()->id,
                 ]);
 
                 Log::info($affectation);
                 Client::where('id', $affectation->client_id)->update([
                     'type_affectation' => 'Manuelle',
+                    'status' => 'Affecté',
                 ]);
                 $count++;
             }
@@ -621,7 +655,7 @@ class ClientsService
                 Log::info($affectationId);
                 if ($affectation) {
                     $affectation->technicien_id = $data['technicien_affectation'];
-                    $affectation->status = 'Affecté';
+                    $affectation->status = 'En cours';
                     $affectation->save();
                     $updatedCount++;
                 }

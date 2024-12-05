@@ -1,4 +1,5 @@
 
+
 <div class="container-fluid">   
 
     <div class="row">
@@ -281,6 +282,7 @@
                                     <option value="Affecté">Affecté</option>
                                     <option value="Déclaré">Déclaré</option>
                                     <option value="Validé">Validé</option>
+                                    <option value="Bloqué">Bloqué</option>
                                 </select>
                                 <label for="floatingSelect">Statut du client</label>
                             </div>
@@ -331,6 +333,7 @@
                                     <option value="Affecté">Affecté</option>
                                     <option value="Déclaré">Déclaré</option>
                                     <option value="Validé">Validé</option>
+                                    
                                 </select>
                                 <label for="floatingSelect">Statut du client</label>
                             </div>
@@ -436,6 +439,13 @@
                                 <a class="btn btn-primary btn-sm shadow-none" target="_blank"
                                     href="{{ route('admin.clients.profile', [$client->id]) }}"><i class="uil-eye"></i>
                                 </a>
+                                @if ($client->affectations()->latest()->first()?->status == 'Bloqué')
+                                <button class="btn btn-sm btn-success shadow-none"
+                                    wire:click="$set('affectation_id',{{ $client->affectations()->latest()->first()->id }})"
+                                    data-bs-toggle="modal" data-bs-target="#deblocage-modal"> 
+                                    <i class="uil-user-check" alt='resolue le blocage'></i> 
+                                </button>
+                            @endif
                                 @if ($client->relance())
                                 <button class="btn btn-sm btn-dark shadow-none"
                                     wire:click="$set('client_id',{{ $client->id }})" data-bs-toggle="modal"
@@ -552,6 +562,34 @@
         </div>
         @endrole
     </div>
+
+   
+    <div class="modal fade" id="deblocage-modal" tabindex="-1" role="dialog"
+    aria-labelledby="deblocage-modalLabel" aria-hidden="true"  wire:ignore.self>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form wire:submit.prevent="debloque">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="deblocage-modalLabel">Résolu le blocage</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="fw-bold f-16">Es-tu sûr que ce problème a été résolu ?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light shadow-none" data-bs-dismiss="modal">Fermer</button>
+                    <button type="submit" class="btn btn-danger shadow-none">
+                        <span wire:loading.remove wire:target="debloque">Oui</span>
+                        <span wire:loading wire:target="debloque">
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            Chargement...
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 
     <div id="importation-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="importation-modalLabel"
@@ -1029,6 +1067,58 @@
             </div>
         </div>
     </div>
+<div id="deblocage" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="deblocage-modalLabel"
+    aria-hidden="true" wire:ignore.self>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form wire:submit.prevent="rejouerBlocage">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="importation-modalLabel">Rejouer les blocages</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-floating">
+                        <select class="form-select" id="floatingSelect" wire:model="causeDeblocage">
+                            <option selected value="-">Sélectionnez blocage</option>
+                            @foreach ($blocages as $item)
+                            <option value="{{ $item->cause }}">{{ $item->cause }}</option>
+                            @endforeach
+                        </select>
+                        <label for="floatingSelect">Cause de blocage</label>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6 mb-1">
+                            <div class="form-floating">
+                                <input type="date" class="form-control" id="floatingInput" placeholder=""
+                                    wire:model="deblocage_start_date" />
+                                <label for="floatingInput">Du</label>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6 mb-1">
+                            <div class="form-floating">
+                                <input type="date" class="form-control" id="floatingInput" placeholder=""
+                                    wire:model="deblocage_end_date" />
+                                <label for="floatingInput">Au</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light shadow-none" data-bs-dismiss="modal">Fermer</button>
+                    <button type="submit" class="btn btn-primary shadow-none">
+                        <span wire:loading.remove wire:target="rejouerBlocage">Rejouer</span>
+                        <span wire:loading wire:target="rejouerBlocage">
+                            <span class="spinner-border spinner-border-sm me-2" role="status"
+                                aria-hidden="true"></span>
+                            Chargement...
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 
     <div id="add-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="importation-modalLabel"
         aria-hidden="true" wire:ignore.self>
@@ -1165,56 +1255,6 @@
         </div>
     </div>
 
-    <div id="deblocage" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="deblocage-modalLabel"
-        aria-hidden="true" wire:ignore.self>
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form wire:submit.prevent="rejouerBlocage">
-                    <div class="modal-header">
-                        <h4 class="modal-title" id="importation-modalLabel">Rejouer les blocages</h4>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-floating">
-                            <select class="form-select" id="floatingSelect" wire:model="causeDeblocage">
-                                <option selected value="-">Sélectionnez blocage</option>
-                                @foreach ($blocages as $item)
-                                <option value="{{ $item->cause }}">{{ $item->cause }}</option>
-                                @endforeach
-                            </select>
-                            <label for="floatingSelect">Cause de blocage</label>
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6 mb-1">
-                                <div class="form-floating">
-                                    <input type="date" class="form-control" id="floatingInput" placeholder=""
-                                        wire:model="deblocage_start_date" />
-                                    <label for="floatingInput">Du</label>
-                                </div>
-                            </div>
-                            <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6 mb-1">
-                                <div class="form-floating">
-                                    <input type="date" class="form-control" id="floatingInput" placeholder=""
-                                        wire:model="deblocage_end_date" />
-                                    <label for="floatingInput">Au</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-light shadow-none" data-bs-dismiss="modal">Fermer</button>
-                        <button type="submit" class="btn btn-primary shadow-none">
-                            <span wire:loading.remove wire:target="rejouerBlocage">Rejouer</span>
-                            <span wire:loading wire:target="rejouerBlocage">
-                                <span class="spinner-border spinner-border-sm me-2" role="status"
-                                    aria-hidden="true"></span>
-                                Chargement...
-                            </span>
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+   
 
 </div>

@@ -4,14 +4,18 @@
             <div class="page-title-box">
                 <div class="page-title-right">
                     @if ($client->validations->count() != 0)
-                    @role('admin')
-                    @if($client->phase_one != 1)
-                    <button class="btn btn-danger shadow-none" data-bs-toggle="modal" data-bs-target='#refuser-modal'>
-                        <i class="uil-times-circle me-2"></i> À Modifier</button>
-                    <button class="btn btn-success shadow-none" data-bs-toggle="modal" data-bs-target='#valider-modal'>
-                        <i class="uil-check-circle me-2"></i> Valider </button>
-                    @endif
-                    @endrole
+                    {{-- @role('admin') --}}
+                    @if(in_array(Auth::user()->email, ['o.oma@gmail.com', 'j.sas@gmail.com','b.chabab@neweracom.ma']))
+    @if($client->phase_one != 1)
+        <button class="btn btn-danger shadow-none" data-bs-toggle="modal" data-bs-target='#refuser-modal'>
+            <i class="uil-times-circle me-2"></i> À Modifier
+        </button>
+        <button class="btn btn-success shadow-none" data-bs-toggle="modal" data-bs-target='#valider-modal'>
+            <i class="uil-check-circle me-2"></i> Valider 
+        </button>
+    @endif
+@endif
+                    {{-- @endrole --}}
                     <a href="{{ route('pdf',[ $client]) }}" class="btn btn-primary shadow-none">
                         <i class="ri-download-2-line me-2"></i>
                         Télécharger le rapport

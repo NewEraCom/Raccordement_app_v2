@@ -27,6 +27,7 @@ class ClientsExport implements WithMultipleSheets
             'Tous les clients' => new AllClientExport($this->start_date,$this->end_date),
             'Clients Restant' => new ClientsRestantExport(),
             'Affectation Bloque' => new AffectationBlocage($this->technicien,$this->start_date,$this->end_date),
+            'Affectation Historique' => new AffectationHistorique($this->technicien,$this->start_date,$this->end_date),
             'Affectation Planifier' => new AffectationPlanned($this->technicien,$this->start_date,$this->end_date),
         ];
 

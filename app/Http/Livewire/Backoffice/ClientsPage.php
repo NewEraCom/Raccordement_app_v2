@@ -25,6 +25,8 @@ use Illuminate\Support\Str;
 use Livewire\WithFileUploads;
 use Maatwebsite\Excel\Facades\Excel;
 use OneSignal;
+use App\Models\Notification;
+
 
 class ClientsPage extends Component
 {
@@ -48,6 +50,7 @@ class ClientsPage extends Component
     public $soustraitant_affectation = false; // Determines if a subcontractor is assigned
     public $selectedSoustraitantName ;
     public $search_term = '';
+    public $affectation_id;
 
     public function export()
     {
@@ -219,6 +222,56 @@ class ClientsPage extends Component
         }
     }
 
+   
+
+    public function debloque()
+    {
+        $this->validate([
+            'affectation_id' => 'required',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $affectation = Affectation::find($this->affectation_id);
+
+            $text = 'En cours';
+
+            if ($affectation->declarations->count() != 0) {
+                $text = $affectation->status;
+            }
+
+            Affectation::find($this->affectation_id)->update([
+                'status' => $text,
+            ]);
+
+            Blocage::where('affectation_id', $this->affectation_id)->update([
+                'resolue' => 1,
+            ]);
+
+            DB::commit();
+
+            $technicien = Technicien::find($affectation->technicien_id);
+            $filedsh['include_player_ids'] = [$technicien->player_id];
+            $message = 'Le blocage de client ' . $affectation->client->sip . ' a été débloquer.';
+            OneSignal::sendPush($filedsh, $message);
+            Notification::create([
+                'uuid' => Str::uuid(),
+                'title' => 'Deblocage',
+                'data' => $message,
+                'user_id' => $technicien->user_id,
+            ]);
+            
+            $this->affectation_id = null;
+            $this->emit('success');
+            $this->dispatchBrowserEvent('contentChanged', ['item' => 'Client débloquer avec succès.']);
+           
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            Log::channel('error')->error('Function Relance in ClientsPage.php : ' . $th->getMessage());
+            $this->dispatchBrowserEvent('contentChanged', ['item' => 'Une erreur est survenue.']);
+        }
+    }
 
     public function add()
     {
