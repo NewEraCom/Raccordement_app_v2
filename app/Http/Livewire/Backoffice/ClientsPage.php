@@ -264,7 +264,7 @@ class ClientsPage extends Component
             
             $this->affectation_id = null;
             $this->emit('success');
-            $this->dispatchBrowserEvent('contentChanged', ['item' => 'Client relancé avec succès.']);
+            $this->dispatchBrowserEvent('contentChanged', ['item' => 'Client débloquer avec succès.']);
            
         } catch (\Throwable $th) {
             DB::rollBack();

@@ -16,7 +16,8 @@ class AffectationObserver
             'affectation_id' => $affectation->id,
             //'technicien_id' => $affectation->technicien_id,
             'soustraitant_id'=> $affectation->soustraitant_id,
-            'status' => $affectation->status,
+          //  'status' => 'Affecté',
+         'status' => $affectation->status,
             'cause' => $affectation->status == 'Planifié' ? $affectation->planification_date : null,
         ]);
         
@@ -66,7 +67,8 @@ class AffectationObserver
         'affectation_id' => $affectation->id,
         'technicien_id' => $affectation->technicien_id,
         'soustraitant_id' => $affectation->soustraitant_id,
-        'status' => 'Affecté',
+    //    'status' => 'En cours',
+    'status' => $affectation->status,
         'cause' => $text,
     ]);
     

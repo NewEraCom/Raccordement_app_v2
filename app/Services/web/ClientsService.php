@@ -289,7 +289,7 @@ public static function getClients($search_term, $client_status, $technicien, $st
             $countClient = 0;
             $cityIds = [];
             $oClient = ClientIMAP::account('default')->connect();
-            $inbox = $oClient->getFolder('Racco');
+            $inbox = $oClient->getFolder('RaccoB2B');
             $messages = $inbox->query()->unseen()->text('Installation Fibre Optique')->get();
             if (count($messages) > 0) {
                 foreach ($messages as $message) {
@@ -355,8 +355,8 @@ public static function getClients($search_term, $client_status, $technicien, $st
                     $message->setFlag('Seen');
                 }
             }
-
-            /*$messagesB2B = $inbox->query()->unseen()->text("Passage à l'étape Installation")->get();
+//B2B 
+            $messagesB2B = $inbox->query()->unseen()->text("Passage à l'étape Installation")->get();
             if (count($messagesB2B) > 0) {
                 foreach ($messagesB2B as $ms) {
                     $tech = null;
@@ -424,7 +424,7 @@ public static function getClients($search_term, $client_status, $technicien, $st
                     $ms->move('INBOX.RaccoArchive');
                     $ms->setFlag('Seen');
                 }
-            }*/
+            }
 
             /* $techniciens = Technicien::whereHas('cities', function ($query) use ($cityIds) {
                 $query->whereIn('city_id', $cityIds);
@@ -577,13 +577,14 @@ public static function getClients($search_term, $client_status, $technicien, $st
                     'client_id' => $item,
                   //'technicien_id' => $data['technicien_affectation'],
                     'soustraitant_id' => $data['soustraitant_affectation'],
-                    'status' => 'En cours',
+                    'status' => 'Affecté',
                     'affected_by' => Auth::user()->id,
                 ]);
 
                 Log::info($affectation);
                 Client::where('id', $affectation->client_id)->update([
                     'type_affectation' => 'Manuelle',
+                    'status' => 'Affecté',
                 ]);
                 $count++;
             }
@@ -654,7 +655,7 @@ public static function getClients($search_term, $client_status, $technicien, $st
                 Log::info($affectationId);
                 if ($affectation) {
                     $affectation->technicien_id = $data['technicien_affectation'];
-                    $affectation->status = 'Affecté';
+                    $affectation->status = 'En cours';
                     $affectation->save();
                     $updatedCount++;
                 }

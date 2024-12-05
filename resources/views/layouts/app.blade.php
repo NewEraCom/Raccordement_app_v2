@@ -464,20 +464,21 @@
     <!-- END wrapper -->
 
     @stack('scripts')
-    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" defer></script>
+    {{-- <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" defer></script> --}}
     <script>
-        window.OneSignal = window.OneSignal || [];
-        OneSignal.push(function() {
-            OneSignal.init({
-                appId: "9d7161b3-0c5e-4dd0-93fa-67e6b57fe2dd",
-            });
-        });
+        // window.OneSignal = window.OneSignal || [];
+        // OneSignal.push(function() {
+        //     OneSignal.init({
+        //         appId: "9d7161b3-0c5e-4dd0-93fa-67e6b57fe2dd",
+        //     });
+        // });
     </script>
     @livewireScripts
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         window.livewire.on('success', () => {
             $('#add-modal').modal('hide');
+            $('#deblocage-modal').modal('hide');
             $('#relance-modal').modal('hide');
             $('#edit-modal').modal('hide');
             $('#associer-modal').modal('hide');

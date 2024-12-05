@@ -26,8 +26,61 @@ class AllClientExport implements FromCollection, WithHeadings, ShouldAutoSize, W
         $this->start_date = $start_date;
         $this->end_date = $end_date;
     }
-
+/*
     public function headings(): array
+    {
+        return [
+            'Date de creation',
+            'Equipe',
+            'Adresse',
+            'SIP',
+            'ID',
+            'Routeur',
+            'Zone',
+            'Nom Client',
+            'Telephone',
+            'Debit',
+            'Etat',
+        ];
+    }
+        public function collection()
+    {
+        return Client::select(DB::raw('DATE_FORMAT(clients.created_at, "%d-%m-%Y %H:%i")'),'soustraitants.name as soustraitant_name','address','sip','clients.client_id','routeur_type as routeur','cities.name as city_name','clients.name','clients.phone_no as phoneNumber','clients.debit','clients.status as client_status')
+            ->join('cities', 'cities.id', '=', 'clients.city_id')
+             ->leftJoin('affectations', function ($join) {
+                $join->on('clients.id', '=', 'affectations.client_id')
+                    ->whereNull('affectations.deleted_at');
+            })
+            ->leftJoin('techniciens', 'clients.technicien_id', '=', 'techniciens.id')
+            ->leftJoin('soustraitants', 'techniciens.soustraitant_id', '=', 'soustraitants.id')
+            ->where('clients.deleted_at', null)
+            ->when($this->start_date && $this->end_date, function ($query) {
+                return $query->whereBetween('clients.created_at', [Carbon::parse($this->start_date)->startOfDay(), Carbon::parse($this->end_date)->endOfDay() ]);
+            })
+            ->whereNull('clients.statusSav')
+            ->orderBy('clients.created_at', 'DESC')
+            ->groupBy('clients.sip')
+            ->get();
+    }
+     public function registerEvents(): array
+    {
+        return [
+            AfterSheet::class => function (AfterSheet $event) {
+                $lastRow = $event->sheet->getHighestRow();
+                $event->sheet->getStyle('A1:K1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+                $event->sheet->getStyle('A1:K1')->getFont()->setBold(true);
+                $event->sheet->getStyle('A1:K1')->getFont()->getColor()->setARGB(\PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE);
+                $event->sheet->getStyle('A1:K1')->getFill()->getStartColor()->setARGB('002060');
+                $event->sheet->getStyle('A1:K' . $lastRow)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+                $event->sheet->getStyle('A1:K' . $lastRow)->getFont()->setSize(10);
+                $event->sheet->getStyle('A1:K' . $lastRow)->getFont()->setName('Calibri');
+                $event->sheet->getStyle('A1:K' . $lastRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                $event->sheet->getStyle('A1:K' . $lastRow)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+            },
+        ];
+    }
+*/
+   public function headings(): array
     {
         return [
             'Date de creation',
@@ -42,90 +95,44 @@ class AllClientExport implements FromCollection, WithHeadings, ShouldAutoSize, W
             'Telephone',
             'Debit',
             'Etat Actuel',
-            // Première affectation (Backoffice -> Soustraitant)
             'Affectation 1 - Date',
             'Affectation 1 - Status',
             'Affectation 1 - Soustraitant',
-            // Deuxième affectation (Soustraitant -> Technicien)
             'Affectation 2 - Date',
             'Affectation 2 - Status',
             'Affectation 2 - Technicien',
-            'Affectation 2 - Soustraitant',
-            // Troisième affectation (Feedback Technicien)
-            'Feedback 3 - Date',
-            'Feedback 3 - Status',
-            'Feedback 3 - Cause',
-            'Affectation 3 - Technicien',
-            'Affectation 3 - Soustraitant',
-            // Quatrième affectation (Si reaffectation nécessaire)
-            'Feedback 4 - Date',
-            'Feedback 4 - Status',
-            'Feedback 4 - Cause',
-            'Affectation 4 - Soustraitant',
-            'Affectation 4 - Technicien',
-            // Cinquième affectation
-            'Feedback 5 - Date',
-            'Feedback 5 - Status',
-            'Feedback 5 - Cause',
-            'Affectation 5 - Soustraitant',
-            'Affectation 5 - Technicien',
-            // Sixième affectation
-            'Feedback 6 - Date',
-            'Feedback 6 - Status',
-            'Feedback 6 - Cause',
-            'Affectation 6 - Soustraitant',
-            'Affectation 6 - Technicien',
+
+  
         ];
     }
-
+    
     public function collection()
     {   
         return Client::select([
-            DB::raw('DATE_FORMAT(clients.created_at, "%d-%m-%Y %H:%i") as created_at'),
-            'st_initial.name as soustraitant_name',
+         
+            DB::raw('DATE_FORMAT(clients.created_at, "%d-%m-%Y %H:%i") as creation_date'),   
+            'st_initial.name as equipe',
             'clients.address',
             'clients.type',
             'clients.sip',
-            'clients.client_id',
+            'clients.client_id as ID',
             'clients.routeur_type as routeur',
-            'cities.name as city_name',
-            'clients.name',
-            'clients.phone_no as phoneNumber',
+            'cities.name as zone',
+            'clients.name as nom_client',
+            'clients.phone_no as telephone',
             'clients.debit',
-            'clients.status as client_status',
-            // Affectation 1
+            'clients.status as etat_actuel',
+    
+            // Première affectation (Backoffice -> Soustraitant)
             DB::raw('MAX(CASE WHEN hist_rank.rank = 1 THEN DATE_FORMAT(affectation_histories.created_at, "%d-%m-%Y %H:%i") END) as affectation1_date'),
             DB::raw('MAX(CASE WHEN hist_rank.rank = 1 THEN affectation_histories.status END) as affectation1_status'),
             DB::raw('MAX(CASE WHEN hist_rank.rank = 1 THEN st_aff1.name END) as affectation1_soustraitant'),
-            // Affectation 2
+    
+            // Deuxième affectation (Soustraitant -> Technicien)
             DB::raw('MAX(CASE WHEN hist_rank.rank = 2 THEN DATE_FORMAT(affectation_histories.created_at, "%d-%m-%Y %H:%i") END) as affectation2_date'),
             DB::raw('MAX(CASE WHEN hist_rank.rank = 2 THEN affectation_histories.status END) as affectation2_status'),
             DB::raw('MAX(CASE WHEN hist_rank.rank = 2 THEN CONCAT(users_aff2.first_name, " ", users_aff2.last_name) END) as affectation2_technicien'),
-            DB::raw('MAX(CASE WHEN hist_rank.rank = 2 THEN st_aff2.name END) as affectation2_soustraitant'),
-            // Affectation 3 (Feedback Technicien)
-            DB::raw('MAX(CASE WHEN hist_rank.rank = 3 THEN DATE_FORMAT(affectation_histories.created_at, "%d-%m-%Y %H:%i") END) as affectation3_date'),
-            DB::raw('MAX(CASE WHEN hist_rank.rank = 3 THEN affectation_histories.status END) as affectation3_status'),
-            DB::raw('MAX(CASE WHEN hist_rank.rank = 3 THEN affectation_histories.cause END) as affectation3_cause'),
-            DB::raw('MAX(CASE WHEN hist_rank.rank = 3 THEN CONCAT(users3.first_name, " ", users3.last_name) END) as affectation3_technicien'),
-            DB::raw('MAX(CASE WHEN hist_rank.rank = 3 THEN st3.name END) as affectation3_soustraitant'),
-            // Affectation 4
-            DB::raw('MAX(CASE WHEN hist_rank.rank = 4 THEN DATE_FORMAT(affectation_histories.created_at, "%d-%m-%Y %H:%i") END) as affectation4_date'),
-            DB::raw('MAX(CASE WHEN hist_rank.rank = 4 THEN affectation_histories.status END) as affectation4_status'),
-            DB::raw('MAX(CASE WHEN hist_rank.rank = 4 THEN affectation_histories.cause END) as affectation4_cause'),
-            DB::raw('MAX(CASE WHEN hist_rank.rank = 4 THEN st4.name END) as affectation4_soustraitant'),
-            DB::raw('MAX(CASE WHEN hist_rank.rank = 4 THEN CONCAT(users4.first_name, " ", users4.last_name) END) as affectation4_technicien'),
-            // Affectation 5
-            DB::raw('MAX(CASE WHEN hist_rank.rank = 5 THEN DATE_FORMAT(affectation_histories.created_at, "%d-%m-%Y %H:%i") END) as affectation5_date'),
-            DB::raw('MAX(CASE WHEN hist_rank.rank = 5 THEN affectation_histories.status END) as affectation5_status'),
-            DB::raw('MAX(CASE WHEN hist_rank.rank = 5 THEN affectation_histories.cause END) as affectation5_cause'),
-            DB::raw('MAX(CASE WHEN hist_rank.rank = 5 THEN st5.name END) as affectation5_soustraitant'),
-            DB::raw('MAX(CASE WHEN hist_rank.rank = 5 THEN CONCAT(users5.first_name, " ", users5.last_name) END) as affectation5_technicien'),
-            // Affectation 6
-            DB::raw('MAX(CASE WHEN hist_rank.rank = 6 THEN DATE_FORMAT(affectation_histories.created_at, "%d-%m-%Y %H:%i") END) as affectation6_date'),
-            DB::raw('MAX(CASE WHEN hist_rank.rank = 6 THEN affectation_histories.status END) as affectation6_status'),
-            DB::raw('MAX(CASE WHEN hist_rank.rank = 6 THEN affectation_histories.cause END) as affectation6_cause'),
-            DB::raw('MAX(CASE WHEN hist_rank.rank = 6 THEN st6.name END) as affectation6_soustraitant'),
-            DB::raw('MAX(CASE WHEN hist_rank.rank = 6 THEN CONCAT(users6.first_name, " ", users6.last_name) END) as affectation6_technicien')
+
         ])
         ->join('cities', 'cities.id', '=', 'clients.city_id')
         ->leftJoin('techniciens', 'clients.technicien_id', '=', 'techniciens.id')
@@ -163,42 +170,6 @@ class AllClientExport implements FromCollection, WithHeadings, ShouldAutoSize, W
             $join->on('affectation_histories.soustraitant_id', '=', 'st_aff2.id')
                 ->whereRaw('hist_rank.rank = 2');
         })
-        ->leftJoin('soustraitants as st3', function($join) {
-            $join->on('affectation_histories.soustraitant_id', '=', 'st3.id')
-                ->whereRaw('hist_rank.rank = 3');
-        })
-        ->leftJoin('soustraitants as st4', function($join) {
-            $join->on('affectation_histories.soustraitant_id', '=', 'st4.id')
-                ->whereRaw('hist_rank.rank = 4');
-        })
-        ->leftJoin('soustraitants as st5', function($join) {
-            $join->on('affectation_histories.soustraitant_id', '=', 'st5.id')
-                ->whereRaw('hist_rank.rank = 5');
-        })
-        ->leftJoin('techniciens as tech3', function($join) {
-            $join->on('affectation_histories.technicien_id', '=', 'tech3.id')
-                ->whereRaw('hist_rank.rank = 3');
-        })
-        ->leftJoin('users as users3', 'tech3.user_id', '=', 'users3.id')
-        ->leftJoin('techniciens as tech4', function($join) {
-            $join->on('affectation_histories.technicien_id', '=', 'tech4.id')
-                ->whereRaw('hist_rank.rank = 4');
-        })
-        ->leftJoin('users as users4', 'tech4.user_id', '=', 'users4.id')
-        ->leftJoin('techniciens as tech5', function($join) {
-            $join->on('affectation_histories.technicien_id', '=', 'tech5.id')
-                ->whereRaw('hist_rank.rank = 5');
-        })
-        ->leftJoin('users as users5', 'tech5.user_id', '=', 'users5.id')
-        ->leftJoin('soustraitants as st6', function($join) {
-            $join->on('affectation_histories.soustraitant_id', '=', 'st6.id')
-                ->whereRaw('hist_rank.rank = 6');
-        })
-        ->leftJoin('techniciens as tech6', function($join) {
-            $join->on('affectation_histories.technicien_id', '=', 'tech6.id')
-                ->whereRaw('hist_rank.rank = 6');
-        })
-        ->leftJoin('users as users6', 'tech6.user_id', '=', 'users6.id')
         ->where('clients.deleted_at', null)
         ->when($this->start_date && $this->end_date, function ($query) {
             return $query->whereBetween('clients.created_at', [
@@ -213,6 +184,7 @@ class AllClientExport implements FromCollection, WithHeadings, ShouldAutoSize, W
             'clients.created_at',
             'st_initial.name',
             'clients.address',
+            'clients.type',
             'clients.sip',
             'clients.client_id',
             'clients.routeur_type',
@@ -224,59 +196,75 @@ class AllClientExport implements FromCollection, WithHeadings, ShouldAutoSize, W
         ])
         ->get();
     }
-
+    
     public function registerEvents(): array
-    {
-        return [
-            AfterSheet::class => function (AfterSheet $event) {
-                $lastRow = $event->sheet->getHighestRow();
-                $lastColumn = 'AO'; // 36 colonnes + 6 nouvelles colonnes
+{
+    return [
+        AfterSheet::class => function (AfterSheet $event) {
+            $lastRow = $event->sheet->getHighestRow();
+            $lastColumn = 'X'; // 24 colonnes (A à X)
 
-                // Fonction helper pour générer les lettres des colonnes
-                $getColumnName = function($num) {
-                    $numeric = $num - 1;
-                    $letter = '';
-                    while ($numeric > -1) {
-                        $letter = chr(65 + ($numeric % 26)) . $letter;
-                        $numeric = floor($numeric / 26) - 1;
-                    }
-                    return $letter;
-                };
-
-                // Style pour l'en-tête
-                $event->sheet->getStyle('A1:' . $lastColumn . '1')->getFill()
-                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
-                $event->sheet->getStyle('A1:' . $lastColumn . '1')->getFont()->setBold(true);
-                $event->sheet->getStyle('A1:' . $lastColumn . '1')->getFont()->getColor()
-                    ->setARGB(\PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE);
-                $event->sheet->getStyle('A1:' . $lastColumn . '1')->getFill()->getStartColor()
-                    ->setARGB('002060');
-
-                // Style pour toutes les cellules
-                $event->sheet->getStyle('A1:' . $lastColumn . $lastRow)->getFill()
-                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
-                $event->sheet->getStyle('A1:' . $lastColumn . $lastRow)->getFont()->setSize(10);
-                $event->sheet->getStyle('A1:' . $lastColumn . $lastRow)->getFont()->setName('Calibri');
-                $event->sheet->getStyle('A1:' . $lastColumn . $lastRow)->getAlignment()
-                    ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-                $event->sheet->getStyle('A1:' . $lastColumn . $lastRow)->getBorders()
-                    ->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
-
-                // Ajustement automatique de la largeur des colonnes
-                for ($i = 1; $i <= 36; $i++) {
-                    $column = $getColumnName($i);
-                    $event->sheet->getColumnDimension($column)->setAutoSize(true);
+            // Fonction helper pour générer les lettres des colonnes
+            $getColumnName = function($num) {
+                $numeric = $num - 1;
+                $letter = '';
+                while ($numeric > -1) {
+                    $letter = chr(65 + ($numeric % 26)) . $letter;
+                    $numeric = floor($numeric / 26) - 1;
                 }
-            },
-        ];
-    }
+                return $letter;
+            };
+
+            // Style pour l'en-tête
+            $event->sheet->getStyle('A1:' . $lastColumn . '1')->applyFromArray([
+                'font' => [
+                    'bold' => true,
+                    'color' => ['argb' => 'FFFFFF'],
+                    'size' => 10,
+                    'name' => 'Calibri'
+                ],
+                'fill' => [
+                    'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                    'startColor' => ['argb' => '002060']
+                ],
+                'alignment' => [
+                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER
+                ]
+            ]);
+
+            // Style pour toutes les cellules
+            $event->sheet->getStyle('A1:' . $lastColumn . $lastRow)->applyFromArray([
+                'font' => [
+                    'size' => 10,
+                    'name' => 'Calibri'
+                ],
+                'fill' => [
+                    'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID
+                ],
+                'alignment' => [
+                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER
+                ],
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => Border::BORDER_THIN
+                    ]
+                ]
+            ]);
+
+            // Ajustement automatique de la largeur des colonnes
+            for ($i = 1; $i <= 24; $i++) {
+                $column = $getColumnName($i);
+                $event->sheet->getColumnDimension($column)->setAutoSize(true);
+            }
+        },
+    ];
+}
+   
 
     public function title(): string
     {
         return 'ToExcel';
     }
 
-  
-    
-   
+
 }
