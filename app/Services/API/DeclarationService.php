@@ -55,6 +55,7 @@ class DeclarationService
                 'pto' => $request->input('pto'),
                 'routeur_id' => $request->routeur_id,
                 'test_signal' => $request->input('test_signal'),
+                'type_routeur' => $request->input('type_routeur'),
                 'image_test_signal_url' => $imagePaths['image_test_signal_url'] ?? null,
                 'image_pbo_before_url' => $imagePaths['image_pbo_before_url'] ?? null,
                 'image_pbo_after_url' => $imagePaths['image_pbo_after_url'] ?? null,
