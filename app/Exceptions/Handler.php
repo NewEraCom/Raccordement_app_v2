@@ -43,17 +43,13 @@ class Handler extends ExceptionHandler
 
     public function render($request, \Throwable $exception)
     {
-        // Check if the request is an API request
-        if ($request->expectsJson()) {
-            if ($exception instanceof AuthenticationException) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Your token is expired or invalid. Please log in again.'
-                ], 401);
-            }
+        if ($exception instanceof AuthenticationException) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Your token is expired or invalid. Please log in again.'
+            ], 401);
         }
 
-        // For non-API requests, use the default behavior
         return parent::render($request, $exception);
     }
 }
