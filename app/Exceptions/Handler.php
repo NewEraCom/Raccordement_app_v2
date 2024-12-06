@@ -45,7 +45,7 @@ class Handler extends ExceptionHandler
     {
         // Check if the request is an API request
         if ($request->expectsJson()) {
-            if ($exception instanceof \Illuminate\Auth\AuthenticationException) {
+            if ($exception instanceof AuthenticationException) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Your token is expired or invalid. Please log in again.'
