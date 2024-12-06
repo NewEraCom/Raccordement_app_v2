@@ -46,7 +46,7 @@ class Handler extends ExceptionHandler
         if ($exception instanceof AuthenticationException) {
             return response()->json([
                 'success' => false,
-                'message' => 'Your token is expired or invalid. Please log in again.'
+                'message' => 'Hamza.'
             ], 401);
         }
 
