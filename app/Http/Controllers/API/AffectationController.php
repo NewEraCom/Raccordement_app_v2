@@ -72,6 +72,18 @@ class AffectationController extends Controller
             'affectations' => $affectation
         ], 200);
     }
+    public function getAffectationPromoteurPlanifierApi($id)
+    {
+
+        $affectation =  $this->affectationService->getAffectationPromoteurPlanifierApi($id);
+
+        return response()->json([
+
+            'success' => true,
+            'message' => 'The data has been successfully returned.',
+            'affectations' => $affectation
+        ], 200);
+    }
 
 
 
@@ -145,10 +157,7 @@ class AffectationController extends Controller
                 'technicien_id' =>  $request->input('technicien_id'),
                 'status' => 'En cours',
                 'lat' =>  $request->input('lat'),
-                'lng' =>  $request->input('lng'),
-
-
-
+                'lng' =>  $request->input('lng')
             ]
         );
 
