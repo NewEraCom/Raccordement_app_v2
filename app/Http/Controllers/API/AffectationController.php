@@ -177,31 +177,40 @@ class AffectationController extends Controller
 
     public function planifierAffectation(Request $request)
     {
-        $check = Technicien::find($request->input('technicien_id'));
-        $checkNbModification =  Affectation::find($request->input('id'));
-        $affectationCount = Affectation::where('technicien_id', $check->id)->where('status', 'Planifié')->count();
+        $technicien = Technicien::find($request->input('technicien_id'));
+        $affectation = Affectation::find($request->input('id'));
 
+        if (!$technicien || !$affectation) {
+            return response()->json(['error' => 'Technicien ou affectation introuvable.'], 404);
+        }
 
-        if ($checkNbModification->nb_modification_planification < 2 && $checkNbModification->nb_modification_planification != 0) {
-            $affectation =    Affectation::find($request->input('id'))->update([
+        $affectationCount = Affectation::where('technicien_id', $technicien->id)
+            ->where('status', 'Planifié')
+            ->count();
+
+        // Vérification des modifications restantes
+        if ($affectation->nb_modification_planification < 2 && $affectation->nb_modification_planification > 0) {
+            $affectation->update([
                 'status' => 'Planifié',
                 'planification_date' => Carbon::parse($request->input('planification_date'))->format('Y-m-d H:i:s'),
-                'nb_modification_planification' => $checkNbModification->nb_modification_planification + 1,
+                'nb_modification_planification' => $affectation->nb_modification_planification + 1,
             ]);
         } else {
-            if ($check->planification_count > $affectationCount) {
-                $affectation =    Affectation::find($request->input('id'))->update([
+            // Vérification du seuil de planifications pour le technicien
+            if ($technicien->planification_count > $affectationCount) {
+                $affectation->update([
                     'status' => 'Planifié',
                     'planification_date' => Carbon::parse($request->input('planification_date'))->format('Y-m-d H:i:s'),
-                    'nb_modification_planification' => $checkNbModification->nb_modification_planification + 1,
+                    'nb_modification_planification' => $affectation->nb_modification_planification + 1,
                 ]);
             } else {
-                return response()->json(['Affectations' =>  ''], 409);
+                return response()->json(['error' => 'Nombre maximal de planifications atteint pour ce technicien.'], 409);
             }
         }
 
-        return response()->json(['Affectations' =>  $affectation], 200);
+        return response()->json(['Affectation' => $affectation], 200);
     }
+
 
 
     public function setAffectationAuto(Request $request)
