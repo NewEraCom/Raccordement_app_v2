@@ -28,8 +28,6 @@ class AffectationService
     public function getAffectationPromoteurPlanifierApi($id)
     {
 
-
-
         $affectation = Affectation::with(['client'])->where('technicien_id', $id)->orderBy('planification_date', 'asc')->where('status', 'Planifié')->whereHas('client', function ($query) {
             $query->where('promoteur', 1);
         })->limit(10)->get();
