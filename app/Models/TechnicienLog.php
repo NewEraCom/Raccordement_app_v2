@@ -8,16 +8,19 @@ use Illuminate\Database\Eloquent\Model;
 class TechnicienLog extends Model
 {
     use HasFactory;
-    
-       protected $fillable = [
+
+    protected $fillable = [
         'technicien_id',
         'lat',
         'lng',
         'nb_affectation',
-        'build'
+        'build',
+        'action',
+        'page'
     ];
 
-    public function technicien(){
+    public function technicien()
+    {
         return $this->belongsTo(Technicien::class);
     }
 }

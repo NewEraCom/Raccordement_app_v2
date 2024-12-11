@@ -175,7 +175,9 @@ class AffectationController extends Controller
                 'nb_affectation' =>  $request->input('nb_affectation'),
                 'lat' => $request->input('lat'),
                 'lng' => $request->input('lng'),
-                'build' => $request->input('build')
+                'build' => $request->input('build'),
+                'action' => $request->input('action'),
+                'page' => $request->input('page'),
             ]
         );
 
