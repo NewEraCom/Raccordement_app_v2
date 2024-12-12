@@ -319,69 +319,134 @@
                             </tr>
                         </tbody>
                     </table>
-                    @if ($client->declarations->first()->image_test_signal)
-                    <div class="text-center mb-4">
-                        <img src="data:image/png;base64,{{ $client->declarations->first()->image_test_signal }}"
-                            width="550">
-                        <h4 class="mt-2">Test Signal</h4>
-                    </div>
-                    @endif
-                    @if ($client->declarations->first()->image_pbo_before)
-                    <div class="text-center mb-4">
-                        <img src="data:image/png;base64,{{ $client->declarations->first()->image_pbo_before }}"
-                            width="550">
-                        <h4 class="mt-2">Image PBO avant</h4>
-                    </div>
-                    @endif
+                  
+                  
+    @if ($client->declarations->first()->image_test_signal)
+        <div class="text-center mb-4">
+            <img src="data:image/png;base64,{{ $client->declarations->first()->image_test_signal }}" width="550">
+            <h4 class="mt-2">Test Signal</h4>
+        </div>
+    @elseif ($client->declarations->first()->image_test_signal_url)
+        <div class="text-center mb-4">
+  
+            <img src="{{ asset('storage/' . $client->declarations->first()->image_test_signal_url) }}" width="550">
+            <h4 class="mt-2">Test Signal</h4>
+        </div>
+    @endif
+
+                  
+
+                 
+    @if ($client->declarations->first()->image_pbo_before)
+        <div class="text-center mb-4">
+            <img src="data:image/png;base64,{{ $client->declarations->first()->image_pbo_before }}" width="550">
+            <h4 class="mt-2">Image PBO avant</h4>
+        </div>
+    @elseif ($client->declarations->first()->image_pbo_before_url)
+        <div class="text-center mb-4">
+          <img src="{{ asset('storage/' .$client->declarations->first()->image_pbo_before_url) }}" width="550">
+            <h4 class="mt-2">Image PBO avant</h4>
+        </div>
+    @endif
+
+
                     @if ($client->declarations->first()->image_pbo_after)
                     <div class="text-center mb-4">
-                        <img src="data:image/png;base64,{{ $client->declarations->first()->image_pbo_after }}"
-                            width="550">
+                        <img src="data:image/png;base64,{{ $client->declarations->first()->image_pbo_after }}" width="550">
                         <h4 class="mt-2">Image PBO après</h4>
                     </div>
-                    @endif
+                @elseif ($client->declarations->first()->image_pbo_after_url)
+                    <div class="text-center mb-4">
+                        <img src="{{ asset('storage/' .$client->declarations->first()->image_pbo_after_url) }}" width="550">
+                        <h4 class="mt-2">Image PBO après</h4>
+                    </div>
+                @endif
+                
                     @if ($client->declarations->first()->image_pbi_before)
                     <div class="text-center mb-4">
                         <img src="data:image/png;base64,{{ $client->declarations->first()->image_pbi_before }}"
                             width="550">
                         <h4 class="mt-2">Image PBI avant</h4>
                     </div>
-                    @endif
-                    @if ($client->declarations->first()->image_pbi_after)
+                    @elseif($client->declarations->first()->image_pbi_before_url)
                     <div class="text-center mb-4">
+                        <img src="{{ asset('storage/' .$client->declarations->first()->image_pbi_before_url) }}" width="550">
+                        <h4 class="mt-2">Image PBI avant</h4>
+                    </div>
+                    @endif
+                    
+                    @if ($client->declarations->first()->image_pbi_after)
+                     <div class="text-center mb-4">
                         <img src="data:image/png;base64,{{ $client->declarations->first()->image_pbi_after }}"
                             width="550">
                         <h4 class="mt-2">Image PBI après</h4>
                     </div>
+                    @elseif($client->declarations->first()->image_pbi_after_url)
+                    <div class="text-center mb-4">
+                    <img src="{{ asset('storage/' .$client->declarations->first()->image_pbi_after_url) }}" width="550">
+                     <h4 class="mt-2">Image PBI après</h4>
+                      </div>
                     @endif
+
+
+                 
                     @if ($client->declarations->first()->image_splitter)
                     <div class="text-center mb-4">
                         <img src="data:image/png;base64,{{ $client->declarations->first()->image_splitter }}"
                             width="550">
                         <h4 class="mt-2">Image Splitter</h4>
                     </div>
+                    @elseif($client->declarations->first()->image_splitter_url)
+                    <div class="text-center mb-4">
+                        <img src="{{ asset('storage/' . $client->declarations->first()->image_splitter_url )}}" width="550">
+                        <h4 class="mt-2">Image Splitter</h4>
+                    </div>
                     @endif
+
                     @if ($client->declarations->first()->image_passage_1)
                     <div class="text-center mb-4">
-                        <img src="data:image/png;base64,{{ $client->declarations->first()->image_passage_1 }}"
-                            width="550">
+                        <img src="data:image/png;base64,{{ $client->declarations->first()->image_passage_1 }}" width="550">
                         <h4 class="mt-2">Image Passage 1</h4>
                     </div>
-                    @endif
+                @elseif ($client->declarations->first()->image_passage_1_url)
+                    <div class="text-center mb-4">
+                        <img src="{{ asset('storage/' .$client->declarations->first()->image_passage_1_url) }}" width="550">
+                        <h4 class="mt-2">Image Passage 1</h4>
+                    </div>
+                @endif
+
+               
+
                     @if ($client->declarations->first()->image_passage_2)
                     <div class="text-center mb-4">
-                        <img src="data:image/png;base64,{{ $client->declarations->first()->image_passage_2 }}"
-                            width="550">
+                        <img src="data:image/png;base64,{{ $client->declarations->first()->image_passage_2 }}" width="550">
                         <h4 class="mt-2">Image Passage 2</h4>
                     </div>
-                    @endif
-                    @if ($client->declarations->first()->image_passage_3)
+                @elseif ($client->declarations->first()->image_passage_2_url)
+                    <div class="text-center mb-4">
+                      <img src="{{ asset('storage/' .$client->declarations->first()->image_passage_2_url) }}" width="550">
+                        <h4 class="mt-2">Image Passage 2</h4>
+                    </div>
+                @endif
+
+                    {{-- @if ($client->declarations->first()->image_passage_3)
                     <div class="text-center mb-4">
                         <img src="data:image/png;base64,{{ $client->declarations->last()->image_passage_3 }}"
                             width="550">
                         <h4 class="mt-2">Image Passage 3</h4>
                     </div>
-                    @endif
+                    @endif --}}
+                    @if ($client->declarations->last()->image_passage_3)
+                    <div class="text-center mb-4">
+                        <img src="data:image/png;base64,{{ $client->declarations->last()->image_passage_3 }}" width="550">
+                        <h4 class="mt-2">Image Passage 3</h4>
+                    </div>
+                @elseif ($client->declarations->last()->image_passage_3_url)
+                    <div class="text-center mb-4">
+                        <img src="{{ $client->declarations->last()->image_passage_3_url }}" width="550">
+                        <h4 class="mt-2">Image Passage 3</h4>
+                    </div>
+                @endif
                     @endif
                     @if ($client->validations->count() != 0)
                     <div class="bg-light p-2 mb-4 d-flex align-items-center justify-content-between">
@@ -396,57 +461,113 @@
                             </tr>
                         </tbody>
                     </table>
+                
                     @if ($client->validations->first()->test_debit_image)
                     <div class="text-center mb-4">
                         <img src="data:image/png;base64,{{ $client->validations->first()->test_debit_image }}" width="550">
-                        <h4 class="mt-2">Image test debit</h4>
+                        <h4 class="mt-2">Image Test Débit</h4>
                     </div>
-                    @endif
+                @elseif ($client->validations->first()->test_debit_image_url)
+                    <div class="text-center mb-4">
+                        <img src="{{ asset('storage/' .$client->validations->first()->test_debit_image_url) }}" width="550">
+                        <h4 class="mt-2">Image Test Débit</h4>
+                    </div>
+                @endif
+
+            
+
                     @if ($client->validations->first()->test_debit_via_cable_image)
                     <div class="text-center mb-4">
-                        <img src="data:image/png;base64,{{ $client->validations->first()->test_debit_via_cable_image }}"
-                            width="550">
-                        <h4 class="mt-2">Image tedt debit via cable</h4>
+                        <img src="data:image/png;base64,{{ $client->validations->first()->test_debit_via_cable_image }}" width="550">
+                        <h4 class="mt-2">Image Test Débit via Câble</h4>
                     </div>
-                    @endif
+                @elseif ($client->validations->first()->test_debit_via_cable_image_url)
+                    <div class="text-center mb-4">
+                    <img src="{{ asset('storage/' .$client->validations->first()->test_debit_via_cable_image_url )}}" width="550">
+                        <h4 class="mt-2">Image Test Débit via Câble</h4>
+                    </div>
+                @endif
+
+                  
                     @if ($client->validations->first()->photo_test_debit_via_wifi_image)
                     <div class="text-center mb-4">
-                        <img src="data:image/png;base64,{{ $client->validations->first()->photo_test_debit_via_wifi_image }}"
-                            width="550">
-                        <h4 class="mt-2">Image test debit via wifi</h4>
+                        <img src="data:image/png;base64,{{ $client->validations->first()->photo_test_debit_via_wifi_image }}" width="550">
+                        <h4 class="mt-2">Image Test Débit via Wi-Fi</h4>
                     </div>
-                    @endif
-                    @if ($client->validations->first()->etiquetage_image)
+                @elseif ($client->validations->first()->photo_test_debit_via_wifi_image_url)
                     <div class="text-center mb-4">
-                        <img src="data:image/png;base64,{{ $client->validations->first()->etiquetage_image }}" width="550">
-                        <h4 class="mt-2">Image Etiquetage</h4>
+                       <img src="{{ asset('storage/' . $client->validations->first()->photo_test_debit_via_wifi_image_url )}}" width="550">
+                        <h4 class="mt-2">Image Test Débit via Wi-Fi</h4>
                     </div>
+                @endif
+
+                     
+                        @if ($client->validations->first()->etiquetage_image)
+                        <div class="text-center mb-4">
+                            <img src="data:image/png;base64,{{ $client->validations->first()->etiquetage_image }}" width="550">
+                            <h4 class="mt-2">Image Etiquetage</h4>
+                        </div>
+                    @elseif ($client->validations->first()->etiquetage_image_url)
+                        <div class="text-center mb-4">
+                            <img src="{{ asset('storage/' .$client->validations->first()->etiquetage_image_url )}}" width="550">
+                            <h4 class="mt-2">Image Etiquetage</h4>
+                        </div>
                     @endif
+
+
                     @if ($client->validations->first()->fiche_installation_image)
                     <div class="text-center mb-4">
-                        <img src="data:image/png;base64,{{ $client->validations->first()->fiche_installation_image }}"
-                            width="550">
+                        <img src="data:image/png;base64,{{ $client->validations->first()->fiche_installation_image }}" width="550">
                         <h4 class="mt-2">Fiche d'installation</h4>
                     </div>
-                    @endif
+                @elseif ($client->validations->first()->fiche_installation_image_url)
+                    <div class="text-center mb-4">
+                     <img src="{{ asset('storage/' . $client->validations->first()->fiche_installation_image_url )}}" width="550">
+                        <h4 class="mt-2">Fiche d'installation</h4>
+                    </div>
+                @endif
+                    
                     @if ($client->validations->first()->router_tel_image)
                     <div class="text-center mb-4">
                         <img src="data:image/png;base64,{{ $client->validations->first()->router_tel_image }}" width="550">
-                        <h4 class="mt-2">Image de routeur/tel</h4>
+                        <h4 class="mt-2">Image de Routeur/Tel</h4>
                     </div>
-                    @endif
+                @elseif ($client->validations->first()->router_tel_image_url)
+                    <div class="text-center mb-4">
+                       <img src="{{ asset('storage/' . $client->validations->first()->router_tel_image_url) }}" width="550">
+                        <h4 class="mt-2">Image de Routeur/Tel</h4>
+                    </div>
+                @endif
+
+
+
+
+            
                     @if ($client->validations->first()->pv_image)
-                    <div class="text-center mb-4">
-                        <img src="data:image/png;base64,{{ $client->validations->first()->pv_image }}" width="550">
-                        <h4 class="mt-2">Image PV</h4>
-                    </div>
-                    @endif
+        <div class="text-center mb-4">
+            <img src="data:image/png;base64,{{ $client->validations->first()->pv_image }}" width="550">
+            <h4 class="mt-2">Image PV</h4>
+        </div>
+    @elseif ($client->validations->first()->pv_image_url)
+        <div class="text-center mb-4">
+           <img src="{{ asset('storage/' .$client->validations->first()->pv_image_url )}}" width="550">
+            <h4 class="mt-2">Image PV</h4>
+        </div>
+    @endif
+
+
+                   
                     @if ($client->validations->first()->image_cin)
-                    <div class="text-center mb-4">
-                        <img src="data:image/png;base64,{{ $client->validations->first()->image_cin }}" width="550">
-                        <h4 class="mt-2">CIN</h4>
-                    </div>
-                    @endif
+        <div class="text-center mb-4">
+            <img src="data:image/png;base64,{{ $client->validations->first()->image_cin }}" width="550">
+            <h4 class="mt-2">CIN</h4>
+        </div>
+    @elseif ($client->validations->first()->image_cin_url)
+        <div class="text-center mb-4">
+           <img src="{{ asset('storage/' .$client->validations->first()->image_cin_url )}}" width="550">
+            <h4 class="mt-2">CIN</h4>
+        </div>
+    @endif
                     @endif
                 </div>
             </div>
