@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Backoffice;
 
 use App\Models\Soustraitant;
+use App\Models\SoustraitantStock;
 use Livewire\Component;
 use Illuminate\Support\Str;
 
@@ -17,9 +18,20 @@ class SoustraitantPage extends Component
             'soustraitant_name' => 'required',
         ]);
 
-        Soustraitant::create([
+        $soustraitant = Soustraitant::create([
             'uuid' => Str::uuid(),
             'name' => $this->soustraitant_name,
+        ]);
+        SoustraitantStock::create([
+            'soustraitant_id' => $soustraitant->id,
+            'f680' => 0,
+            'f6600' => 0,
+            'pto' => 0,
+            'cable' => 0,
+            'fix' => 0,
+            'jarretiere' => 0,
+            'splitter' => 0,
+            'racco' => 0,
         ]);
 
         $this->soustraitant_name = '';

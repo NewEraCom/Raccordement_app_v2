@@ -12,12 +12,12 @@
             <div class="card">
                 <div class="card-header border-bottom d-flex">
                     <h5 class="text-muted fw-bold">Filtrage</h5>
-                 <!--   <div class="ms-auto">
+                 <div class="ms-auto">
                        <button class="btn btn-warning btn-sm shadow-none" data-bs-toggle="modal"
                             data-bs-target="#add-modal">
                             <i class="uil-plus me-2"></i> Ajouter
                         </button> 
-                    </div> -->
+                    </div>  
                 </div>
                 <div class="card-body">
                     <div class="row">

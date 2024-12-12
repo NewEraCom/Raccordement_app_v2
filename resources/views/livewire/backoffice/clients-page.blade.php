@@ -439,13 +439,20 @@
                                 <a class="btn btn-primary btn-sm shadow-none" target="_blank"
                                     href="{{ route('admin.clients.profile', [$client->id]) }}"><i class="uil-eye"></i>
                                 </a>
-                                @if ($client->affectations()->latest()->first()?->status == 'Bloqué')
+
+
+                          
+
+
+                            @if ($latestAffectation = $client->affectations()->latest()->first())
+                            @if ($latestAffectation->status == 'Bloqué')
                                 <button class="btn btn-sm btn-success shadow-none"
-                                    wire:click="$set('affectation_id',{{ $client->affectations()->latest()->first()->id }})"
-                                    data-bs-toggle="modal" data-bs-target="#deblocage-modal"> 
-                                    <i class="uil-user-check" alt='resolue le blocage'></i> 
+                                    wire:click="$set('affectation_id', {{ $latestAffectation->id }})"
+                                    data-bs-toggle="modal" data-bs-target="#deblocage-modal">
+                                    <i class="uil-user-check" alt="résolue le blocage"></i>
                                 </button>
                             @endif
+                        @endif
                                 @if ($client->relance())
                                 <button class="btn btn-sm btn-dark shadow-none"
                                     wire:click="$set('client_id',{{ $client->id }})" data-bs-toggle="modal"
