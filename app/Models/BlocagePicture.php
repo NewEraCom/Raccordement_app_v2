@@ -13,7 +13,8 @@ class BlocagePicture extends Model
     protected $fillable = [
         'uuid',
         'image',
-        'image_data' ,
+        'image_data',
+        'image_url',
         'blocage_id'
     ];
 }

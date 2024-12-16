@@ -20,23 +20,43 @@ class BlocagePictureController extends Controller
     // }
     public function storeImageBlocage(Request $request)
     {
-        $blocagePicture = BlocagePicture::create([
-            'uuid' => Str::uuid(),
-            'image' => $request->input('image'),
-            'image_data' => $request->input('image_data'),
-            'blocage_id' =>  $request->input('blocage_id')
+        // Validate the incoming request (adjust validation rules as needed)
+        $validated = $request->validate([
+            'image_url' => 'required|image|mimes:jpg,jpeg,png,gif|max:10240', // Ensure it's an image with max size 10MB
+            '' => 'required|string',  // Example validation for additional fields
 
-
+            'blocage_id' => 'required|exists:blocages,id',  // Ensure the blocage_id exists in the 'blocages' table
         ]);
 
+        // Handle uploaded images using the static helper method
+        $imagePaths = self::handleUploadedImages($request, ['image' => $request->file('image')]);
 
+        // Create a new BlocagePicture entry using validated data
+        $blocagePicture = BlocagePicture::create([
+            'uuid' => Str::uuid(),
+            'image_url' => $imagePaths['image_url'],  // Store the path of the uploaded image
+            'image' => $request->input('image'),
+            'blocage_id' =>  $request->input('blocage_id')
+        ]);
 
-
+        // Save the BlocagePicture record
         if ($blocagePicture->save()) {
             return response()->json(['images' => $blocagePicture], 200);
         }
-        // $blocage = $this->blocagePictureService->storeImageBlocage($request);
-        return response()->json(['Blocage' =>" blocage"], 200);
 
+        return response()->json(['error' => 'Failed to save image'], 500);
+    }
+
+    // Static method to handle image uploads
+    protected static function handleUploadedImages(Request $request, array $validated): array
+    {
+        $imagePaths = [];
+        foreach ($validated as $fieldName => $file) {
+            if ($request->hasFile($fieldName)) {
+                // Store image in 'public/uploads' directory
+                $imagePaths[$fieldName] = $request->file($fieldName)->store('uploads', 'public');
+            }
+        }
+        return $imagePaths;
     }
 }
