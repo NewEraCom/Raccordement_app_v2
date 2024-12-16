@@ -20,12 +20,17 @@ class BlocagePictureController extends Controller
     // }
     public function storeImageBlocage(Request $request)
     {
-        // Validate the incoming request (adjust validation rules as needed)
-        $validated = $request->validate([
-            'image_url' => 'required|image|mimes:jpg,jpeg,png,gif|max:10240', // Ensure it's an image with max size 10MB
 
-            'blocage_id' => 'required|string',
-        ]);  // Example validation for additional fields        ]);
+
+
+
+        $validated = $request->validate([
+            'image_url' => 'image|mimes:jpeg,png,jpg|max:10240',
+
+        ]);
+
+        // Process and store uploaded images
+        $imagePaths = self::handleUploadedImages($request, $validated);
 
         // Handle uploaded images using the static helper method
         $imagePaths = self::handleUploadedImages($request, ['image_url' => $request->file('image_url')]);
