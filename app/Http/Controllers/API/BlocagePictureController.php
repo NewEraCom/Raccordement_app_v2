@@ -23,13 +23,12 @@ class BlocagePictureController extends Controller
         // Validate the incoming request (adjust validation rules as needed)
         $validated = $request->validate([
             'image_url' => 'required|image|mimes:jpg,jpeg,png,gif|max:10240', // Ensure it's an image with max size 10MB
-            '' => 'required|string',  // Example validation for additional fields
 
-            'blocage_id' => 'required|exists:blocages,id',  // Ensure the blocage_id exists in the 'blocages' table
-        ]);
+            'blocage_id' => 'required|string',
+        ]);  // Example validation for additional fields        ]);
 
         // Handle uploaded images using the static helper method
-        $imagePaths = self::handleUploadedImages($request, ['image' => $request->file('image')]);
+        $imagePaths = self::handleUploadedImages($request, ['image_url' => $request->file('image_url')]);
 
         // Create a new BlocagePicture entry using validated data
         $blocagePicture = BlocagePicture::create([
