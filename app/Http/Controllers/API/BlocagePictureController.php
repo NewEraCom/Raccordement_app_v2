@@ -33,7 +33,6 @@ class BlocagePictureController extends Controller
         $imagePaths = self::handleUploadedImages($request, $validated);
 
         // Handle uploaded images using the static helper method
-        $imagePaths = self::handleUploadedImages($request, ['image_url' => $request->file('image_url')]);
 
         // Create a new BlocagePicture entry using validated data
         $blocagePicture = BlocagePicture::create([
