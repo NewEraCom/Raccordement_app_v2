@@ -31,6 +31,23 @@ class SavTicketController extends Controller
             200
         );
     }
+    public function getSavTicketSavBlocage($id)
+    {
+        $ticket = $this->ticketService->getSavTicketSavBlocageApi($id);
+
+        return response()->json(
+
+
+            [
+                'success' => true,
+                'message' => 'The data has been successfully returned.',
+                'affectations' => $ticket
+            ],
+
+
+            200
+        );
+    }
     public function getPlanifiedTicket($id)
     {
         $ticket = $this->ticketService->getSavTicketPlanApi($id);

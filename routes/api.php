@@ -76,6 +76,7 @@ Route::get('/getClients/{id}', 'App\Http\Controllers\API\ClientController@getCli
 // Route::get('/getClientThecnicien/{id}', 'App\Http\Controllers\API\ClientController@getClientThecnicien');
 Route::get('/getClientsThecnicien/{id}', [ClientController::class, 'getClientsThecnicien']);
 Route::get('/getSavTickets/{id}', [SavTicketController::class, 'getAllTicket']);
+Route::get('/getSavTicketSavBlocage/{id}', [SavTicketController::class, 'getSavTicketSavBlocage']);
 Route::get('/getPlanifiedTicket/{id}', [SavTicketController::class, 'getPlanifiedTicket']);
 /*
 |

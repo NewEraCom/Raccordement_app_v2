@@ -92,11 +92,10 @@ class AffectationService
                     }
                 );
             }
-
-        )
-            ->where('declared', 'Déclaré')->orderBy('id', 'desc')->get();
+        )->where('declared', 'Déclaré')->orderBy('id', 'desc')->get();
         return  $affectation;
     }
+
     public function getThecnincenAfectationCouteurApi()
     {
         $count = Technicien::where("id", 1)->count();
