@@ -93,7 +93,7 @@ class AffectationController extends Controller
 
             'success' => true,
             'message' => 'The data has been successfully returned.',
-            'affectations' => $affectation
+            'blocages' => $affectation
         ], 200);
     }
 

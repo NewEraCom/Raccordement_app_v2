@@ -41,7 +41,7 @@ class SavTicketController extends Controller
             [
                 'success' => true,
                 'message' => 'The data has been successfully returned.',
-                'affectations' => $ticket
+                'blocages' => $ticket
             ],
 
 
