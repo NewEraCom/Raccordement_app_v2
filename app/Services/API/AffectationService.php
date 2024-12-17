@@ -60,11 +60,20 @@ class AffectationService
                 $query->with(['client']);
             }
 
-        )
+        )->where('declared', null)->where('resolue', 0)->orderBy('id', 'desc')->get();
+        return  $affectation;
+    }
+    public function getAffectationPromoteurBlocageApi($id)
+    {
+        $affectation = Blocage::whereHas('affectation', function ($query)  use ($id) {
+            $query->where('technicien_id', $id)->where('status', "Bloqué");
+        })->with(
+            'affectation',
+            function ($query) {
+                $query->where('promoteur', 1)->with(['client']);
+            }
 
-
-
-            ->where('declared', null)->where('resolue', 0)->orderBy('id', 'desc')->get();
+        )->where('declared', null)->where('resolue', 0)->orderBy('id', 'desc')->get();
         return  $affectation;
     }
 

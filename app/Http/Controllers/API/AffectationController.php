@@ -84,6 +84,18 @@ class AffectationController extends Controller
             'affectations' => $affectation
         ], 200);
     }
+    public function getAffectationPromoteurBlocageApi($id)
+    {
+
+        $affectation =  $this->affectationService->getAffectationPromoteurBlocageApi($id);
+
+        return response()->json([
+
+            'success' => true,
+            'message' => 'The data has been successfully returned.',
+            'affectations' => $affectation
+        ], 200);
+    }
 
 
 

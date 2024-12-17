@@ -178,6 +178,7 @@ Route::middleware('auth:sanctum')->group(
         Route::get('/getAffectation/{id}', 'App\Http\Controllers\API\AffectationController@getAffectation');
         Route::get('/getAffectationPromoteurApi/{id}', 'App\Http\Controllers\API\AffectationController@getAffectationPromoteurApi');
         Route::get('/getAffectationPromoteurPlanifierApi/{id}', 'App\Http\Controllers\API\AffectationController@getAffectationPromoteurPlanifierApi');
+        Route::get('/getAffectationPromoteurBlocageApi/{id}', 'App\Http\Controllers\API\AffectationController@getAffectationPromoteurBlocageApi');
         Route::get('/getAffectationPlanifier/{id}', 'App\Http\Controllers\API\AffectationController@getAffectationPlanifier');
         Route::get('/getAffectationValider/{id}', 'App\Http\Controllers\API\AffectationController@getAffectationValider');
         Route::get('/getAffectationDeclarer/{id}', 'App\Http\Controllers\API\AffectationController@getAffectationDeclarer');
