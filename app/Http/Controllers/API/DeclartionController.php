@@ -25,7 +25,7 @@ class DeclartionController extends Controller
     {
 
 
-        return response()->json(['Declaration' => ''], 200);
+        return response()->json(['declaration' => ''], 200);
     }
 
 
@@ -33,6 +33,6 @@ class DeclartionController extends Controller
     {
 
         $blocage = $this->declarationService->getDeclarationApi($id);
-        return response()->json(['Declaration' => $blocage], 200);
+        return response()->json(['declaration' => $blocage], 200);
     }
 }
