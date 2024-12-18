@@ -20,7 +20,7 @@ class DeclarationService
 
     public function getDeclarationApi($id)
     {
-        $Declaration = Declaration::where("affectation_id", $id)->first();
+        $Declaration = Declaration::where("affectation_id", $id)->last();
         return  $Declaration;
     }
 
