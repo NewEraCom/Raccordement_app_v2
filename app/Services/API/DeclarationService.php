@@ -20,7 +20,7 @@ class DeclarationService
 
     public function getDeclarationApi($id)
     {
-        $Declaration = Declaration::where("affectation_id", $id)->orderBy('id', 'desc')->first();
+        $Declaration = Declaration::where("affectation_id", $id)->orderBy('id', 'asc')->first();
         return  $Declaration;
     }
 
