@@ -21,6 +21,13 @@ class DeclartionController extends Controller
         return response()->json(['Declaration' => $blocage], 200);
     }
 
+    public function updateDeclarationAffectation(Request $request, $id)
+    {
+
+        $declaration = $this->declarationService->updateDeclaration($request, $id);
+        return response()->json(['declaration' => $declaration], 200);
+    }
+
     public function updateDeclaration(Request $request)
     {
 

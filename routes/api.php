@@ -191,6 +191,7 @@ Route::middleware('auth:sanctum')->group(
         Route::post('/planifierAffectation', 'App\Http\Controllers\API\AffectationController@planifierAffectation');
         Route::post('/updateDeclaration', 'App\Http\Controllers\API\DeclartionController@updateDeclaration');
         Route::post('/declarationAffectation', 'App\Http\Controllers\API\DeclartionController@declarationAffectation');
+        Route::post('/updateDeclarationAffectation/{id}', 'App\Http\Controllers\API\DeclartionController@updateDeclarationAffectation');
 
 
         Route::get('/declaration/{id}', 'App\Http\Controllers\API\DeclartionController@getDeclaration');
