@@ -121,8 +121,17 @@ class AffectationController extends Controller
     {
 
         $affectation =  $this->affectationService->getAffectationValiderApi($id);
+        return response()->json(
 
-        return response()->json(['Affectations' => $affectation], 200);
+
+            [
+                'success' => true,
+                'message' => 'The data has been successfully returned.',
+                'affectations' => $affectation
+            ],
+
+            200
+        );
     }
     public function getAffectationDeclarer($id)
     {
