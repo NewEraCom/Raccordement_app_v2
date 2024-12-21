@@ -156,7 +156,7 @@ class DeclarationService
 
             // Update the declaration with the stored image URLs and other fields
             $declaration->update([
-                'affectation_id' => $request->input('affectation_id', $declaration->affectation_id),
+                // 'affectation_id' => $request->input('affectation_id', $declaration->affectation_id),
                 'pto' => $request->input('pto', $declaration->pto),
                 'routeur_id' => $request->input('routeur_id', $declaration->routeur_id),
                 'test_signal' => $request->input('test_signal', $declaration->test_signal),
