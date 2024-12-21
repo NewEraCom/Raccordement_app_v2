@@ -73,9 +73,9 @@ class DeclarationObserver
     {
         $affectation = Affectation::find($declaration->affectation_id);
 
-        if ($affectation->client->sip != 'TEST') {
-            Mail::to(MailList::where([['type', 'orange'], ['status', 1]])->get('email'))->cc(MailList::where([['type', 'declaration'], ['status', 1]])->get('email'))->send(new DeclarationMail($declaration));
-        }
+        // if ($affectation->client->sip != 'TEST') {
+        //     Mail::to(MailList::where([['type', 'orange'], ['status', 1]])->get('email'))->cc(MailList::where([['type', 'declaration'], ['status', 1]])->get('email'))->send(new DeclarationMail($declaration));
+        // }
     }
 
     /**

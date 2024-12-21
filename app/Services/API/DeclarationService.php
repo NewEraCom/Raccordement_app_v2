@@ -178,6 +178,10 @@ class DeclarationService
                 'lng' => $request->input('lng', $declaration->lng),
             ]);
 
+            if ($request->filled('routeur_type')) {
+                $declaration->affectation->client->routeur_type = $request->input('routeur_type');
+                $declaration->affectation->client->save();
+            }
 
             return response()->json(['declaration' => $declaration], 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
