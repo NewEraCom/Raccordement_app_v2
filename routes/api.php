@@ -110,7 +110,7 @@ Route::post('/addPlanned', 'App\Http\Controllers\API\FeedbackController@addPlann
 
 
 Route::post('/validationAffectation', [ValidationController::class, 'validation']);
-Route::post('/updateValidation', [ValidationController::class, 'updateValidation']);
+Route::post('/updateValidation/{id}', [ValidationController::class, 'updateValidation']);
 // Route::get('/getClientThecnicien/{id}', 'App\Http\Controllers\API\ClientController@getClientThecnicien');
 
 Route::get('/validation/{id}', [ValidationController::class, 'getValidation']);

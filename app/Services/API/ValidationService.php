@@ -18,8 +18,8 @@ class ValidationService
 
     public function getValidationApi($id)
     {
-        $Declaration = Validation::where("affectation_id", $id)->first();
-        return  $Declaration;
+        $validation = Validation::where("affectation_id", $id)->first();
+        return  $validation;
     }
 
 
@@ -70,6 +70,54 @@ class ValidationService
 
     }
 
+
+
+    static public function updateValidation(Request $request, $id)
+    {
+        // Find the validation entry by ID
+        $validation = Validation::find($id);
+
+        if (!$validation) {
+            return response()->json(['message' => 'Validation not found'], 404);
+        }
+
+        // Validate the request
+        $validated = $request->validate([
+            'test_debit_image_url' => 'image|mimes:jpeg,png,jpg|max:10240',
+            'test_debit_via_cable_image_url' => 'image|mimes:jpeg,png,jpg|max:10240',
+            'photo_test_debit_via_wifi_image_url' => 'image|mimes:jpeg,png,jpg|max:10240',
+            'etiquetage_image_url' => 'image|mimes:jpeg,png,jpg|max:10240',
+            'fiche_installation_image_url' => 'image|mimes:jpeg,png,jpg|max:10240',
+            'image_cin_url' => 'image|mimes:jpeg,png,jpg|max:10240',
+            'router_tel_image_url' => 'image|mimes:jpeg,png,jpg|max:10240',
+            'pv_image_url' => 'image|mimes:jpeg,png,jpg|max:10240',
+        ]);
+
+        // Process and store uploaded images
+        $imagePaths = self::handleUploadedImages($request, $validated);
+
+        // Update the validation entry
+        $validation->update([
+            'test_debit' => $request->input('test_debit', $validation->test_debit),
+            'test_debit_via_cable_image_url' => $imagePaths['test_debit_via_cable_image_url'] ?? $validation->test_debit_via_cable_image_url,
+            'photo_test_debit_via_wifi_image_url' => $imagePaths['photo_test_debit_via_wifi_image_url'] ?? $validation->photo_test_debit_via_wifi_image_url,
+            'etiquetage_image_url' => $imagePaths['etiquetage_image_url'] ?? $validation->etiquetage_image_url,
+            'fiche_installation_image_url' => $imagePaths['fiche_installation_image_url'] ?? $validation->fiche_installation_image_url,
+            'pv_image_url' => $imagePaths['pv_image_url'] ?? $validation->pv_image_url,
+            'router_tel_image_url' => $imagePaths['router_tel_image_url'] ?? $validation->router_tel_image_url,
+            'cin_description' => $request->input('cin_description', $validation->cin_description),
+            'image_cin_url' => $imagePaths['image_cin_url'] ?? $validation->image_cin_url,
+            'cin_justification' => $request->input('cin_justification', $validation->cin_justification),
+            // 'affectation_id' => $request->input('affectation_id', $validation->affectation_id),
+            'lat' => $request->input('lat', $validation->lat),
+            'lng' => $request->input('lng', $validation->lng),
+        ]);
+
+        return response()->json([
+            'message' => 'Validation updated successfully',
+            'validation' => $validation,
+        ], 200);
+    }
 
 
 

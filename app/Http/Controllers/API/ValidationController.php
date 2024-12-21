@@ -20,10 +20,10 @@ class ValidationController extends Controller
         $validation = $this->validationService->validation($request);
         return response()->json(['validation' => $validation], 200);
     }
-    public function updateValidation(Request $request)
+    public function updateValidation(Request $request, $id)
     {
 
-        $validation = $this->validationService->updateValidationApi($request);
+        $validation = $this->validationService->updateValidation($request, $id);
         return response()->json(['validation' => $validation], 200);
     }
 
@@ -32,6 +32,6 @@ class ValidationController extends Controller
     {
 
         $validation = $this->validationService->getValidationApi($id);
-        return response()->json(['Validation' => $validation], 200);
+        return response()->json(['validation' => $validation], 200);
     }
 }
