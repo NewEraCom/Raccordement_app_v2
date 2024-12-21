@@ -25,7 +25,7 @@ class DeclartionController extends Controller
     {
 
         $declaration = $this->declarationService->updateDeclaration($request, $id);
-        return response()->json(['declaration' => $declaration], 200);
+        return  $declaration;
     }
 
     public function updateDeclaration(Request $request)

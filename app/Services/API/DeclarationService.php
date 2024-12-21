@@ -183,7 +183,7 @@ class DeclarationService
                 $declaration->affectation->client->save();
             }
 
-            return response()->json($declaration, 200);
+            return response()->json(['declaration' => $declaration], 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Return validation errors in JSON format
             return response()->json([
