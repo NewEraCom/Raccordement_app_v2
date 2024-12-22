@@ -162,7 +162,14 @@ class AffectationController extends Controller
 
         $affectation =  $this->affectationService->getAffectationBlocageAfterDeclaredApi($id);
 
-        return response()->json(['Affectations' => $affectation], 200);
+        return response()->json([
+
+
+            'success' => true,
+            'message' => 'The data has been successfully returned.',
+            'affectations' => $affectation
+
+        ], 200);
     }
 
     public function createAffectation(Request $request)
