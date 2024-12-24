@@ -440,7 +440,7 @@
                                     href="{{ route('admin.clients.profile', [$client->id]) }}"><i class="uil-eye"></i>
                                 </a>
 
-
+                                
                           
 
 

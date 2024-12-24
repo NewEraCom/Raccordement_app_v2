@@ -144,11 +144,13 @@ class AffectationsPage extends Component
             $filedsh['include_player_ids'] = [$technicien->player_id];
             $message = 'Le blocage de client ' . $affectation->client->sip . ' a été débloquer.';
             OneSignal::sendPush($filedsh, $message);
+            
             Notification::create([
                 'uuid' => Str::uuid(),
                 'title' => 'Deblocage',
                 'data' => $message,
                 'user_id' => $technicien->user_id,
+                'affectation_id' => $this->affectation_id
             ]);
 
             $this->affectation_id = null;

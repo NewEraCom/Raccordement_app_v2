@@ -13,7 +13,8 @@ class Notification extends Model
         'uuid',
         'title',
         'data',
-        'user_id'
+        'user_id',
+        'affectation_id'
     ];
     
     
@@ -21,4 +22,8 @@ class Notification extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function affectation()
+{
+    return $this->belongsTo(Affectation::class);
+}
 }

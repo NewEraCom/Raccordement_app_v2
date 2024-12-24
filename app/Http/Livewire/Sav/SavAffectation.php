@@ -163,6 +163,7 @@ class SavAffectation extends Component
                 'title' => 'Deblocage',
                 'data' => $message,
                 'user_id' => $technicien->user_id,
+                'affectation_id' => $this->affectation_id
             ]);
 
             $this->affectation_id = null;
