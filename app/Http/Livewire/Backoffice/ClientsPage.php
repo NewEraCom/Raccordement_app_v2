@@ -237,9 +237,9 @@ class ClientsPage extends Component
 
             $text = 'En cours';
 
-            if ($affectation->declarations->count() != 0) {
-                $text = $affectation->status;
-            }
+            // if ($affectation->declarations->count() != 0) {
+            //     $text = $affectation->status;
+            // }
 
             $affectation->update([
                 'status' => $text,
