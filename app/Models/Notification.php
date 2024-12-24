@@ -13,11 +13,12 @@ class Notification extends Model
         'uuid',
         'title',
         'data',
-        'user_id'
+        'user_id',
+        'affectation_id'
     ];
-    
-    
-       public function user()
+
+
+    public function user()
     {
         return $this->belongsTo(User::class);
     }
