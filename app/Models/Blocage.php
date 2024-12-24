@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Blocage extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'uuid',
@@ -18,7 +18,8 @@ class Blocage extends Model
         'lat',
         'lng',
         'justification',
-        'resolue'
+        'resolue',
+        'gps_link'
     ];
 
     public function affectation()
@@ -39,6 +40,4 @@ class Blocage extends Model
     {
         return $this->hasOneThrough(Client::class, Affectation::class);
     }
-
-
 }

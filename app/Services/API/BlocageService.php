@@ -45,6 +45,7 @@ class BlocageService
             'affectation_id' => $request->input('affectation_id'),
             'cause' =>  $request->input('cause'),
             'justification' =>  $request->input('justification'),
+            'gps_link' =>  $request->input('gps_link'),
             'lat' =>  $request->input('lat'),
             'lng' =>  $request->input('lng')
         ]);
