@@ -241,7 +241,7 @@ class ClientsPage extends Component
                 $text = $affectation->status;
             }
 
-            Affectation::find($this->affectation_id)->update([
+            $affectation->update([
                 'status' => $text,
             ]);
 
@@ -260,6 +260,7 @@ class ClientsPage extends Component
                 'title' => 'Deblocage',
                 'data' => $message,
                 'user_id' => $technicien->user_id,
+                'affectation_id' => $this->affectation_id
             ]);
             
             $this->affectation_id = null;

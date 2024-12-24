@@ -9,6 +9,7 @@ use App\Models\Affectation;
 use App\Models\Client;
 use App\Models\Map;
 use App\Models\Blocage;
+use App\Models\Notification;
 use App\Models\Plaque;
 use App\Models\Soustraitant;
 use Carbon\Carbon;
@@ -608,80 +609,53 @@ public static function getClients($search_term, $client_status, $technicien, $st
             return $th;
         }
     }
+
     static public function assigneTechnicien($data)
     {
-        
         try {
             DB::beginTransaction();
-
-            // $affectationIds = array_map(function($id) {
-            //     return (int)$id;
-            // }, $data['selectedItems']);
     
-            // // Check if all affectations exist
-            // $existingIds = Affectation::whereIn('id', $affectationIds)->pluck('id')->toArray();
-            
-            // if (count($existingIds) !== count($affectationIds)) {
-            //     throw new \Exception("Some affectations do not exist.");
-            // }
-    
-            // // Get client IDs associated with these affectations
-            // $clientIds = Affectation::whereIn('id', $affectationIds)->pluck('client_id')->toArray();
-    
-            // // Perform bulk update on Affectation table
-            // $updatedCount = Affectation::whereIn('id', $affectationIds)->update([
-            //     'technicien_id' => $data['technicien_affectation'],
-            // ]);
-    
-            // // Perform bulk update on Client table
-            // Client::whereIn('id', $clientIds)->update([
-            //     'technicien_id' => $data['technicien_affectation'],
-            // ]);
-            $affectationIds = array_map(function($id) {
+            $affectationIds = array_map(function ($id) {
                 return (int)$id;
             }, $data['selectedItems']);
     
             // Check if all affectations exist
             $existingIds = Affectation::whereIn('id', $affectationIds)->pluck('id')->toArray();
-            
             if (count($existingIds) !== count($affectationIds)) {
                 throw new \Exception("Some affectations do not exist.");
             }
     
-            // Update each affectation individually to trigger the observer
-            $updatedCount = 0;
+            // Update each affectation individually and add notifications
             foreach ($affectationIds as $affectationId) {
                 $affectation = Affectation::find($affectationId);
-                Log::info($affectationId);
                 if ($affectation) {
                     $affectation->technicien_id = $data['technicien_affectation'];
                     $affectation->status = 'En cours';
                     $affectation->save();
-                    $updatedCount++;
+    
+                    // Add a notification for the affectation
+                    $message = count($affectationIds) > 1 
+                        ? count($affectationIds) . ' clients vous ont été affectés.' 
+                        : 'Un client vous a été affecté';
+    
+                    Notification::create([
+                        'uuid' => Str::uuid(),
+                        'title' => 'Affectation',
+                        'data' => $message,
+                        'user_id' => Technicien::find($data['technicien_affectation'])->user_id,
+                        'affectation_id' => $affectationId,
+                    ]);
                 }
             }
     
-            // Update the Client table
+            // Update the Client table outside the loop
             $clientIds = Affectation::whereIn('id', $affectationIds)->pluck('client_id')->toArray();
             Client::whereIn('id', $clientIds)->update([
                 'technicien_id' => $data['technicien_affectation'],
             ]);
     
-    
             DB::commit();
     
-          
-            // $technicien = Technicien::find($data['technicien_affectation']);
-            // $filedsh['include_player_ids'] = [$technicien->player_id];
-            // $message = $count > 1 ? $count . ' clients vous ont été affectés.' : 'Un client vous a été affecté.';
-
-            // OneSignal::sendPush($filedsh, $message);
-            // Notification::create([
-            //     'uuid' => Str::uuid(),
-            //     'title' => 'Affectation',
-            //     'data' => $message,
-            //     'user_id' => $technicien->user_id,
-            // ]);
             return true;
         } catch (\Throwable $th) {
             DB::rollBack();

@@ -22,4 +22,8 @@ class Notification extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function affectation()
+{
+    return $this->belongsTo(Affectation::class);
+}
 }

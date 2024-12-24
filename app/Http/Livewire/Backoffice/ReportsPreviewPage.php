@@ -77,6 +77,7 @@ class ReportsPreviewPage extends Component
                 'title' => 'Modification',
                 'data' => $message,
                 'user_id' => $technicien->user_id,
+                'affectation_id' => $this->client->affectations->last()->id
             ]);
 
             DB::commit();
