@@ -12,6 +12,8 @@ class Validation extends Model
         'id',
         'uuid',
         'test_debit',
+        'test_debit_via_cable',
+        'test_debit_via_wifi',
         // 'test_debit_image',
         // 'test_debit_via_cable_image',
         // 'photo_test_debit_via_wifi_image',
