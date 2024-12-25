@@ -176,6 +176,7 @@ Route::post('/addRouteur', [RouteurController::class, 'addRouteurs']);
 Route::middleware('auth:sanctum')->group(
     function () {
 
+
         Route::get('/getAffectation/{id}', 'App\Http\Controllers\API\AffectationController@getAffectation');
         Route::get('/getAffectationPromoteurApi/{id}', 'App\Http\Controllers\API\AffectationController@getAffectationPromoteurApi');
         Route::get('/getAffectationPromoteurPlanifierApi/{id}', 'App\Http\Controllers\API\AffectationController@getAffectationPromoteurPlanifierApi');

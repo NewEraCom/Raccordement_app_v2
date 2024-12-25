@@ -161,7 +161,6 @@ class ValidationService
             'fiche_installation_image' => $request->input('fiche_installation_image'),
             'pv_image' => $request->input('pv_image'),
             'router_tel_image' => $request->input('router_tel_image'),
-
             'cin_description' =>  $request->input('cin_description'),
             'image_cin' =>  $request->input('image_cin'),
             'cin_justification' =>  $request->input('cin_justification'),
