@@ -21,7 +21,7 @@ class DeclarationService
 
     public function getDeclarationApi($id)
     {
-        $declaration = Declaration::with('routeur') // Eager load the 'routeur' relationship
+        $declaration = Declaration::with('routeur')
             ->where('affectation_id', $id)
             ->orderBy('id', 'desc')
             ->first();
