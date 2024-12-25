@@ -162,7 +162,7 @@ class DeclarationService
             // Update the declaration with the stored image URLs and other fields
             $declaration->update([
                 'pto' => $request->input('pto', $declaration->pto),
-                'routeur_id' => $request->input('routeur_id', $declaration->routeur_id),
+                // 'routeur_id' => $request->input('routeur_id', $declaration->routeur_id),
                 'test_signal' => $request->input('test_signal', $declaration->test_signal),
                 'type_routeur' => $request->input('type_routeur', $declaration->type_routeur),
                 'image_test_signal_url' => $imagePaths['image_test_signal_url'] ?? $declaration->image_test_signal_url,
