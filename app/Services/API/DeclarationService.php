@@ -5,6 +5,7 @@ namespace App\Services\API;
 use App\Models\Blocage;
 use App\Models\Declaration;
 use App\Models\Technicien;
+use App\Models\Routeur;
 use Illuminate\Support\Str;
 
 use Illuminate\Http\Request;
@@ -160,7 +161,6 @@ class DeclarationService
 
             // Update the declaration with the stored image URLs and other fields
             $declaration->update([
-                // 'affectation_id' => $request->input('affectation_id', $declaration->affectation_id),
                 'pto' => $request->input('pto', $declaration->pto),
                 'routeur_id' => $request->input('routeur_id', $declaration->routeur_id),
                 'test_signal' => $request->input('test_signal', $declaration->test_signal),
@@ -182,6 +182,18 @@ class DeclarationService
                 'lng' => $request->input('lng', $declaration->lng),
             ]);
 
+            // Update associated router if routeur_id is provided
+            if ($request->filled('routeur_id')) {
+                $router = Routeur::find($request->input('routeur_id'));
+                if ($router) {
+                    $router->update([
+                        'sn_gpon' => $request->input('sn_gpon', $router->sn_gpon),
+                        'sn_mac' => $request->input('sn_mac', $router->sn_mac),
+                    ]);
+                }
+            }
+
+            // Update client router type if provided
             if ($request->filled('routeur_type')) {
                 $declaration->affectation->client->routeur_type = $request->input('routeur_type');
                 $declaration->affectation->client->save();

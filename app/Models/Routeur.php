@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Routeur extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'uuid',
@@ -41,7 +41,7 @@ class Routeur extends Model
 
     public function returnTechnicienName()
     {
-        return $this->technicien ?  $this->technicien->user->getFullname():'-';
+        return $this->technicien ?  $this->technicien->user->getFullname() : '-';
     }
 
     public function getStatusColor()
@@ -63,6 +63,4 @@ class Routeur extends Model
         }
         return $data;
     }
-
-
 }
