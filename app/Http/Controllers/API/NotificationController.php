@@ -13,10 +13,11 @@ class NotificationController extends Controller
 {
     public function index($id)
     {
-        $notifications = Notification::where('user_id',$id)->orderBy('created_at', 'desc')->get();
+        $notifications = Notification::where('user_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(10); // 10 items per page
 
-
-      return  response()->json( ['notifications' => $notifications]);
+        return response()->json($notifications);
     }
 
     public function markAsRead(Request $request)
