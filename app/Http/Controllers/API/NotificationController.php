@@ -14,7 +14,7 @@ class NotificationController extends Controller
     public function index($id)
     {
         $notifications = Notification::where('user_id', $id)
-            ->with('affectation')
+            ->with(['affectation.client']) // Eager load affectation and its related client
             ->orderBy('created_at', 'desc')
             ->paginate(10); // 10 items per page
 
