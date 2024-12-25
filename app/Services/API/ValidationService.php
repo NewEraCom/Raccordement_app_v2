@@ -105,8 +105,8 @@ class ValidationService
         // Update the validation entry
         $validation->update([
             'test_debit' => $request->input('test_debit', $validation->test_debit),
-            'test_debit_via_cable' => $request->input('test_debit', $validation->test_debit_via_cable),
-            'test_debit_via_wifi' => $request->input('test_debit', $validation->test_debit_via_wifi),
+            'test_debit_via_cable' => $request->input('test_debit_via_cable', $validation->test_debit_via_cable),
+            'test_debit_via_wifi' => $request->input('test_debit_via_wifi', $validation->test_debit_via_wifi),
             'test_debit_via_cable_image_url' => $imagePaths['test_debit_via_cable_image_url'] ?? $validation->test_debit_via_cable_image_url,
             'photo_test_debit_via_wifi_image_url' => $imagePaths['photo_test_debit_via_wifi_image_url'] ?? $validation->photo_test_debit_via_wifi_image_url,
             'etiquetage_image_url' => $imagePaths['etiquetage_image_url'] ?? $validation->etiquetage_image_url,
