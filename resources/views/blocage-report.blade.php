@@ -48,14 +48,18 @@
         </table>
     </div>
     <div class="row text-center">
-
         @foreach ($blocage->blocagePictures as $item)
-        <div class="column" width="48%">
-            <p>{{$item->image }}</p>
-            <img src="data:image/png;base64,{{ $item->image_data }}" alt="" height="80%" srcset="">
-        </div>
+            <div class="column" style="width: 48%; margin: 1%;">
+                <p>{{ $item->image }}</p>
+                @if ($item->image_url)
+                    <img src="{{ asset('storage/' . $item->image_url) }}" alt="{{ $item->image }}" style="width: 100%; height: auto;">
+                @else
+                    <img src="data:image/png;base64,{{ $item->image_data }}" alt="{{ $item->image }}" style="width: 100%; height: auto;">
+                @endif
+            </div>
         @endforeach
     </div>
+    
 
 </div>
 <style>

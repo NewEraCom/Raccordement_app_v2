@@ -144,31 +144,49 @@
     <div class="row text-center">
         <div class="column">
             <p>Équipement installé</p>
-            @if ($client->validations->first()->router_tel_image)
-                <img src="data:image/png;base64,{{ $client->validations->first()->router_tel_image }}"width="80%" alt="" srcset="">
+            @if ($client->validations->first()->router_tel_image_url)
+               
+                <img src="{{ asset('storage/' . $client->validations->first()->router_tel_image_url) }}" width="80%" alt="" srcset="">
+            @elseif ($client->validations->first()->router_tel_image)
+                
+                <img src="data:image/png;base64,{{ $client->validations->first()->router_tel_image }}" width="80%" alt="" srcset="">
             @endif
         </div>
         <div class="column">
             <p>Test de signal (photomètre)</p>
-            @if ($client->declarations->first()->image_test_signal)
-                <img src="data:image/png;base64,{{ $client->declarations->first()->image_test_signal }}"width="80%" alt="" srcset="">
+            @if ($client->declarations->first()->image_test_signal_url)
+               
+                <img src="{{ asset('storage/' . $client->declarations->first()->image_test_signal_url) }}" width="80%" alt="" srcset="">
+            @elseif ($client->declarations->first()->image_test_signal)
+                
+                <img src="data:image/png;base64,{{ $client->declarations->first()->image_test_signal }}" width="80%" alt="" srcset="">
             @endif
         </div>
     </div>
+    
     <div class="row text-center mt-5">
         <div class="column">
-            <p>Test de debit (Par cable)</p>
-            @if ($client->validations->last()->test_debit_via_cable_image)
-                <img src="data:image/png;base64,{{ $client->validations->last()->test_debit_via_cable_image }}"width="80%" alt="" srcset="">
+            <p>Test de débit (Par câble)</p>
+            @if ($client->validations->last()->test_debit_via_cable_image_url)
+               
+                <img src="{{ asset('storage/' . $client->validations->last()->test_debit_via_cable_image_url) }}" width="80%" alt="Test débit via câble">
+            @elseif ($client->validations->last()->test_debit_via_cable_image)
+                
+                <img src="data:image/png;base64,{{ $client->validations->last()->test_debit_via_cable_image }}" width="80%" alt="Test débit via câble">
             @endif
         </div>
         <div class="column">
-            <p>Test de debitrania (Par wifi)</p>
-            @if ($client->validations->first()->photo_test_debit_via_wifi_image)
-                <img src="data:image/png;base64,{{ $client->validations->first()->photo_test_debit_via_wifi_image }}"width="80%" alt="" srcset="">
+            <p>Test de débit (Par wifi)</p>
+            @if ($client->validations->first()->photo_test_debit_via_wifi_image_url)
+               
+                <img src="{{ asset('storage/' . $client->validations->first()->photo_test_debit_via_wifi_image_url) }}" width="80%" alt="Test débit via wifi">
+            @elseif ($client->validations->first()->photo_test_debit_via_wifi_image)
+                
+                <img src="data:image/png;base64,{{ $client->validations->first()->photo_test_debit_via_wifi_image }}" width="80%" alt="Test débit via wifi">
             @endif
         </div>
     </div>
+    
 </div>
 
 <div class="page-break"></div>
@@ -179,38 +197,53 @@
         <h4>Rapport d'intervention Client Fixe</h4>
         <h4 class="text">DTF</h4>
     </div>
-<div class="row text-center">
-    <div class="column">
-        <p>Photo PBI avant l'installation</p>
-        @if ($client->declarations->first()->image_pbi_before)
-            <img src="data:image/png;base64,{{ $client->declarations->first()->image_pbi_before }}"width="80%" alt=""
-                srcset="">
-        @endif
+    <div class="row text-center">
+        <div class="column">
+            <p>Photo PBI avant l'installation</p>
+            @if ($client->declarations->first()->image_pbi_before_url)
+               
+                <img src="{{ asset('storage/' . $client->declarations->first()->image_pbi_before_url) }}" width="80%" alt="Photo PBI avant l'installation">
+            @elseif ($client->declarations->first()->image_pbi_before)
+                
+                <img src="data:image/png;base64,{{ $client->declarations->first()->image_pbi_before }}" width="80%" alt="Photo PBI avant l'installation">
+            @endif
+        </div>
+        <div class="column">
+            <p>Photo PBI après l'installation</p>
+            @if ($client->declarations->first()->image_pbi_after_url)
+               
+                <img src="{{ asset('storage/' . $client->declarations->first()->image_pbi_after_url) }}" width="80%" alt="Photo PBI après l'installation">
+            @elseif ($client->declarations->first()->image_pbi_after)
+                
+                <img src="data:image/png;base64,{{ $client->declarations->first()->image_pbi_after }}" width="80%" alt="Photo PBI après l'installation">
+            @endif
+        </div>
     </div>
-    <div class="column">
-        <p>Photo PBI après l'installation</p>
-        @if ($client->declarations->first()->image_pbi_after)
-            <img src="data:image/png;base64,{{ $client->declarations->first()->image_pbi_after }}"width="80%" alt=""
-                srcset="">
-        @endif
+    
+    <div class="row text-center mt-5">
+        <div class="column">
+            <p>Photo PBO avant l’installation</p>
+            @if ($client->declarations->first()->image_pbo_before_url)
+               
+                <img src="{{ asset('storage/' . $client->declarations->first()->image_pbo_before_url) }}" width="80%" alt="Photo PBO avant l’installation">
+            @elseif ($client->declarations->first()->image_pbo_before)
+                
+                <img src="data:image/png;base64,{{ $client->declarations->first()->image_pbo_before }}" width="80%" alt="Photo PBO avant l’installation">
+            @endif
+        </div>
+        <div class="column">
+            <p>Photo PBO après l’installation</p>
+            @if ($client->declarations->first()->image_pbo_after_url)
+               
+                <img src="{{ asset('storage/' . $client->declarations->first()->image_pbo_after_url) }}" width="80%" alt="Photo PBO après l’installation">
+            @elseif ($client->declarations->first()->image_pbo_after)
+                
+                <img src="data:image/png;base64,{{ $client->declarations->first()->image_pbo_after }}" width="80%" alt="Photo PBO après l’installation">
+            @endif
+        </div>
     </div>
-</div>
-<div class="row text-center mt-5">
-    <div class="column">
-        <p>Photo PBO avant l’installation</p>
-        @if ($client->declarations->first()->image_pbo_before)
-            <img src="data:image/png;base64,{{ $client->declarations->first()->image_pbo_before }}"width="80%"
-                alt="" srcset="">
-        @endif
-    </div>
-    <div class="column">
-        <p>Photo PBO après l’installation</p>
-        @if ($client->declarations->first()->image_pbo_after)
-            <img src="data:image/png;base64,{{ $client->declarations->first()->image_pbo_after }}"width="80%"
-                alt="" srcset="">
-        @endif
-    </div>
-</div>
+    
+
 </div>
 <div class="page-break"></div>
 <div>
@@ -222,10 +255,15 @@
     <div class="row text-center">
         <div class="">
             <p>Etiquetage outdoor:</p>
-                @if ($client->validations->last()->etiquetage_image)
-                <img src="data:image/png;base64,{{ $client->validations->last()->etiquetage_image }}"width="30%" alt="" srcset="">
+            @if ($client->validations->last()->etiquetage_image_url)
+               
+                <img src="{{ asset('storage/' . $client->validations->last()->etiquetage_image_url) }}" width="30%" alt="Etiquetage outdoor">
+            @elseif ($client->validations->last()->etiquetage_image)
+                
+                <img src="data:image/png;base64,{{ $client->validations->last()->etiquetage_image }}" width="30%" alt="Etiquetage outdoor">
             @endif
         </div>
+        
     </div>
     <div class="line bg-black mt-5 h-25">
         <h4>Réception de service</h4>
@@ -233,10 +271,15 @@
     <div class="row text-center">
         <div class="">
             <p>PV d'installation:</p>
-            @if ($client->validations->last()->pv_image)
-                <img src="data:image/png;base64,{{ $client->validations->last()->pv_image }}" width="50%" alt="" srcset="">
+            @if ($client->validations->last()->pv_image_url)
+                
+                <img src="{{ asset('storage/' . $client->validations->last()->pv_image_url) }}" width="50%" alt="PV d'installation">
+            @elseif ($client->validations->last()->pv_image)
+
+                <img src="data:image/png;base64,{{ $client->validations->last()->pv_image }}" width="50%" alt="PV d'installation">
             @endif
         </div>
+        
     </div>
 </div>
 
