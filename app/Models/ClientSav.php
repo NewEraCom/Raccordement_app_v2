@@ -8,4 +8,23 @@ use Illuminate\Database\Eloquent\Model;
 class ClientSav extends Model
 {
     use HasFactory;
+
+    protected $table = 'sav_client';
+
+    // Attributs qui peuvent être remplis en masse (Mass Assignment)
+    protected $fillable = [
+        'n_case',             
+        'login',               
+        'sip',                 
+        'address',           
+        'client_name',       
+        'contact',          
+        'date_demande',      
+        'city_id',           
+        'plaque_id',          
+        'lat',                 
+        'lng',                 
+        'comment',             
+        'service_activities', 
+    ];
 }

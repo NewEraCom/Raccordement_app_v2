@@ -3,7 +3,7 @@
     <div class="row">
         <div class="col-12">
             <div class="page-title-box">
-                <div class="page-title-right">
+                <div class="page-title-right d-flex justify-content-start align-items-center gap-1">
                     <button class="btn btn-success btn-sm shadow-none mb-1" wire:click="exportToCsv">
                         <span wire:target="exportToCsv" wire:loading.remove>
                             <i class="uil-up-arrow me-2"></i> Exporter
@@ -24,6 +24,9 @@
                                 aria-hidden="true"></span>
                             Chargement
                         </span>
+                    </button>
+                    <button class="btn btn-primary btn-sm shadow-none mb-1 d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#add-modal">
+                        <i class="uil-plus me-2"></i> Ajouter un client
                     </button>
                 </div>
                 <h4 class="page-title">Clients</h4>
@@ -147,6 +150,7 @@
                             <th>Client</th>
                             <th class="text-center">Telephone</th>
                             <th class="text-center">Date de creation</th>
+                            <th class="text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -167,8 +171,22 @@
                                 </td>    
                                 <td class="text-center">
                                     {{$client->date_demande}}
-                                </td>                           
+                                </td>   
+                                <td class="text-center"> 
+                                    <div>
+                                        <button class="btn btn-danger btn-sm shadow-none" data-bs-toggle="modal"
+                                        data-bs-target="#delete-modal"
+                                        wire:click="$set('client_id',{{ $client->id }})"><i
+                                            class="uil-trash"></i></button>
+                                            <button type="button" class="btn btn-warning btn-sm shadow-none"
+                                            wire:click="setClient({{ $client->id }})" data-bs-toggle="modal"
+                                            data-bs-target="#edit-modal"><i class="uil-pen"></i>
+                                        </button>
+                                    </div>
+                                </td>                       
                             </tr>
+
+                           
                         @empty
                             <tr>
                                 <td colspan="9" class="text-center">
@@ -265,7 +283,7 @@
         aria-hidden="true" wire:ignore.self>
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form wire:submit.prevent="delete">
+                <form wire:submit.prevent="deleteSavClient">
                     <div class="modal-header">
                         <h4 class="modal-title" id="delete-modalLabel">Supprimer un client</h4>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -278,8 +296,8 @@
                         <button type="button" class="btn btn-light shadow-none"
                             data-bs-dismiss="modal">Fermer</button>
                         <button type="submit" class="btn btn-danger shadow-none">
-                            <span wire:loading.remove wire:target="delete">Oui, supprimez-le</span>
-                            <span wire:loading wire:target="delete">
+                            <span wire:loading.remove wire:target="deleteSavClient">Oui, supprimez-le</span>
+                            <span wire:loading wire:target="deleteSavClient">
                                 <span class="spinner-border spinner-border-sm me-2" role="status"
                                     aria-hidden="true"></span>
                                 Chargement...
@@ -321,134 +339,172 @@
         </div>
     </div>
 
-    <div id="edit-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="edit-modalLabel"
-        aria-hidden="true" wire:ignore.self>
+
+    <div id="edit-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="importation-modalLabel" aria-hidden="true" wire:ignore.self>
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
+            <div class="modal-content shadow-lg border-0 rounded">
                 <form wire:submit.prevent="edit">
-                    <div class="modal-header">
-                        <h4 class="modal-title" id="edit-modalLabel">Modifier un client</h4>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                            aria-hidden="true"></button>
+                    <div class="modal-header bg-primary text-white">
+                        <h4 class="modal-title" id="edit-modalLabel">Ajouter un client</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
                     </div>
                     <div class="modal-body">
                         <div class="row">
-                            <div class="col-12">
-                                <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="floatingInput"
-                                        wire:model.lazy="e_address" />
-                                    <label for="floatingInput">Adresse de client</label>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control border-primary shadow-sm" id="idCaseInput" wire:model.lazy="new_id_case" placeholder=" " required />
+                                    <label for="idCaseInput">ID CASE</label>
                                 </div>
                             </div>
-                            <div class="col-12">
-                                <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="floatingInput"
-                                        wire:model="e_name" />
-                                    <label for="floatingInput">Nom du client</label>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control border-primary shadow-sm" id="networkAccessInput" wire:model.lazy="new_network_access" placeholder=" " required />
+                                    <label for="networkAccessInput">Accès réseau</label>
                                 </div>
                             </div>
-                            <div class="col-12">
-                                <div class="col-12">
-                                    <div class="form-floating mb-3">
-                                        <input type="text" class="form-control" id="floatingInput" min="10"
-                                            wire:model="e_sip" />
-                                        <label for="floatingInput">Login SIP</label>
-                                    </div>
-                                </div>
-                            </div>
-
-
-
-                            <div class="col-12">
-                                <div class="form-floating mb-3">
-                                    <input type="number" min="10" class="form-control" id="floatingInput"
-                                        wire:model.lazy="e_phone" />
-                                    <label for="floatingInput">Téléphone</label>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-floating mb-3">
-                                    <select class="form-select" id="floatingSelect" wire:model.lazy="e_type">
-                                        <option value="" selected>Choisissez un type</option>
-                                        <option value="B2B">B2B</option>
-                                        <option value="B2C">B2C</option>
-                                    </select>
-                                    <label for="floatingSelect">Type de client</label>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-floating mb-3">
-                                     <select class="form-select" id="floatingSelect" wire:model.lazy="e_type_prob">
-                                        <option value="" selected>Choisissez un type</option>
-                                        <option value="Accès">Accès</option>
-                                        <option value="Changement routeur payant">Changement routeur payant</option>
-                                         <option value="Emplacement équipement
-">Emplacement équipement
-</option>
-                                          <option value="Lenteur débit">Lenteur débit</option>
-                                           <option value="Microcoupure data">Microcoupure data</option>
-                                             <option value="Réception
-
-">Réception</option>
-                                               <option value="Incompatibilité
-">Incompatibilité</option>
-                                    </select>
-                                   
-                                    <label for="floatingInput">Type Probleme</label>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="floatingInput"
-                                        wire:model.lazy="e_description" />
-                                    <label for="">Commentaire</label>
-                                </div>
-                            </div>
-
-                            <div class="col-6">
-                                <div class="form-floating mb-3">
-                                    <select class="form-select" id="floatingSelect" wire:model.lazy="e_debit">
-                                        <option value="" selected disabled>Choisissez un débit</option>
-                                        <option value="-"></option>
-                                        <option value="20">20 Méga</option>
-                                        <option value="50">50 Méga</option>
-                                        <option value="100">100 Méga</option>
-                                        <option value="200">200 Méga</option>
-                                    </select>
-                                    <label for="floatingSelect">Débit</label>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="form-floating mb-3">
-                                    <select class="form-select" id="floatingSelect" wire:model.lazy="e_routeur">
-                                        <option value="" selected disabled>Choisissez un equipement</option>
-                                        <option value="-"></option>
-                                        <option>ZTE F660</option>
-                                        <option>ZTE F680</option>
-                                        <option>ZTE F6600</option>
-                                    </select>
-                                    <label for="floatingSelect">Equipement</label>
-                                </div>
-                            </div>
-
                         </div>
+    
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control border-primary shadow-sm" id="lineNumberInput" wire:model.lazy="new_line_number" placeholder=" " required />
+                                    <label for="lineNumberInput">N° de la ligne</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control border-primary shadow-sm" id="fullNameInput" wire:model.lazy="new_full_name" placeholder=" " required />
+                                    <label for="fullNameInput">Nom et prénom</label>
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control border-primary shadow-sm" id="contactNumberInput" wire:model.lazy="new_contact_number" placeholder="" required />
+                                    <label for="contactNumberInput">N° de contact</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control border-primary shadow-sm" id="serviceActivitiesInput" wire:model.lazy="new_service_activities" placeholder="" required />
+                                    <label for="serviceActivitiesInput">Activités de service</label>
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div class="mb-3">
+                            <div class="">
+                                <label for="addressInput">Adresse</label>
+                                <input type="text" class="form-control border-primary shadow-sm" id="addressInput" wire:model.lazy="new_address" placeholder="" required />
+                                
+                            </div>
+                        </div>
+    
+                        <div class="">
+                            <label for "commentInput">Commentaire</label>
+                            <textarea class="form-control border-primary shadow-sm" id="commentInput" wire:model.lazy="new_comment" rows=3 placeholder=""></textarea>
+                           
+                        </div>
+    
                     </div>
+    
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-light shadow-none"
-                            data-bs-dismiss="modal">Fermer</button>
-                        <button type="submit" class="btn btn-primary shadow-none">
-                            <span wire:loading.remove wire:target="edit">Modifier</span>
-                            <span wire:loading wire:target="edit">
-                                <span class="spinner-border spinner-border-sm me-2" role="status"
-                                    aria-hidden="true"></span>
-                                Chargement...
+                        <button type="button" class="btn btn-light shadow-none me-auto" data-bs-dismiss="modal">Fermer</button>
+                        <button type="submit" class='btn btn-info shadow-none'>
+                            <span wire:loading.remove wire:target='edit'>Modifier</span>
+                            <span wire:loading wire:target='edit'>
+                                <span class='spinner-border spinner-border-sm me-2' role='status' aria-hidden='true'></span> Chargement...
                             </span>
                         </button>
                     </div>
                 </form>
             </div>
         </div>
-    </div>
+    </div> 
+    <div id="add-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="importation-modalLabel" aria-hidden="true" wire:ignore.self>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content shadow-lg border-0 rounded">
+                <form wire:submit.prevent="Insert">
+                    <div class="modal-header bg-primary text-white">
+                        <h4 class="modal-title" id="add-modalLabel">Ajouter un client</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control border-primary shadow-sm" id="idCaseInput" wire:model.lazy="new_id_case1" placeholder=" " required />
+                                    <label for="idCaseInput">ID CASE</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control border-primary shadow-sm" id="networkAccessInput" wire:model.lazy="new_network_access1" placeholder=" " required />
+                                    <label for="networkAccessInput">Accès réseau</label>
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control border-primary shadow-sm" id="lineNumberInput" wire:model.lazy="new_line_number1" placeholder=" " required />
+                                    <label for="lineNumberInput">N° de la ligne</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control border-primary shadow-sm" id="fullNameInput" wire:model.lazy="new_full_name1" placeholder=" " required />
+                                    <label for="fullNameInput">Nom et prénom</label>
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control border-primary shadow-sm" id="contactNumberInput" wire:model.lazy="new_contact_number1" placeholder="" required />
+                                    <label for="contactNumberInput">N° de contact</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control border-primary shadow-sm" id="serviceActivitiesInput" wire:model.lazy="new_service_activities1" placeholder="" required />
+                                    <label for="serviceActivitiesInput">Activités de service</label>
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div class="mb-3">
+                            <div class="">
+                                <input type="text" class="form-control border-primary shadow-sm" id="addressInput" wire:model.lazy="new_address1" placeholder="" required />
+                                <label for="addressInput">Adresse</label>
+                            </div>
+                        </div>
+    
+                        <div class="">
+                            <textarea class="form-control border-primary shadow-sm" id="commentInput" wire:model.lazy="new_comment1" rows=3 placeholder=""></textarea>
+                            <label for "commentInput">Commentaire</label>
+                        </div>
+    
+                    </div>
+    
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light shadow-none me-auto" data-bs-dismiss="modal">Fermer</button>
+                        <button type="submit" class='btn btn-success shadow-none'>
+                            <span wire:loading.remove wire:target='Insert'>Ajouter</span>
+                            <span wire:loading wire:target='Insert'>
+                                <span class='spinner-border spinner-border-sm me-2' role='status' aria-hidden='true'></span> Chargement...
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div> 
+    
 
     <div id="affecter-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="edit-modalLabel"
         aria-hidden="true" wire:ignore.self>
@@ -537,159 +593,12 @@
         </div>
     </div>
 
-    <div id="add-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="importation-modalLabel"
-        aria-hidden="true" wire:ignore.self>
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form wire:submit.prevent="add">
-                    <div class="modal-header">
-                        <h4 class="modal-title" id="add-modalLabel">Ajouter un client</h4>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                            aria-hidden="true"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="floatingInput"
-                                wire:model.lazy="new_name" />
-                            <label for="floatingInput">Nom de client</label>
-                        </div>
+ 
 
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="floatingInput"
-                                wire:model.lazy="new_address" />
-                            <label for="floatingInput">Adresse de client</label>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-6">
-                                <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="floatingInput"
-                                        wire:model.lazy="new_sip" />
-                                    <label for="floatingInput">Login SIP</label>
-                                </div>
-                            </div>
-
-                            <div class="col-6">
-                                <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="floatingInput"
-                                        wire:model.lazy="new_id" />
-                                    <label for="floatingInput">Login Internet</label>
-                                </div>
-                            </div>
-
-                            <div class="col-6">
-                                <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="floatingInput"
-                                        wire:model.lazy="new_id_case" />
-                                    <label for="floatingInput">Id Case</label>
-                                </div>
-                            </div>
-                            <div class="col-6">
-
-
-
-                                <div class="form-floating mb-3">
-                                    <input type="number" min="10" class="form-control" id="floatingInput"
-                                        wire:model.lazy="new_phone" />
-                                    <label for="floatingInput">Téléphone</label>
-                                </div>
-                            </div>
-
-
-
-                            <div>
-
-                            </div>
-
-                            <div class="col-6">
-                                <div class="form-floating mb-3">
-                                    <select class="form-select" id="floatingSelect" wire:model.lazy="new_type">
-                                        <option value="" selected>Choisissez un type</option>
-                                        <option value="B2B">B2B</option>
-                                        <option value="B2C">B2C</option>
-                                    </select>
-                                    <label for="floatingSelect">Type de client</label>
-                                </div>
-                            </div>
-
-                            <div class="col-6">
-                                <div class="form-floating mb-3">
-                                    <select class="form-select" id="floatingSelect" wire:model.lazy="new_type_prob">
-                                        <option value="" selected>Choisissez un type</option>
-                                        <option value="Accès">Accès</option>
-                                        <option value="Changement routeur payant">Changement routeur payant</option>
-                                         <option value="Emplacement équipement
-">Emplacement équipement
-</option>
-                                          <option value="Lenteur débit">Lenteur débit</option>
-                                           <option value="Microcoupure data">Microcoupure data</option>
-                                             <option value="Réception
-
-">Réception</option>
-                                               <option value="Incompatibilité
-">Incompatibilité</option>
-                                    </select>
-                                    <label for="floatingInput">Type Probleme</label>
-                                </div>
-                            </div>
-
-
-                            <div>
-                                <label for="description">Commentaire</label>
-
-                                <textarea id="description" name="description" rows="4" cols="60" wire:model.lazy="new_description"></textarea>
-
-                            </div>
-
-
-
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="form-floating mb-3">
-                                        <select class="form-select" id="floatingSelect" wire:model.lazy="new_debit"
-                                            required>
-                                            <option value="" selected disabled>Choisissez un débit</option>
-                                            <option value="-"></option>
-                                            <option value="20">20 Méga</option>
-                                            <option value="50">50 Méga</option>
-                                            <option value="100">100 Méga</option>
-                                            <option value="200">200 Méga</option>
-                                        </select>
-                                        <label for="floatingSelect">Débit</label>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="form-floating mb-3">
-                                        <select class="form-select" id="floatingSelect" wire:model.lazy="new_routeur"
-                                            required>
-                                            <option value="" selected disabled>Choisissez un equipement</option>
-                                            <option value="-"></option>
-                                            <option>ZTE F660</option>
-                                            <option>ZTE F680</option>
-                                            <option>ZTE F6600</option>
-                                        </select>
-                                        <label for="floatingSelect">Equipement</label>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-light shadow-none"
-                                data-bs-dismiss="modal">Fermer</button>
-                            <button type="submit" class="btn btn-primary shadow-none">
-                                <span wire:loading.remove wire:target="add">Ajouter</span>
-                                <span wire:loading wire:target="add">
-                                    <span class="spinner-border spinner-border-sm me-2" role="status"
-                                        aria-hidden="true"></span>
-                                    Chargement...
-                                </span>
-                            </button>
-                        </div>
-                </form>
-            </div>
-        </div>
-    </div>
+   
+    
+    
+    
 
     <div id="pipe" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="pipe-modalLabel"
         aria-hidden="true" wire:ignore.self>

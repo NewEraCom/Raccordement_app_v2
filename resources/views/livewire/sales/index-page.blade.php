@@ -50,7 +50,7 @@
                                     <option value="" selected>-</option>
                                     @foreach ($techniciens as $item)
                                     <option value="{{ $item->id }}">{{ $item->user->getFullname() }}
-                                        <small>({{ $item->soustraitant->name }})</small>
+                                        <small>({{ $item->soustraitant ? $item->soustraitant->name : 'N/A' }})</small>
                                     </option>
                                     @endforeach
                                 </select>
