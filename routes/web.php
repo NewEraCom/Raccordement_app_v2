@@ -44,6 +44,7 @@ use App\Http\Livewire\Sav\SavViewScreen;
 use App\Http\Livewire\Sav\StockSav as SavStockSav;
 use App\Http\Livewire\Sav\Technicien as SavTechnicien;
 use App\Http\Livewire\Sav\Techniciens;
+use App\Http\Livewire\shared\TechPosPage;
 use App\Http\Livewire\Soustraitant\HomePage as SoustraitantHomePage;
 use App\Http\Livewire\Soustraitant\SoustraitantAffectationsPage;
 use App\Http\Livewire\SousTraitant\SousTraitantComponent;
@@ -176,6 +177,9 @@ Route::middleware(['auth', 'role:sav'])->name('sav.')->prefix('sav')->group(func
 Route::any('/pdf/{client}', PDFGenerator::class)->name('pdf');
 Route::any('/blocage-pdf/{blocage}', BlocageController::class)->name('blocage-pdf');
 
+// Route::middleware(['auth', 'role:sav','role:supervisor'])->group(function () {
+    Route::any('/techpos', TechPosPage::class)->name('techpos');
+// });
 
 Route::any('/decl', function () {
     set_time_limit(0);
