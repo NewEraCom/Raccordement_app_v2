@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <title>Neweraconnect - {{ $title }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content="Ayoub chahid" name="author" />
+    <meta content="Ayoub chahid - Hamza El Jaouani - Mourad Arejdal" name="author" />
 
     <!-- App favicon -->
     <link rel="shortcut icon" href="{{ asset('assets/images/NEWERACONNECT.png') }}">
@@ -193,7 +193,12 @@
                                 <span> Affectations </span>
                             </a>
                         </li>
-
+                        <li class="side-nav-item">
+                            <a href="{{ route('techpos') }}" class="side-nav-link fw-bold">
+                                <i class="uil-location-point"></i>
+                                <span> Technicien Logs </span>
+                            </a>
+                        </li>
                         <li class="side-nav-item">
                             <a href="{{ route('admin.routeurs') }}" class="side-nav-link fw-bold">
                                 <i class="uil-technology"></i>
@@ -276,6 +281,12 @@
                         <a href="{{ route('sav.savaffectation') }}" class="side-nav-link fw-bold">
                             <i class="uil-clipboard-alt"></i>
                             <span> Affectation </span>
+                        </a>
+                    </li>
+                    <li class="side-nav-item">
+                        <a href="{{ route('techpos') }}" class="side-nav-link fw-bold">
+                            <i class="uil-location-point"></i>
+                            <span> Technicien Logs </span>
                         </a>
                     </li>
                     <li class="side-nav-item">
