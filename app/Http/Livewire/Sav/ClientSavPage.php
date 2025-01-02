@@ -107,10 +107,11 @@ class ClientSavPage extends Component
                     'status' => 'Affecté',
 
                 ]);
-                // $client = $affectation->client;
-                // Client::find($affectation->client_id)->update([
-                //     'statusSav' => 'Affecté',
-                // ]);
+                if ($client) {
+                    $client->update([
+                        'status' => 'Affecté',  // Properly update statusSav
+                    ]);
+                }
 
                 // if ($this->selectedTech != null) {
                 //     $affectation->update([
@@ -251,6 +252,7 @@ class ClientSavPage extends Component
           //  'plaque_id' => $this->new_plaque_id,
             //'lat' => $this->new_lat,
            // 'lng' => $this->new_lng,
+           'client' =>'Saisie',
             'comment' => $this->new_comment1,
             'service_activities' => $this->new_service_activities1,
         ]);

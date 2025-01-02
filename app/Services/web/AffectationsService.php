@@ -38,26 +38,51 @@ class AffectationsService
             })
             ->orderByDesc('updated_at');
     }
-    static public function getTickets($client_name, $client_status, $technicien)
-    {
-        return SavTicket::with(['client', 'client.city', 'technicien.user'])
-            ->when($client_name, function ($q, $client_name) {
-                $q->whereHas('client', function ($q) use ($client_name) {
-                    $q->where('name', 'like', '%' . $client_name . '%')->orWhere('sip', 'like', '%' . $client_name . '%')->orWhereHas('city', function ($q) use ($client_name) {
-                        $q->where('name', 'like', '%' . $client_name . '%');
-                    });
-                });
-            })
-            ->when($client_status, function ($q, $client_status) {
-                $q->when('statusSav', $client_status);
-            })
+    // static public function getTickets($client_name, $client_status, $technicien)
+    // {
+    //     return SavTicket::with(['client', 'client.city', 'technicien.user'])
+    //         ->when($client_name, function ($q, $client_name) {
+    //             $q->whereHas('client', function ($q) use ($client_name) {
+    //                 $q->where('name', 'like', '%' . $client_name . '%')->orWhere('sip', 'like', '%' . $client_name . '%')->orWhereHas('city', function ($q) use ($client_name) {
+    //                     $q->where('name', 'like', '%' . $client_name . '%');
+    //                 });
+    //             });
+    //         })
+    //         ->when($client_status, function ($q, $client_status) {
+    //             $q->when('statusSav', $client_status);
+    //         })
 
-            ->when($technicien, function ($q, $technicien) {
-                $q->where('technicien_id', $technicien);
-            })
-            ->orderByDesc('updated_at');
-    }
+    //         ->when($technicien, function ($q, $technicien) {
+    //             $q->where('technicien_id', $technicien);
+    //         })
+    //         ->orderByDesc('updated_at');
+    // }
+    static public function getTickets($search, $client_status, $technicien)
+{
+    return SavTicket::with(['client', 'client.city', 'technicien.user'])
+        ->when($search, function ($q, $search) {
+            $q->whereHas('client', function ($q) use ($search) {
+                // Search by client_name, sip, city.name, or id_case
+                $q->where('client_name', 'like', '%' . $search . '%')
+                  ->orWhere('sip', 'like', '%' . $search . '%')
+                  ->orWhere('id_case', 'like', '%' . $search . '%')  // Added search by id_case
+                  ->orWhereHas('city', function ($q) use ($search) {
+                      $q->where('name', 'like', '%' . $search . '%');
+                  });
+            });
+        })
+        ->when($client_status, function ($q, $client_status) {
+            // Filter by client status
+            $q->where('statusSav', $client_status);
+        })
+        ->when($technicien, function ($q, $technicien) {
+            // Filter by technicien if provided
+            $q->where('technicien_id', $technicien);
+        })
+        ->orderByDesc('updated_at');
+}
 
+    
 
 
     public static function getAffectationsStatistic($status, $start_date, $end_date): array

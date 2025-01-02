@@ -180,7 +180,7 @@ class SavAffectation extends Component
 
     public function render()
     {
-     $affectations = AffectationsService::getTickets($this->client_name, $this->client_status, $this->technicien)->paginate(10);
+     $affectations = AffectationsService::getTickets($this->search, $this->client_status, $this->technicien)->paginate(10);
         $data = AffectationsService::getSavAffectationsStatistic($this->start_date, $this->end_date);
         $techniciens = Technicien::with('user')->get();
         $this->sTechniciens = Technicien::where('soustraitant_id', $this->technicien_affectation)->get();
