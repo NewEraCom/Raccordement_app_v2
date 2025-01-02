@@ -61,12 +61,12 @@
                         <button class="btn btn-success btn-sm shadow-none" data-bs-toggle="modal"
                             data-bs-target="#exportation-modal"> <i class="uil-export me-2"></i> Exproter
                         </button>
-                        <button class="btn btn-danger btn-sm shadow-none" data-bs-toggle="modal"
+                        {{--<button class="btn btn-danger btn-sm shadow-none" data-bs-toggle="modal"
                             data-bs-target="#delete-all-modal"> <i class="uil-trash me-2"></i> Supprimer
-                        </button>
-                        {{-- <button class="btn btn-secondary btn-sm shadow-none" data-bs-toggle="modal"
+                        </button>--}}
+                         <button class="btn btn-secondary btn-sm shadow-none" data-bs-toggle="modal"
                             data-bs-target="#affecter-modal"> <i class="uil-label me-2"></i> Affecter
-                        </button> --}}
+                        </button> 
                     </div>
                 </div>
                 <div class="card-body">
@@ -296,7 +296,7 @@
         </div>
     </div>
 
-    <div id="affecter-modal" class="modal fade" tabindex="-1" role="dialog"
+    <!-- <div id="affecter-modal" class="modal fade" tabindex="-1" role="dialog"
         aria-labelledby="importation-modalLabel" aria-hidden="true" wire:ignore.self>
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -344,6 +344,71 @@
                             </select>
                             <label for="floatingSelect">Techniciens </label>
                         </div> --}}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light shadow-none"
+                            data-bs-dismiss="modal">Fermer</button>
+                        <button type="submit" class="btn btn-primary shadow-none">
+                            <span wire:loading.remove wire:target="affectation">Affecter</span>
+                            <span wire:loading wire:target="affectation">
+                                <span class="spinner-border spinner-border-sm me-2" role="status"
+                                    aria-hidden="true"></span>
+                                Chargement...
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div> -->
+    <div id="affecter-modal" class="modal fade" tabindex="-1" role="dialog"
+        aria-labelledby="importation-modalLabel" aria-hidden="true" wire:ignore.self>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form wire:submit.prevent="affectation">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="importation-modalLabel">Affectation des clients</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-hidden="true"></button>
+                    </div>
+                    <div class="modal-body">
+                        @error('soustraitant_affectation')
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <strong>{{ $message }}</strong>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+                        @enderror
+                        @error('selectedItems')
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <strong>{{ $message }}</strong>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+                        @enderror
+                        <!-- <div class="form-floating">
+                            <select class="form-select" id="floatingSelect"
+                                aria-label="Floating label select example" wire:model="soustraitant_affectation">
+                                <option selected>Sélectionnez un sous traitant</option>
+                                @foreach ($sousTraitant as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
+                            <label for="floatingSelect">Sous Traitant </label>
+                        </div> -->
+                        <div class="pt-3">
+
+                        </div>
+                         <div class="form-floating  ">
+                            <select class="form-select" id="floatingSelect"
+                                aria-label="Floating label select example" wire:model="selectedTech">
+                                <option selected>Sélectionnez un technicien </option>
+                                @foreach ($sTechniciens as $item)
+                                    <option value="{{ $item->id }}">{{ $item->user->getFullName() }}</option>
+                                @endforeach
+                            </select>
+                            <label for="floatingSelect">Techniciens </label>
+                        </div> 
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light shadow-none"
