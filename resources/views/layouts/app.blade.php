@@ -403,6 +403,12 @@
                             </a>
                         </li>
                         <li class="side-nav-item">
+                            <a href="{{ route('sav.savaffectation') }}" class="side-nav-link fw-bold">
+                                <i class="uil-users-alt"></i>
+                                <span> Clients (SAV)</span>
+                            </a>
+                        </li>
+                        <li class="side-nav-item">
                             <a href="{{ route('soustraitant.stock') }}" class="side-nav-link fw-bold">
                                 <i class="uil-clipboard-alt"></i>
                                 <span> Stock </span>

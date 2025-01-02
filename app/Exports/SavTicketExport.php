@@ -36,9 +36,9 @@ class SavTicketExport implements FromCollection, WithHeadings, ShouldAutoSize, W
     }
     public function collection()
     {
-        return SavTicket::select('clients.sip','id_case','clients.address','clients.phone_no','clients.name', DB::raw("CONCAT(users.first_name,' ',users.last_name)"),'soustraitants.name as soustraitant')
+        return SavTicket::select('sav_client.sip','id_case','sav_client.address','sav_client.contact','sav_client.client_name', DB::raw("CONCAT(users.first_name,' ',users.last_name)"),'soustraitants.name as soustraitant')
 
-        ->join('clients', 'clients.id', '=', 'sav_tickets.client_id')
+        ->join('sav_client', 'sav_client.id', '=', 'sav_tickets.client_id')
         ->leftJoin('techniciens', 'techniciens.id', '=', 'sav_tickets.technicien_id')
         ->leftJoin('users', 'users.id', '=', 'techniciens.user_id')
         ->leftJoin('soustraitants', 'soustraitants.id', '=', 'sav_tickets.soustraitant_id')

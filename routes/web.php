@@ -162,7 +162,7 @@ Route::middleware(['auth', 'role:sales'])->name('sales.')->prefix('sales')->grou
 });
 
 
-Route::middleware(['auth', 'role:sav'])->name('sav.')->prefix('sav')->group(function () {
+Route::middleware(['auth'])->name('sav.')->prefix('sav')->group(function () {
     Route::any('/dashboard', SavHomePage::class)->name('dashboard');
     Route::any('/clientsav', ClientSavPage::class)->name('clientsav');
     Route::any('/stock', SavStockSav::class)->name('stock');
