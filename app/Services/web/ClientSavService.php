@@ -12,6 +12,7 @@ use App\Models\Blocage;
 use App\Models\ClientSav;
 use App\Models\Notification;
 use App\Models\Plaque;
+use App\Models\SavClient;
 use App\Models\Soustraitant;
 use Carbon\Carbon;
 use DOMDocument;
@@ -233,7 +234,7 @@ static public function ImportsClientSAV($content)
 
 
 
-    static function index($start_date, $end_date, $search, $status)
+static function index($start_date, $end_date, $search, $status)
     {
         return Client::with(['city', 'technicien'])
             ->whereNotNull('statusSav')
@@ -251,24 +252,13 @@ static public function ImportsClientSAV($content)
                             $query->where('name', 'like', '%' . $search . '%');
                         });
                 });
-            } else {
-                return $query->where('status', $client_status);
-            }
-        })
-        ->when($technicien, function ($query) use ($technicien) {
-            return $query->where('technicien_id', $technicien);
-        })
-        ->when($start_date && $end_date, function ($query) use ($start_date, $end_date) {
-            return $query->whereBetween('created_at', [
-                Carbon::parse($start_date)->startOfDay(),
-                Carbon::parse($end_date)->endOfDay()
-            ]);
-        })
-        ->where('deleted_at', null)
-        ->whereNull('statusSav')
-        ->orderBy('created_at', 'DESC');
-}
-
+            })
+            ->when($status, function ($query) use ($status) {
+                $query->where('statusSav', $status);
+            })
+            ->orderBy('created_at', 'desc');
+    }
+        
     static public function getClientsStatistic()
     {
         $clients = Client::query();
@@ -438,177 +428,177 @@ static public function ImportsClientSAV($content)
     }
 
 
-    static public function importAuto()
-    {
-        try {
-            $array_code = Plaque::where('is_ppi', 1)->pluck('code_plaque')->toArray();
-            set_time_limit(0);
-            $countClient = 0;
-            $cityIds = [];
-            $oClient = ClientIMAP::account('default')->connect();
-            $inbox = $oClient->getFolder('RaccoB2B');
-            $messages = $inbox->query()->unseen()->text('Installation Fibre Optique')->get();
-            if (count($messages) > 0) {
-                foreach ($messages as $message) {
-                    $tech = null;
-                    $data = self::importsClientsAuto(str_replace('&nbsp;', ' ', strip_tags($message->getHTMLBody(true))));
-                    preg_match('/\d{2}\.\d\.\d{2}\.\d{1,3}/', $data['address'], $code);
-                    $lat = $data['lat'];
-                    $lng = $data['lng'];
+//     static public function importAuto()
+//     {
+//         try {
+//             $array_code = Plaque::where('is_ppi', 1)->pluck('code_plaque')->toArray();
+//             set_time_limit(0);
+//             $countClient = 0;
+//             $cityIds = [];
+//             $oClient = ClientIMAP::account('default')->connect();
+//             $inbox = $oClient->getFolder('RaccoB2B');
+//             $messages = $inbox->query()->unseen()->text('Installation Fibre Optique')->get();
+//             if (count($messages) > 0) {
+//                 foreach ($messages as $message) {
+//                     $tech = null;
+//                     $data = self::importsClientsAuto(str_replace('&nbsp;', ' ', strip_tags($message->getHTMLBody(true))));
+//                     preg_match('/\d{2}\.\d\.\d{2}\.\d{1,3}/', $data['address'], $code);
+//                     $lat = $data['lat'];
+//                     $lng = $data['lng'];
 
-                    if (isset($code[0])) {
-                        $item = Map::where('code', $code[0])->first();
-                        if ($item === null) {
-                            $gps = ClientsService::mapSurvey($code[0]);
-                            $lat = $gps->latitude;
-                            $lng = $gps->longitude;
-                            Map::create([
-                                'code' => $code[0],
-                                'lat' => $lat,
-                                'lng' => $lng,
-                            ]);
-                        } else {
-                            $lat = $item->lat;
-                            $lng = $item->lng;
-                        }
-                    }
+//                     if (isset($code[0])) {
+//                         $item = Map::where('code', $code[0])->first();
+//                         if ($item === null) {
+//                             $gps = ClientsService::mapSurvey($code[0]);
+//                             $lat = $gps->latitude;
+//                             $lng = $gps->longitude;
+//                             Map::create([
+//                                 'code' => $code[0],
+//                                 'lat' => $lat,
+//                                 'lng' => $lng,
+//                             ]);
+//                         } else {
+//                             $lat = $item->lat;
+//                             $lng = $item->lng;
+//                         }
+//                     }
 
-                    preg_match('/\d{2}\.\d\.\d{2}/', $data['address'], $plaq_sp);
-                    if ($plaq_sp != null) {
-                        if (in_array($plaq_sp[0], $array_code)) {
-                            $tech = 91;
-                        }
-                    }
+//                     preg_match('/\d{2}\.\d\.\d{2}/', $data['address'], $plaq_sp);
+//                     if ($plaq_sp != null) {
+//                         if (in_array($plaq_sp[0], $array_code)) {
+//                             $tech = 91;
+//                         }
+//                     }
 
-                    $countClient++;
-                    $client = Client::where('sip', $data['sip'])
-                        ->where('offre', $data['offre'])->whereNull('deleted_at')
-                        ->first();
-                    if ($client === NULL || ($client->sip !== $data['sip'] && $client->type !== $data['type'])) {
-                        $countClient++;
-                        Client::create([
-                            'uuid' => Str::uuid(),
-                            'client_id' => $data['login_internet'] ?? '0',
-                            'type' => 'B2C',
-                            'offre' => $data['offre'] ?? '-',
-                            'name' => Str::title($data['name']),
-                            'address' => Str::title($data['address']),
-                            'lat' => $lat,
-                            'technicien_id' => $tech == null ? null : $tech,
-                            'lng' => $lng,
-                            'city_id' => $data['city'],
-                            'plaque_id' => $data['plaque'],
-                            'debit' => $data['debit'],
-                            'sip' => $data['sip'],
-                            'phone_no' => $data['phone'],
-                            'routeur_type' => $data['routeur'],
-                            'status' => $tech == null ? ClientStatusEnum::NEW : ClientStatusEnum::AFFECTED,
-                            'promoteur' => $tech == null ? 0 : 1,
-                        ]);
-                        $cityIds[] = $data['city'];
-                    }
+//                     $countClient++;
+//                     $client = Client::where('sip', $data['sip'])
+//                         ->where('offre', $data['offre'])->whereNull('deleted_at')
+//                         ->first();
+//                     if ($client === NULL || ($client->sip !== $data['sip'] && $client->type !== $data['type'])) {
+//                         $countClient++;
+//                         Client::create([
+//                             'uuid' => Str::uuid(),
+//                             'client_id' => $data['login_internet'] ?? '0',
+//                             'type' => 'B2C',
+//                             'offre' => $data['offre'] ?? '-',
+//                             'name' => Str::title($data['name']),
+//                             'address' => Str::title($data['address']),
+//                             'lat' => $lat,
+//                             'technicien_id' => $tech == null ? null : $tech,
+//                             'lng' => $lng,
+//                             'city_id' => $data['city'],
+//                             'plaque_id' => $data['plaque'],
+//                             'debit' => $data['debit'],
+//                             'sip' => $data['sip'],
+//                             'phone_no' => $data['phone'],
+//                             'routeur_type' => $data['routeur'],
+//                             'status' => $tech == null ? ClientStatusEnum::NEW : ClientStatusEnum::AFFECTED,
+//                             'promoteur' => $tech == null ? 0 : 1,
+//                         ]);
+//                         $cityIds[] = $data['city'];
+//                     }
 
-                    $message->move('INBOX.RaccoArchive');
-                    $message->setFlag('Seen');
-                }
-            }
-//B2B 
-            $messagesB2B = $inbox->query()->unseen()->text("Passage à l'étape Installation")->get();
-            if (count($messagesB2B) > 0) {
-                foreach ($messagesB2B as $ms) {
-                    $tech = null;
-                    $data = self::importB2BClient(str_replace('&nbsp;', ' ', strip_tags($ms->getHTMLBody(true))));
-                    preg_match('/\d{2}\.\d\.\d{2}\.\d{1,3}/', $data['address'], $code);
-                    $lat = $data['lat'];
-                    $lng = $data['lng'];
-
-
-                    $item = null;
-                    if (isset($code[0])) {
-                        $item = Map::where('code', $code[0])->first();
-                    }
-
-                    if ($code != null) {
-                        if ($item === null) {
-                            $gps = ClientsService::mapSurvey($code[0]);
-                            $lat = $gps->latitude;
-                            $lng = $gps->longitude;
-                            Map::create([
-                                'code' => $code[0],
-                                'lat' => $lat,
-                                'lng' => $lng,
-                            ]);
-                        } else {
-                            $lat = $item->lat;
-                            $lng = $item->lng;
-                        }
-                    }
+//                     $message->move('INBOX.RaccoArchive');
+//                     $message->setFlag('Seen');
+//                 }
+//             }
+// //B2B 
+//             $messagesB2B = $inbox->query()->unseen()->text("Passage à l'étape Installation")->get();
+//             if (count($messagesB2B) > 0) {
+//                 foreach ($messagesB2B as $ms) {
+//                     $tech = null;
+//                     $data = self::importB2BClient(str_replace('&nbsp;', ' ', strip_tags($ms->getHTMLBody(true))));
+//                     preg_match('/\d{2}\.\d\.\d{2}\.\d{1,3}/', $data['address'], $code);
+//                     $lat = $data['lat'];
+//                     $lng = $data['lng'];
 
 
-                    preg_match('/\d{2}\.\d\.\d{2}/', $data['address'], $plaq_sp);
-                    if ($plaq_sp != null) {
-                        if (in_array($plaq_sp[0], $array_code)) {
-                            $tech = 91;
-                        }
-                    }
+//                     $item = null;
+//                     if (isset($code[0])) {
+//                         $item = Map::where('code', $code[0])->first();
+//                     }
+
+//                     if ($code != null) {
+//                         if ($item === null) {
+//                             $gps = ClientsService::mapSurvey($code[0]);
+//                             $lat = $gps->latitude;
+//                             $lng = $gps->longitude;
+//                             Map::create([
+//                                 'code' => $code[0],
+//                                 'lat' => $lat,
+//                                 'lng' => $lng,
+//                             ]);
+//                         } else {
+//                             $lat = $item->lat;
+//                             $lng = $item->lng;
+//                         }
+//                     }
 
 
-                    $client = Client::where('sip', $data['sip'])
-                        ->where('offre', $data['offre'])->whereNull('deleted_at')
-                        ->first();
-                    if ($client === NULL || ($client->sip !== $data['sip'])) {
-                        $countClient++;
-                        Client::create([
-                            'uuid' => Str::uuid(),
-                            'client_id' => $data['login_internet'] ?? '0',
-                            'type' => 'B2B',
-                            'offre' => $data['offre'] ?? '-',
-                            'name' => Str::title($data['name']),
-                            'address' => Str::title($data['address']),
-                            'lat' => $lat,
-                            'technicien_id' => $tech == null ? null : $tech,
-                            'lng' => $lng,
-                            'city_id' => $data['city'],
-                            'plaque_id' => $data['plaque'],
-                            'debit' => $data['debit'],
-                            'sip' => $data['sip'],
-                            'phone_no' => $data['phone'],
-                            'routeur_type' => $data['routeur'],
-                            'status' => $tech == null ? ClientStatusEnum::NEW : ClientStatusEnum::AFFECTED,
-                            'promoteur' => $tech == null ? 0 : 1,
-                        ]);
-                    }
-                    $ms->move('INBOX.RaccoArchive');
-                    $ms->setFlag('Seen');
-                }
-            }
+//                     preg_match('/\d{2}\.\d\.\d{2}/', $data['address'], $plaq_sp);
+//                     if ($plaq_sp != null) {
+//                         if (in_array($plaq_sp[0], $array_code)) {
+//                             $tech = 91;
+//                         }
+//                     }
 
-            /* $techniciens = Technicien::whereHas('cities', function ($query) use ($cityIds) {
-                $query->whereIn('city_id', $cityIds);
-            })->get();
-            $techniciensWithMultipleCities = collect();
-            foreach ($techniciens as $technicien) {
-                if ($technicien->cities->count() > 1) {
-                    foreach ($technicien->cities as $city) {
-                        $techniciensWithMultipleCities->push($technicien->replicate()->setRelation('cities', collect([$city])));
-                    }
-                } else {
-                    $techniciensWithMultipleCities->push($technicien);
-                }
-            }
-            foreach ($techniciensWithMultipleCities as $technicien) {
-                $fieldsh['include_player_ids'] = [$technicien->player_id];
-                $notificationMsgi = 'Nouveaux clients disponibles dans votre zone.';
-                OneSignal::sendPush($fieldsh, $notificationMsgi);
-            } */
-            Log::channel('mylog')->info($countClient . ' Clients have been imported.');
-            return $countClient;
-        } catch (Exception $e) {
-            dd($e->getMessage());
-            Log::channel('mylog')->info('Error : ' . $e->getMessage());
-            return $e->getMessage();
-        }
-    }
+
+//                     $client = Client::where('sip', $data['sip'])
+//                         ->where('offre', $data['offre'])->whereNull('deleted_at')
+//                         ->first();
+//                     if ($client === NULL || ($client->sip !== $data['sip'])) {
+//                         $countClient++;
+//                         Client::create([
+//                             'uuid' => Str::uuid(),
+//                             'client_id' => $data['login_internet'] ?? '0',
+//                             'type' => 'B2B',
+//                             'offre' => $data['offre'] ?? '-',
+//                             'name' => Str::title($data['name']),
+//                             'address' => Str::title($data['address']),
+//                             'lat' => $lat,
+//                             'technicien_id' => $tech == null ? null : $tech,
+//                             'lng' => $lng,
+//                             'city_id' => $data['city'],
+//                             'plaque_id' => $data['plaque'],
+//                             'debit' => $data['debit'],
+//                             'sip' => $data['sip'],
+//                             'phone_no' => $data['phone'],
+//                             'routeur_type' => $data['routeur'],
+//                             'status' => $tech == null ? ClientStatusEnum::NEW : ClientStatusEnum::AFFECTED,
+//                             'promoteur' => $tech == null ? 0 : 1,
+//                         ]);
+//                     }
+//                     $ms->move('INBOX.RaccoArchive');
+//                     $ms->setFlag('Seen');
+//                 }
+//             }
+
+//             /* $techniciens = Technicien::whereHas('cities', function ($query) use ($cityIds) {
+//                 $query->whereIn('city_id', $cityIds);
+//             })->get();
+//             $techniciensWithMultipleCities = collect();
+//             foreach ($techniciens as $technicien) {
+//                 if ($technicien->cities->count() > 1) {
+//                     foreach ($technicien->cities as $city) {
+//                         $techniciensWithMultipleCities->push($technicien->replicate()->setRelation('cities', collect([$city])));
+//                     }
+//                 } else {
+//                     $techniciensWithMultipleCities->push($technicien);
+//                 }
+//             }
+//             foreach ($techniciensWithMultipleCities as $technicien) {
+//                 $fieldsh['include_player_ids'] = [$technicien->player_id];
+//                 $notificationMsgi = 'Nouveaux clients disponibles dans votre zone.';
+//                 OneSignal::sendPush($fieldsh, $notificationMsgi);
+//             } */
+//             Log::channel('mylog')->info($countClient . ' Clients have been imported.');
+//             return $countClient;
+//         } catch (Exception $e) {
+//             dd($e->getMessage());
+//             Log::channel('mylog')->info('Error : ' . $e->getMessage());
+//             return $e->getMessage();
+//         }
+//     }
 
     static public function mapSurvey($newClient)
     {

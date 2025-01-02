@@ -11,6 +11,7 @@ use App\Models\Map;
 use App\Models\Blocage;
 use App\Models\Notification;
 use App\Models\Plaque;
+use App\Models\SavTicket;
 use App\Models\Soustraitant;
 use Carbon\Carbon;
 use DOMDocument;

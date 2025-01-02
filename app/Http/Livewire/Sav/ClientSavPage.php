@@ -14,9 +14,11 @@ use App\Models\Plaque;
 use App\Models\SavClient;
 use App\Models\savhistory;
 use App\Models\SavTicket;
+use App\Models\Soustraitant;
 use App\Models\Technicien;
 use App\Services\web\ClientSavService;
 use App\Services\web\ClientsService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
@@ -36,6 +38,7 @@ class ClientSavPage extends Component
     public $file;
     public $new_login_internet, $new_activites, $new_description, $new_type_prob;
     public $technicien_affectation, $cause, $resetPage = false;
+    public $soustraitant_affectation;
 
     public $new_debit, $new_sip, $new_phone, $new_name, $new_id, $new_type, $new_offre, $new_routeur;
     public $e_address, $e_debit, $e_sip, $e_phone, $e_name, $e_id, $e_city, $e_type, $e_offre, $e_routeur, $e_login_internet, $e_activites, $e_description, $e_type_prob;
@@ -76,27 +79,68 @@ class ClientSavPage extends Component
     }
 
 
+
     public function affectation()
     {
-        $data = $this->validate([
-            'technicien_affectation' => 'required',
+        $this->validate([
+            'soustraitant_affectation' => 'required',
             'selectedItems' => 'required',
         ], [
-            'technicien_affectation.required' => 'Veuillez choisir un technicien pour continuer.',
+            'soustraitant_affectation.required' => 'Veuillez choisir un Sous-traitant pour continuer.',
             'selectedItems.required' => 'Veuillez choisir au moins un client pour continuer.',
         ]);
 
-        $return = ClientsService::newAffecttion($data);
+        try {
 
-        $this->selectedItems = [];
-        $this->emit('success');
-        if ($return) {
-            $this->dispatchBrowserEvent('contentChanged', ['item' => 'Affectation effectuée avec succès.']);
-        } else {
-            Log::channel('error')->error('Function affectation in ClientsPage.php : ' . $return->getMessage());
+            DB::beginTransaction();
+            $count = 0;
+            foreach ($this->selectedItems as $item) {
+                $client = SavClient::find($item);
+                $affectation =  SavTicket::updateOrCreate([
+                    'client_id' => $item,
+                    'id_case'=>$client->n_case,
+                    'status' => 'En cours',
+                    'soustraitant_id' => $this->soustraitant_affectation,
+                    'technicien_id' => null,
+                    'affected_by' => Auth::user()->id,
+                    'service_activity'=> $client->service_activities,
+                    'status' => 'Affecté',
+
+                ]);
+                // $client = $affectation->client;
+                // Client::find($affectation->client_id)->update([
+                //     'statusSav' => 'Affecté',
+                // ]);
+
+                // if ($this->selectedTech != null) {
+                //     $affectation->update([
+
+                //         'technicien_id' => $this->selectedTech,
+
+                //     ]);
+            //    }
+                // if ($this->selectedTech) {
+                //     # code...
+                // }
+                $count++;
+            }
+
+            DB::commit();
+
+            $this->selectedItems = [];
+            $this->soustraitant_affectation = null;
+            $this->cause = '';
+            $this->emit('success');
+            $this->dispatchBrowserEvent('contentChanged', ['item' => 'Client affecté avec succès.']);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            dd($th->getMessage());
+            Log::channel('error')->error('Function Affectation in AffectationsPage.php : ' . $th->getMessage());
+            $this->emit('success');
             $this->dispatchBrowserEvent('contentChanged', ['item' => 'Une erreur est survenue.']);
         }
     }
+
 
     public function edit()
     {
@@ -404,12 +448,12 @@ class ClientSavPage extends Component
         $clientsCount = SavClient::count();
         $data = ClientSavService::getClientsSavStatistic();
         $techniciens = Technicien::with('user')->get();
-        
+        $sousTraitant = Soustraitant::all();
         $cities = City::get(['id', 'name']);
         $blocages = Blocage::groupBy('cause')->get('cause');
 
 
-        return view('livewire.sav.client-sav-page', compact(['clients', 'techniciens', 'cities', 'clientsCount', 'problem', 'blocages','kpisData']), ['data' => $data])->layout('layouts.app', [
+        return view('livewire.sav.client-sav-page', compact(['clients', 'techniciens', 'cities', 'clientsCount', 'problem', 'blocages','kpisData','sousTraitant']), ['data' => $data])->layout('layouts.app', [
             'title' => 'Clients',
         ]);
     }

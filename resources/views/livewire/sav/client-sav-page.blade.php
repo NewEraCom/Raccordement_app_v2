@@ -46,8 +46,8 @@
             </div>
         </div>        
     </div>
-    
-    {{-- <div class="row">
+   
+    <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-header border-bottom d-flex">
@@ -55,39 +55,39 @@
                         Filtrage</h5>
                     <div class="ms-auto">
                         <div class="d-none d-sm-none d-md-none d-lg-inline d-xl-inline d-xxl-inline">
-
-                          
-
-
+                         
+                            <button class="btn btn-primary btn-sm shadow-none mb-1 d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#affecter-modal">
+                                <i class="uil-plus me-2"></i> Affecter
+                            </button>
                         </div>
                         <div class="btn-group dropdown d-inline d-sm-inline d-md-inline d-lg-none d-xl-none d-xxl-none">
-                            <a href="#"
-                                class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-xs shadow-none"
-                                data-bs-toggle="dropdown" aria-expanded="false"><i
-                                    class="mdi mdi-dots-horizontal"></i></a>
-                            <div class="dropdown-menu dropdown-menu-end" style="">
+                            <a href="#" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-xs shadow-none"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="mdi mdi-dots-horizontal"></i>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end">
                                 <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#add-modal">
                                     <i class="uil-plus me-2"></i> Ajouter un client
                                 </button>
-                                <button class="dropdown-item" data-bs-toggle="modal"
-                                    data-bs-target="#exportation-modal"> <i class="uil-export me-2"></i> Exproter
+                                <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exportation-modal">
+                                    <i class="uil-export me-2"></i> Exporter
                                 </button>
-                                <button class="dropdown-item" data-bs-toggle="modal"
-                                    data-bs-target="#importation-modal"> <i class="uil-down-arrow me-2"></i> Importer
+                                <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#importation-modal">
+                                    <i class="uil-down-arrow me-2"></i> Importer
                                 </button>
                                 <button class="dropdown-item" wire:click="importAuto">
                                     <span wire:target="importAuto" wire:loading.remove>
-                                        <i class="uil-down-arrow me-2"></i> Importer
-                                        automatique
+                                        <i class="uil-down-arrow me-2"></i> Importer automatique
                                     </span>
                                     <span wire:target="importAuto" wire:loading>
-                                        <span class="spinner-border spinner-border-sm me-2" role="status"
-                                            aria-hidden="true"></span> Chargement
+                                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                        Chargement
                                     </span>
                                 </button>
                                 <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#delete-all-modal">
                                     <i class="uil-trash me-2"></i> Supprimer
                                 </button>
+                                <!-- Add the Affecter option here in the dropdown -->
                                 <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#affecter-modal">
                                     <i class="uil-label me-2"></i> Affecter
                                 </button>
@@ -100,7 +100,7 @@
                         <div class="col-12 col-sm-12 col-md-12 col-lg-3 col-xl-4 col-xxl-3 mb-1">
                             <div class="form-floating">
                                 <input type="text" class="form-control" id="floatingInput"
-                                    placeholder="Ex : Ville, Téléphone,SIP Ou Code Plaque " wire:model="search" />
+                                    placeholder="Ex : Ville, Téléphone, SIP Ou Code Plaque " wire:model="search" />
                                 <label for="floatingInput">Ville, Téléphone, SIP Ou Code Plaque</label>
                             </div>
                         </div>
@@ -115,7 +115,7 @@
                                 <label for="floatingSelect">Status du client</label>
                             </div>
                         </div>
-
+    
                         <div class="col-12 col-sm-12 col-md-12 col-lg-3 col-xl-6 col-xxl-3 mb-1">
                             <div class="form-floating">
                                 <input type="date" class="form-control" id="floatingInput" placeholder=""
@@ -131,18 +131,19 @@
                             </div>
                         </div>
                     </div>
-
+    
                 </div>
             </div>
         </div>
-    </div> --}}
+    </div>
+    
 
     <div class="card">
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover table-centered table-nowrap mb-0">
                     <thead class="table-dark">
-                        <tr>
+                        <tr><th class="text-center"></th>
                             <th>ID Case</th>
                             <th class="text-center">SIP</th>
                             <th class="text-center">Access</th>
@@ -150,12 +151,17 @@
                             <th>Client</th>
                             <th class="text-center">Telephone</th>
                             <th class="text-center">Date de creation</th>
+                            <th class="text-center">Statut</th>
                             <th class="text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($clients as $client)
-                            <tr>                                
+                            <tr>        
+                                <td class="text-center">
+                                    <input type="checkbox" class="form-check-input" value="{{ $client->id }}"
+                                        wire:model="selectedItems">
+                                </td>                        
                                 <td>{{ $client->n_case }}</td>
                                 <td class="text-center">{{ $client->sip }}</td>
                                 <td class="text-center">{{ $client->login }}</td>
@@ -172,6 +178,22 @@
                                 <td class="text-center">
                                     {{$client->date_demande}}
                                 </td>   
+                                <td>
+                                    @if ($client->status == 'Bloqué')
+                                        <span class="badge bg-danger p-1">{{ $client->status }}</span>
+                                    @elseif($client->status == 'Planifié')
+                                        <span class="badge bg-warning p-1">{{ $client->status }}</span>
+                                    @elseif($client->status == 'Saisie')
+                                        <span class="badge bg-primary p-1">{{ $client->status }}</span>
+                                    @elseif($client->status == 'En cours')
+                                        <span class="badge bg-primary p-1">{{ $client->status }}</span>
+                                    @elseif($client->status == 'Validé')
+                                        <span class="badge bg-success p-1">{{ $client->status }}</span>
+                                    @elseif($client->status == 'Affecté')
+                                        <span class="badge bg-warning p-1">{{ $client->status }}</span>
+                                    @endif
+
+                                </td>
                                 <td class="text-center"> 
                                     <div>
                                         <button class="btn btn-danger btn-sm shadow-none" data-bs-toggle="modal"
@@ -506,8 +528,9 @@
     </div> 
     
 
-    <div id="affecter-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="edit-modalLabel"
-        aria-hidden="true" wire:ignore.self>
+  
+    <div id="affecter-modal" class="modal fade" tabindex="-1" role="dialog"
+        aria-labelledby="importation-modalLabel" aria-hidden="true" wire:ignore.self>
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <form wire:submit.prevent="affectation">
@@ -517,7 +540,7 @@
                             aria-hidden="true"></button>
                     </div>
                     <div class="modal-body">
-                        @error('technicien_affectation')
+                        @error('soustraitant_affectation')
                             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                                 <strong>{{ $message }}</strong>
                                 <button type="button" class="btn-close" data-bs-dismiss="alert"
@@ -533,14 +556,27 @@
                         @enderror
                         <div class="form-floating">
                             <select class="form-select" id="floatingSelect"
-                                aria-label="Floating label select example" wire:model="technicien_affectation">
-                                <option selected>Sélectionnez un technicien</option>
-                                @foreach ($techniciens as $item)
-                                    <option value="{{ $item->id }}">{{ $item->user->getFullname() }}</option>
+                                aria-label="Floating label select example" wire:model="soustraitant_affectation">
+                                <option selected>Sélectionnez un sous traitant</option>
+                                @foreach ($sousTraitant as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
                                 @endforeach
                             </select>
-                            <label for="floatingSelect">Technicien </label>
+                            <label for="floatingSelect">Sous Traitant </label>
                         </div>
+                        <div class="pt-3">
+
+                        </div>
+                        {{-- <div class="form-floating  ">
+                            <select class="form-select" id="floatingSelect"
+                                aria-label="Floating label select example" wire:model="selectedTech">
+                                <option selected>Sélectionnez un technicien (Facultatif)</option>
+                                @foreach ($sTechniciens as $item)
+                                    <option value="{{ $item->id }}">{{ $item->user->getFullName() }}</option>
+                                @endforeach
+                            </select>
+                            <label for="floatingSelect">Techniciens </label>
+                        </div> --}}
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light shadow-none"

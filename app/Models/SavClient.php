@@ -13,18 +13,19 @@ class SavClient extends Model
 
 
     protected $fillable = [
-        'id',
-        'n_case',
-        'sip',
-        'login',
-        'address',
-        'client_name',
-        'contact',
-        'date_demande',
-        'city_id',
-        'plaque_id',
-        'created_at',
-        'updated_at',
+        'n_case',             
+        'login',               
+        'sip',                 
+        'address',           
+        'client_name',       
+        'contact',          
+        'date_demande',      
+        'city_id',           
+        'plaque_id',          
+        'lat',                 
+        'lng',                 
+        'comment',             
+        'service_activities', 
     ];
 
 

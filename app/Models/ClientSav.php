@@ -27,4 +27,8 @@ class ClientSav extends Model
         'comment',             
         'service_activities', 
     ];
+    public function city()
+    {
+        return $this->belongsTo(City::class);
+    }
 }

@@ -31,7 +31,7 @@ class SavAffectation extends Component
 
     public $start_date = '', $end_date = '', $client_name, $client_sip, $client_status, $technicien;
     public $affectation_id, $selectedItems = [];
-    public $sTechniciens;
+    public $sTechniciens , $search;
     public $technicien_affectation, $selectedTech,  $cause, $blocage_type;
     public function updatingSearch()
     {
@@ -67,10 +67,10 @@ class SavAffectation extends Component
     public function affectation()
     {
         $this->validate([
+            'soustraitant_affectation' => 'required',
             'selectedItems' => 'required',
-            'technicien_affectation' => 'required',
         ], [
-            'technicien_affectation.required' => 'Veuillez choisir un technicien pour continuer.',
+            'soustraitant_affectation.required' => 'Veuillez choisir un Sous-traitant pour continuer.',
             'selectedItems.required' => 'Veuillez choisir au moins un client pour continuer.',
         ]);
 
@@ -180,7 +180,7 @@ class SavAffectation extends Component
 
     public function render()
     {
-        $affectations = AffectationsService::getTickets($this->client_name, $this->client_status, $this->technicien)->paginate(10);
+     $affectations = AffectationsService::getTickets($this->client_name, $this->client_status, $this->technicien)->paginate(10);
         $data = AffectationsService::getSavAffectationsStatistic($this->start_date, $this->end_date);
         $techniciens = Technicien::with('user')->get();
         $this->sTechniciens = Technicien::where('soustraitant_id', $this->technicien_affectation)->get();
