@@ -62,4 +62,18 @@ class SavTicketController extends Controller
             200
         );
     }
+    public function planifierAffectationSav($id)
+    {
+        $this->ticketService->planifierAffectationSav($id);
+        // return response()->json(
+        //     [
+        //         'success' => true,
+        //         'message' => 'The data has been successfully returned.',
+        //         'affectations' => $ticket
+        //     ],
+
+
+        //     200
+        // );
+    }
 }

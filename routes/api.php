@@ -78,6 +78,7 @@ Route::get('/getClientsThecnicien/{id}', [ClientController::class, 'getClientsTh
 Route::get('/getSavTickets/{id}', [SavTicketController::class, 'getAllTicket']);
 Route::get('/getSavTicketSavBlocage/{id}', [SavTicketController::class, 'getSavTicketSavBlocage']);
 Route::get('/getPlanifiedTicket/{id}', [SavTicketController::class, 'getPlanifiedTicket']);
+Route::get('/planifierAffectationSav/{id}', [SavTicketController::class, 'planifierAffectationSav']);
 /*
 |
 */
