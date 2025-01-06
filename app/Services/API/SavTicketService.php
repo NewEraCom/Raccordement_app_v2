@@ -13,14 +13,14 @@ class SavTicketService
 {
     public function getSavTicketApi($id)
     {
-        $affectation = SavTicket::with(['client'])->where('technicien_id', $id)->where('status', 'En cours')->get();
+        $affectation = SavTicket::with(['client'])->where('status', 'En cours')->get();
         return  $affectation;
     }
 
     public function getSavTicketSavBlocageApi($id)
     {
         $affectation = Blocage::whereHas('savTicket', function ($query)  use ($id) {
-            $query->where('status', "Bloqué");
+            $query->where('technicien_id', $id)->where('status', "Bloqué");
         })->with(
             'savTicket',
             function ($query) {
