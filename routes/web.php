@@ -88,7 +88,7 @@ Route::any('/logout', function () {
 })->name('logout');
 
 
-Route::middleware(['auth', 'role:admin','check.deleted.at'])->name('admin.')->prefix('admin')->group(function () {
+Route::middleware(['auth', 'role:admin,sav','check.deleted.at'])->name('admin.')->prefix('admin')->group(function () {
     Route::any('/dashboard', Dashboard::class)->name('dashboard');
     Route::any('/clients', ClientsPage::class)->name('clients');
     Route::any('/clients/{client}', ProfileClientPage::class)->name('clients.profile');

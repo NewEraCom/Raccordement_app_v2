@@ -514,6 +514,8 @@
             $('#refuser-modal').modal('hide');
             $('#get-localisation-modal').modal('hide');
             $('#livre-modal').modal('hide');
+            $('#editstr-modal').modal('hide');
+            $('#toggle-status-modal').modal('hide');
         });
         window.addEventListener('contentChanged', e => {
             const Toast = Swal.mixin({

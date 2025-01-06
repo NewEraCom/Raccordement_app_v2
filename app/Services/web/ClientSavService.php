@@ -968,4 +968,38 @@ static function index($start_date, $end_date, $search, $status)
             }
         }
     }
+
+    static function getLatLongFromOpenCage($address) {
+        $apiKey = env('OPENCAGE_API_KEY');
+        $address = urlencode($address);
+    
+        // OpenCage Geocoding API endpoint
+        $url = "https://api.opencagedata.com/geocode/v1/json?q={$address}&key={$apiKey}";
+    
+        // Send the request using cURL
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+    
+        // Decode the response
+        $responseData = json_decode($response, true);
+    
+        // Check if the response contains data
+        if ($httpCode == 200 && isset($responseData['results'][0])) {
+            return [
+                'latitude' => $responseData['results'][0]['geometry']['lat'],
+                'longitude' => $responseData['results'][0]['geometry']['lng']
+            ];
+        } else {
+            Log::error('OpenCage Geocoding API error', [
+                'http_code' => $httpCode,
+                'response' => $responseData,
+                'address' => $address
+            ]);
+            return ['error' => 'No results found'];
+        }
+    }
 }

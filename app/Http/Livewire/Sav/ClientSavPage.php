@@ -238,6 +238,21 @@ class ClientSavPage extends Component
             'new_address1' => 'required|string|max:500',
             'new_comment1' => 'nullable|string|max:1000',
         ]);
+        $address = $this->new_address1;
+        Log::info('Fetching GPS coordinates for address: ' . $address);
+
+        $gps = ClientSavService::getLatLongFromOpenCage($address);
+        Log::info('GPS coordinates:', $gps);
+        
+        if (isset($gps['latitude']) && isset($gps['longitude'])) {
+            $lat = $gps['latitude'];
+            $lng = $gps['longitude'];
+        } else {
+            Log::error('Failed to fetch GPS coordinates', ['address' => $address, 'gps' => $gps]);
+            // Handle the error appropriately, e.g., set default values or show an error message
+            $lat = null;
+            $lng = null;
+        }
     
         ModelsClientSav::create([
             'n_case' => $this->new_id_case1,
@@ -249,8 +264,8 @@ class ClientSavPage extends Component
          //   'date_demande' => $this->new_date_demande,
           //  'city_id' => $this->new_city_id,
           //  'plaque_id' => $this->new_plaque_id,
-            //'lat' => $this->new_lat,
-           // 'lng' => $this->new_lng,
+            'lat' => $lat,
+           'lng' => $lng,
             'comment' => $this->new_comment1,
             'service_activities' => $this->new_service_activities1,
         ]);

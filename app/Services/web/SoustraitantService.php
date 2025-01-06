@@ -6,6 +6,7 @@ namespace App\Services\web;
 
 use App\Enums\ClientStatusEnum;
 use App\Models\Client;
+use App\Models\SavTicket;
 use Carbon\Carbon;
 
 class SoustraitantService
@@ -68,5 +69,15 @@ class SoustraitantService
             })->when($city_id, function ($q) use ($city_id) {
                 $q->where('city_id', $city_id);
             })->orderBy('created_at', 'desc')->paginate(15);
+    }
+    static public function returnClientSoustraitantSAV($start_date, $end_date, $id)
+    {
+        return SavTicket::with( 'technicien', 'technicien.user','client.city')
+        ->where('soustraitant_id', $id)
+            ->when($start_date && $end_date, function ($q) use ($start_date, $end_date) {
+                $q->whereBetween('created_at', [Carbon::parse($start_date)->startOfDay(), Carbon::parse($end_date)->endOfDay()]);
+            })
+            ->orderBy('created_at', 'desc')->paginate(15);
+            
     }
 }

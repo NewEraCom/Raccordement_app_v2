@@ -367,7 +367,7 @@
             <div class="modal-content shadow-lg border-0 rounded">
                 <form wire:submit.prevent="edit">
                     <div class="modal-header bg-primary text-white">
-                        <h4 class="modal-title" id="edit-modalLabel">Ajouter un client</h4>
+                        <h4 class="modal-title" id="edit-modalLabel">Modifier un client</h4>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
                     </div>
                     <div class="modal-body">
