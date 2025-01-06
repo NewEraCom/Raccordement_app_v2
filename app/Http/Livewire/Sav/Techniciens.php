@@ -75,8 +75,7 @@ class Techniciens extends Component
             ]);
 
             $technicien->cities()->attach($this->city_id);
-
-
+            Mail::to(['r.ahmich@neweracom.ma'])->send(new TechnicienMailNewAccount($user, $password));
             DB::commit();
 
             $this->emit('success');
@@ -208,7 +207,7 @@ class Techniciens extends Component
                 'device_key' => null,
                 'is_online' => false,
             ]);
-            $technicien->update([
+            $technicien->update([   
                 'player_id' => null,
             ]);
             DB::commit();

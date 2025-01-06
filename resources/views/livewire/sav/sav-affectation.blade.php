@@ -64,9 +64,11 @@
                         {{--<button class="btn btn-danger btn-sm shadow-none" data-bs-toggle="modal"
                             data-bs-target="#delete-all-modal"> <i class="uil-trash me-2"></i> Supprimer
                         </button>--}}
+                        @role('soustraitant')
                          <button class="btn btn-secondary btn-sm shadow-none" data-bs-toggle="modal"
                             data-bs-target="#affecter-modal"> <i class="uil-label me-2"></i> Affecter
                         </button> 
+                        @endrole
                     </div>
                 </div>
                 <div class="card-body">

@@ -9,6 +9,7 @@ use App\Models\AffectationHistory;
 use App\Models\Blocage;
 use App\Models\Client;
 use App\Models\Notification;
+use App\Models\SavClient;
 use App\Models\Savhistory;
 use App\Models\SavTicket;
 use App\Models\Soustraitant;
@@ -82,9 +83,9 @@ class SavAffectation extends Component
 
                 $affectation =  SavTicket::find($item);
                 $client = $affectation->client;
-                // Client::find($affectation->client_id)->update([
-                //     'statusSav' => 'Affecté',
-                // ]);
+                SavClient::find($affectation->client_id)->update([
+                    'status' => 'En cours',
+                ]);
 
                 $affectation->update([
                     'status' => 'En cours',
@@ -104,6 +105,7 @@ class SavAffectation extends Component
                     'status' => 'En cours',
                     'description' => 'Affectation du client ' . $client->sip . ' au technicien ' . Technicien::find($this->selectedTech)->user->getFullName(),
                     'technicien_id' => $this->selectedTech,
+                    'soustraitant_id'=> $affectation->soustraitant_id
                 ]);
                 // if ($this->selectedTech) {
                 //     # code...
@@ -186,7 +188,7 @@ class SavAffectation extends Component
 
     public function render()
     {
-     $affectations = AffectationsService::getTickets($this->search, $this->client_status, $this->technicien)->paginate(10);
+        $affectations = AffectationsService::getTickets($this->search, $this->client_status, $this->technicien)->paginate(10);
         $data = AffectationsService::getSavAffectationsStatistic($this->start_date, $this->end_date);
         $techniciens = Technicien::with('user')->get();
         $this->sTechniciens = Technicien::where('soustraitant_id', Auth::user()->soustraitant_id)->get();

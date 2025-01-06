@@ -9,6 +9,7 @@ use App\Models\Affectation;
 use App\Models\Client;
 use App\Models\SavTicket;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class AffectationsService
 {
@@ -58,30 +59,34 @@ class AffectationsService
     //         ->orderByDesc('updated_at');
     // }
     static public function getTickets($search, $client_status, $technicien)
-{
-    return SavTicket::with(['client', 'client.city', 'technicien.user'])
-        ->when($search, function ($q, $search) {
-            $q->whereHas('client', function ($q) use ($search) {
-                // Search by client_name, sip, city.name, or id_case
-                $q->where('client_name', 'like', '%' . $search . '%')
-                  ->orWhere('sip', 'like', '%' . $search . '%')
-                  ->orWhere('id_case', 'like', '%' . $search . '%')  // Added search by id_case
-                  ->orWhereHas('city', function ($q) use ($search) {
-                      $q->where('name', 'like', '%' . $search . '%');
-                  });
-            });
-        })
-        ->when($client_status, function ($q, $client_status) {
-            // Filter by client status
-            $q->where('statusSav', $client_status);
-        })
-        ->when($technicien, function ($q, $technicien) {
-            // Filter by technicien if provided
-            $q->where('technicien_id', $technicien);
-        })
-        ->orderByDesc('updated_at');
-}
-
+    {
+        return SavTicket::with(['client', 'client.city', 'technicien.user'])
+            ->when($search, function ($q, $search) {
+                $q->whereHas('client', function ($q) use ($search) {
+                    // Search by client_name, sip, id_case, or city.name
+                    $q->where('client_name', 'like', '%' . $search . '%')
+                      ->orWhere('sip', 'like', '%' . $search . '%')
+                      ->orWhere('id_case', 'like', '%' . $search . '%')  // Added search by id_case
+                      ->orWhereHas('city', function ($q) use ($search) {
+                          $q->where('name', 'like', '%' . $search . '%');
+                      });
+                });
+            })
+            ->when($client_status, function ($q, $client_status) {
+                // Filter by client status
+                $q->where('statusSav', $client_status);
+            })
+            ->when($technicien, function ($q, $technicien) {
+                // Filter by technicien if provided
+                $q->where('technicien_id', $technicien);
+            })
+            ->when(Auth::user()->soustraitant_id, function ($q) {
+                // Filter by the soustraitant_id of the logged-in user
+                $q->where('soustraitant_id', Auth::user()->soustraitant_id);
+            })
+            ->orderByDesc('updated_at');
+    }
+    
     
 
 

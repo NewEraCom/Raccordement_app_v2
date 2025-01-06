@@ -12,10 +12,14 @@ class Savhistory extends Model
     protected $fillable = [
         'savticket_id',
         'technicien_id',
+        'soustraitant_id',
         'status',
         'description',
     ];
-
+    public function soustraitant()
+    {
+        return $this->belongsTo(Soustraitant::class, 'soustraitant_id');
+    }
     
     public function technicien(){
         return $this->belongsTo(Technicien::class);
