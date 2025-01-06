@@ -48,7 +48,8 @@
     <footer class="footer footer-alt text-white">
         <script>
             document.write(new Date().getFullYear())
-        </script> © Neweracom - Developed By {{ $dev }}
+        </script> © Neweracom 
+        <!-- - Developed By {{ $dev }} -->
     </footer>
 
     @livewireScripts

@@ -11,6 +11,7 @@ use App\Models\Map;
 use App\Models\Blocage;
 use App\Models\Notification;
 use App\Models\Plaque;
+use App\Models\SavTicket;
 use App\Models\Soustraitant;
 use Carbon\Carbon;
 use DOMDocument;
@@ -619,13 +620,17 @@ public static function getClients($search_term, $client_status, $technicien, $st
                 return (int)$id;
             }, $data['selectedItems']);
     
-            // Check if all affectations exist
+            // Vérifier si toutes les affectations existent
             $existingIds = Affectation::whereIn('id', $affectationIds)->pluck('id')->toArray();
             if (count($existingIds) !== count($affectationIds)) {
-                throw new \Exception("Some affectations do not exist.");
+                throw new \Exception("Certaines affectations n'existent pas.");
             }
     
-            // Update each affectation individually and add notifications
+            // Récupérer les SIP des clients associés à ces affectations
+            $clientIds = Affectation::whereIn('id', $affectationIds)->pluck('client_id')->toArray();
+            $clients = Client::whereIn('id', $clientIds)->pluck('sip', 'id')->toArray();
+    
+            // Mettre à jour chaque affectation et ajouter les notifications
             foreach ($affectationIds as $affectationId) {
                 $affectation = Affectation::find($affectationId);
                 if ($affectation) {
@@ -633,23 +638,26 @@ public static function getClients($search_term, $client_status, $technicien, $st
                     $affectation->status = 'En cours';
                     $affectation->save();
     
-                    // Add a notification for the affectation
-                    $message = count($affectationIds) > 1 
-                        ? count($affectationIds) . ' clients vous ont été affectés.' 
-                        : 'Un client vous a été affecté';
+                    // Récupérer le SIP du client pour cette affectation
+                    $clientSip = isset($clients[$affectation->client_id]) ? $clients[$affectation->client_id] : null;
     
-                    Notification::create([
-                        'uuid' => Str::uuid(),
-                        'title' => 'Affectation',
-                        'data' => $message,
-                        'user_id' => Technicien::find($data['technicien_affectation'])->user_id,
-                        'affectation_id' => $affectationId,
-                    ]);
+                    if ($clientSip) {
+                        // Préparer le message de notification pour chaque client
+                        $message = $clientSip . ' vous a été affecté';
+    
+                        // Ajouter une notification pour l'affectation spécifique à ce client
+                        Notification::create([
+                            'uuid' => Str::uuid(),
+                            'title' => 'Affectation',
+                            'data' => $message,
+                            'user_id' => Technicien::find($data['technicien_affectation'])->user_id,
+                            'affectation_id' => $affectationId,
+                        ]);
+                    }
                 }
             }
     
-            // Update the Client table outside the loop
-            $clientIds = Affectation::whereIn('id', $affectationIds)->pluck('client_id')->toArray();
+            // Mettre à jour la table Client
             Client::whereIn('id', $clientIds)->update([
                 'technicien_id' => $data['technicien_affectation'],
             ]);
@@ -659,10 +667,12 @@ public static function getClients($search_term, $client_status, $technicien, $st
             return true;
         } catch (\Throwable $th) {
             DB::rollBack();
-            Log::channel('mylog')->error(Auth::user()->last_name . ' ' . Auth::user()->first_name . ' Try to affect manually - ' . $th);
+            Log::channel('mylog')->error(Auth::user()->last_name . ' ' . Auth::user()->first_name . ' a essayé d\'affecter manuellement - ' . $th);
             return $th;
         }
     }
+    
+
     
     static public function edit($data, $client_id)
     {

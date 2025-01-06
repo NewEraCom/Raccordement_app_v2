@@ -44,6 +44,7 @@ use App\Http\Livewire\Sav\SavViewScreen;
 use App\Http\Livewire\Sav\StockSav as SavStockSav;
 use App\Http\Livewire\Sav\Technicien as SavTechnicien;
 use App\Http\Livewire\Sav\Techniciens;
+use App\Http\Livewire\shared\TechPosPage;
 use App\Http\Livewire\Soustraitant\HomePage as SoustraitantHomePage;
 use App\Http\Livewire\Soustraitant\SoustraitantAffectationsPage;
 use App\Http\Livewire\SousTraitant\SousTraitantComponent;
@@ -87,7 +88,7 @@ Route::any('/logout', function () {
 })->name('logout');
 
 
-Route::middleware(['auth', 'role:admin','check.deleted.at'])->name('admin.')->prefix('admin')->group(function () {
+Route::middleware(['auth', 'role:admin,sav','check.deleted.at'])->name('admin.')->prefix('admin')->group(function () {
     Route::any('/dashboard', Dashboard::class)->name('dashboard');
     Route::any('/clients', ClientsPage::class)->name('clients');
     Route::any('/clients/{client}', ProfileClientPage::class)->name('clients.profile');
@@ -161,7 +162,7 @@ Route::middleware(['auth', 'role:sales'])->name('sales.')->prefix('sales')->grou
 });
 
 
-Route::middleware(['auth', 'role:sav'])->name('sav.')->prefix('sav')->group(function () {
+Route::middleware(['auth'])->name('sav.')->prefix('sav')->group(function () {
     Route::any('/dashboard', SavHomePage::class)->name('dashboard');
     Route::any('/clientsav', ClientSavPage::class)->name('clientsav');
     Route::any('/stock', SavStockSav::class)->name('stock');
@@ -176,6 +177,9 @@ Route::middleware(['auth', 'role:sav'])->name('sav.')->prefix('sav')->group(func
 Route::any('/pdf/{client}', PDFGenerator::class)->name('pdf');
 Route::any('/blocage-pdf/{blocage}', BlocageController::class)->name('blocage-pdf');
 
+// Route::middleware(['auth', 'role:sav','role:supervisor'])->group(function () {
+    Route::any('/techpos', TechPosPage::class)->name('techpos');
+// });
 
 Route::any('/decl', function () {
     set_time_limit(0);

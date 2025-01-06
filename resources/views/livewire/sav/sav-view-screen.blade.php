@@ -26,7 +26,7 @@
                                         <p class="mb-0 font-13 text-white-50">Date de creation</p>
                                     </li>
                                     <li class="list-inline-item">
-                                        <h5 class="mb-1 text-white">{{ $client->statusSav }}</h5>
+                                        <h5 class="mb-1 text-white">{{ $client->status }}</h5>
                                         <p class="mb-0 font-13 text-white-50">Status</p>
                                     </li>
                                 </ul>
@@ -51,7 +51,7 @@
                         <label for="inputEmail3" class="col-5 col-form-label fw-bold">ID Case</label>
                         <div class="col-7">
                             <input type="text" readonly class="form-control-plaintext" id="example-static"
-                                value="{{ $client->savTicket->last()->id_case }}">
+                            value="{{ $client->n_case ?? 'N/A' }}">
                         </div>
                     </div>
                     <div class="row mb-2 align-middle">
@@ -64,15 +64,14 @@
                     <div class="row mb-2 align-middle">
                         <label for="inputEmail3" class="col-5 col-form-label fw-bold">Login internet</label>
                         <div class="col-7">
-                            <input type="text" readonly class="form-control-plaintext" id="example-static"
-                                value="{{ $client->client_id }}">
+                                <p>{{ $client->login }}</p>
                         </div>
                     </div>
                     <div class="row mb-2 align-middle">
                         <label for="inputEmail3" class="col-5 col-form-label fw-bold">Nom du client</label>
                         <div class="col-7">
                             <input type="text" readonly class="form-control-plaintext" id="example-static"
-                                value="{{ $client->name }}">
+                                value="{{ $client->client_name }}">
                         </div>
                     </div>
                     <div class="row mb-2 align-middle">
@@ -95,26 +94,26 @@
                                 value="{{ $client->city->name }}">
                         </div>
                     </div>
-                    <div class="row mb-2 align-middle">
+                    {{-- <div class="row mb-2 align-middle">
                         <label for="inputEmail3" class="col-5 col-form-label fw-bold">Type</label>
                         <div class="col-7">
                             <input type="text" readonly class="form-control-plaintext" id="example-static"
                                 value="{{ $client->type }}">
                         </div>
-                    </div>
-                    <div class="row mb-2 align-middle">
+                    </div> --}}
+                    <!-- <div class="row mb-2 align-middle">
                         <label for="inputEmail3" class="col-5 col-form-label fw-bold">Type Probleme</label>
                         <div class="col-7">
-                            <p>{{ $client->savTicket->last()->type }}</p>
+                            <p>{{ $client->type  }}</p>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="row mb-2 align-middle">
                         <label for="inputEmail3" class="col-5 col-form-label fw-bold">Commentaire</label>
                         <div class="col-7">
-                            <p>{{ $client->savTicket->last()->description }}</p>
+                            <p>{{ $client->comment }}</p>
                         </div>
                     </div>
-                    <div class="row mb-2 align-middle">
+                    <!-- <div class="row mb-2 align-middle">
                         <label for="inputEmail3" class="col-5 col-form-label fw-bold">Equipement</label>
                         <div class="col-7">
                             <input type="text" readonly class="form-control-plaintext" id="example-static"
@@ -127,15 +126,14 @@
                             <input type="text" readonly class="form-control-plaintext" id="example-static"
                                 value="{{ $client->debit != '-' ? $client->debit . ' Méga' : '-' }} ">
                         </div>
-                    </div>
-
-                    <div class="row mb-2 align-middle">
+                    </div> 
+                     <div class="row mb-2 align-middle">
                         <label for="inputEmail3" class="col-5 col-form-label fw-bold">Status du client</label>
                         <div class="col-7">
                             <input type="text" readonly class="form-control-plaintext" id="example-static"
                                 value="{{ $client->status }}">
                         </div>
-                    </div>
+                    </div> -->
                     <div class="row mb-2 align-middle">
                         <label for="inputEmail3" class="col-5 col-form-label fw-bold">Date de création</label>
                         <div class="col-7">
@@ -174,12 +172,12 @@
                             </div>
                         </div>
                     @endif
-                    @if ($client->affectations->last() != null)
+                    @if ($client->savTickets->last() != null)
                         <div class="row mb-2 align-middle">
                             <label for="inputEmail3" class="col-5 col-form-label fw-bold">Affecter par</label>
                             <div class="col-7">
                                 <input type="text" readonly class="form-control-plaintext" id="example-static"
-                                    value="{{ $client->affectations->last()->affectedBy ? $client->affectations->last()->affectedBy->getFullname() : '-' }}">
+                                    value="{{ $client->savTickets->last()->affectedBy ? $client->savTickets->last()->affectedBy->getFullname() : '-' }}">
                             </div>
                         </div>
                     @endif
@@ -191,19 +189,19 @@
                 <div class="card-body">
                     <h4 class="header-title bg-light p-2 mt-0 mb-1"> <i class="uil-chart me-2"></i> Historique des
                         affectations</h4>
-                    <div class="timeline-alt">
-                        @forelse ($affe as $value)
-                        @foreach ($value->history as $item)
+                <div class="timeline-alt">
+                        {{-- @forelse ($affe as $value)
+                        @foreach ($value->savhistories as $item)
                         <div class="timeline-item">
                             <i
-                                class="bg-{{ $item->getStatusColor() }}-lighten text-{{ $item->getStatusColor() }} ri-bookmark-fill timeline-icon"></i>
+                                class="bg-{{ $item->getStatusSavColor() }}-lighten text-{{ $item->getStatusSavColor() }} ri-bookmark-fill timeline-icon"></i>
                             <div class="timeline-item-info">
                                 <h5 class="mt-0 mb-1">{{ $item->status }}
                                     <small>
                                         {{ $item->status == 'Planifié' ? '(' . $item->cause . ')' : ($item->status ==
                                         'Bloqué' ? '(' . $item->cause . ')' : '') }}
                                     </small>
-                                </h5>
+              s                  </h5>
                                 <p class="font-14"><i class="uil-user"></i>
                                     {{ $item->technicien->id == 97
                                     ? 'Contrôle Qualité'
@@ -219,34 +217,35 @@
                         @endforeach
                         @empty
                         
-                        @endforelse
+                        @endforelse --}}
 
-                        @forelse ($client->savTicket->last()->savhistories as $item)
-                            <div class="timeline-item">
-                                <i
-                                    class="bg-{{ $item->getStatusSavColor($item->status) }}-lighten text-{{ $item->getStatusSavColor($item->status) }} ri-bookmark-fill timeline-icon"></i>
-                                <div class="timeline-item-info">
-                                    <h5 class="mt-0 mb-1">{{ $item->status }}
-                                        <h6>
-                                            {{ $item->description }}
-                                        </h6>
-                                    </h5>
-
-                                </div>
+                        @forelse ( $client->savTickets->last()->savhistories ?? [] as $item)
+                        <div class="timeline-item">
+                            <i class="bg-{{ $item->getStatusSavColor($item->status) }}-lighten text-{{ $item->getStatusSavColor($item->status) }} ri-bookmark-fill timeline-icon"></i>
+                            <div class="timeline-item-info">
+                                <h5 class="mt-0 mb-1">{{ $item->status }}
+                                    <h6>
+                                        {{ $item->description }}
+                                    </h6>
+                                </h5>
+                                <p>
+                                    Sous-traitant: {{ optional($item->soustraitant)->name ?? 'N/A' }}
+                                </p>
                             </div>
-                        @empty
+                        </div>
+                    @empty
                             <div class="text-center">
                                 <h1><i class="uil-times-circle"></i></h1>
                                 <h4>Il n'y a pas encore d'affectations.</h4>
                             </div>
                         @endforelse
-                    </div>
+                    </div> 
                     <h4 class="header-title bg-light p-2 mt-2 mb-3"> <i class="uil-file me-2"></i> Rapports</h4>
                     <br>
 
                     <div class="timeline-alt">
 
-                        @forelse ($client->savTicket->last()->feedback as $item)
+                        @forelse ($client->savTickets->last()->feedback ?? [] as $item)
                             <div class="timeline-item">
                                 <i
                                     class="bg-{{ $item->getStatusSavColor($item->type) }}-lighten text-{{ $item->getStatusSavColor($item->status) }} ri-bookmark-fill timeline-icon"></i>

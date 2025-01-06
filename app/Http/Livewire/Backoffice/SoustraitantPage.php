@@ -2,8 +2,12 @@
 
 namespace App\Http\Livewire\Backoffice;
 
+use App\Mail\NewStrCreated;
 use App\Models\Soustraitant;
 use App\Models\SoustraitantStock;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 use Illuminate\Support\Str;
 
@@ -14,6 +18,7 @@ class SoustraitantPage extends Component
 
 
     public function add(){
+        // $password = Str::random(10);
         $this->validate([
             'soustraitant_name' => 'required',
         ]);
@@ -33,6 +38,16 @@ class SoustraitantPage extends Component
             'splitter' => 0,
             'racco' => 0,
         ]);
+        // $user = User::create([
+        //     'uuid' => Str::uuid(),
+        //     'first_name' => $this->soustraitant_name,
+        //     'last_name' => '-',
+        //     'email' => $this->soustraitant_name . '@neweracom.ma',
+        //     'password' => Hash::make($password),
+        // ]);
+        // $user->assignRole('soustraitant');
+
+        // Mail::to(['h.jlidat@neweracom.ma'])->send(new NewStrCreated($user, $password));
 
         $this->soustraitant_name = '';
         $this->emit('success');

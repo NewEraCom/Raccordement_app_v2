@@ -9,6 +9,7 @@ use App\Models\AffectationHistory;
 use App\Models\Blocage;
 use App\Models\Client;
 use App\Models\Notification;
+use App\Models\SavClient;
 use App\Models\Savhistory;
 use App\Models\SavTicket;
 use App\Models\Soustraitant;
@@ -31,7 +32,7 @@ class SavAffectation extends Component
 
     public $start_date = '', $end_date = '', $client_name, $client_sip, $client_status, $technicien;
     public $affectation_id, $selectedItems = [];
-    public $sTechniciens;
+    public $sTechniciens , $search;
     public $technicien_affectation, $selectedTech,  $cause, $blocage_type;
     public function updatingSearch()
     {
@@ -67,10 +68,10 @@ class SavAffectation extends Component
     public function affectation()
     {
         $this->validate([
+            'selectedTech' => 'required',
             'selectedItems' => 'required',
-            'technicien_affectation' => 'required',
         ], [
-            'technicien_affectation.required' => 'Veuillez choisir un technicien pour continuer.',
+            'selectedTech.required' => 'Veuillez choisir un Technicien pour continuer.',
             'selectedItems.required' => 'Veuillez choisir au moins un client pour continuer.',
         ]);
 
@@ -82,14 +83,14 @@ class SavAffectation extends Component
 
                 $affectation =  SavTicket::find($item);
                 $client = $affectation->client;
-                Client::find($affectation->client_id)->update([
-                    'statusSav' => 'Affecté',
+                SavClient::find($affectation->client_id)->update([
+                    'status' => 'En cours',
                 ]);
 
                 $affectation->update([
                     'status' => 'En cours',
-                    'soustraitant_id' => $this->technicien_affectation,
-                    'technicien_id' => null,
+                    // 'soustraitant_id' => $this->technicien_affectation,
+                    // 'technicien_id' => null,
                     'affected_by' => Auth::user()->id,
                 ]);
                 if ($this->selectedTech != null) {
@@ -99,6 +100,13 @@ class SavAffectation extends Component
 
                     ]);
                 }
+                Savhistory::create([
+                    'savticket_id' => $affectation->id,
+                    'status' => 'En cours',
+                    'description' => 'Affectation du client ' . $client->sip . ' au technicien ' . Technicien::find($this->selectedTech)->user->getFullName(),
+                    'technicien_id' => $this->selectedTech,
+                    'soustraitant_id'=> $affectation->soustraitant_id
+                ]);
                 // if ($this->selectedTech) {
                 //     # code...
                 // }
@@ -180,10 +188,10 @@ class SavAffectation extends Component
 
     public function render()
     {
-        $affectations = AffectationsService::getTickets($this->client_name, $this->client_status, $this->technicien)->paginate(10);
+        $affectations = AffectationsService::getTickets($this->search, $this->client_status, $this->technicien)->paginate(10);
         $data = AffectationsService::getSavAffectationsStatistic($this->start_date, $this->end_date);
         $techniciens = Technicien::with('user')->get();
-        $this->sTechniciens = Technicien::where('soustraitant_id', $this->technicien_affectation)->get();
+        $this->sTechniciens = Technicien::where('soustraitant_id', Auth::user()->soustraitant_id)->get();
         $sousTraitant = Soustraitant::all();
         $blocages = Blocage::groupBy('cause')->get('cause');
         return view('livewire.sav.sav-affectation', compact('data', 'techniciens', 'sousTraitant', 'affectations', 'blocages'))->layout('layouts.app', [

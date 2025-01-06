@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SavTicket extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
     protected $fillable = [
         'client_id',
         'id_case',
@@ -26,7 +27,11 @@ class SavTicket extends Model
         
     ];
     public function client(){
-        return $this->belongsTo(Client::class);
+        return $this->belongsTo(ClientSav::class, 'client_id');
+    }
+
+    public function clientSav(){
+        return $this->belongsTo(SavClient::class,'sav_client_id');
     }
 
     public function blocage()

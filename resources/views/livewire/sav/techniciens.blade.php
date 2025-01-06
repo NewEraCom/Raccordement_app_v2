@@ -132,7 +132,7 @@
                                     <th class="text-center">Type</th>
                                     <th class="text-center">Ticket</th>
                                     <th class="text-center">Clients connectés</th>
-                                    <th></th>
+                                    <th class="text-center">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -183,7 +183,7 @@
                                                 Connecté</span>
                                         </td>
 
-                                        {{--  <td class="text-end">
+                                        <td class="text-end">
                                             <div class="dropdown float-end">
                                                 <a href="#" class="dropdown-toggle arrow-none card-drop"
                                                     data-bs-toggle="dropdown" aria-expanded="false">
@@ -217,7 +217,7 @@
                                                     </button>
                                                 </div>
                                             </div>
-                                        </td>  --}}
+                                        </td>  
                                     </tr>
                                 @empty
                                     <tr>
@@ -301,24 +301,30 @@
                                     </div>
                                 </div>
                                 <div class="col-12">
-                                    <label for="" class="mb-2">Type de racco</label>
+                                    <label for="" class="mb-2">Type de raccordement</label>
                                     <div class="row ms-1">
-                                        <div class="form-check col-6">
-                                            <input class="form-check-input" wire:model="type_tech" type="checkbox" value="1"
-                                                id="flexCheckDefault">
-                                            <label class="form-check-label" for="flexCheckDefault">
-                                                Sav
+                                        <div class="form-check col-4">
+                                            <input class="form-check-input" wire:model="type_tech" type="radio" value="1" id="flexRadioSav">
+                                            <label class="form-check-label" for="flexRadioSav">
+                                                SAV
                                             </label>
                                         </div>
-                                        <div class="form-check col-6">
-                                            <input class="form-check-input" wire:model="type_tech" type="checkbox" value="2"
-                                                id="flexCheckDefault">
-                                            <label class="form-check-label" for="flexCheckDefault">
-                                                Racco
+                                        <div class="form-check col-4">
+                                            <input class="form-check-input" wire:model="type_tech" type="radio" value="2" id="flexRadioRacco">
+                                            <label class="form-check-label" for="flexRadioRacco">
+                                                RACCO
+                                            </label>
+                                        </div>
+                                        <div class="form-check col-4">
+                                            <input class="form-check-input" wire:model="type_tech" type="radio" value="3" id="flexRadioBoth">
+                                            <label class="form-check-label" for="flexRadioBoth">
+                                                SAV & RACCO
                                             </label>
                                         </div>
                                     </div>
                                 </div>
+                                
+                                
 
                             </div>
                         </div>
