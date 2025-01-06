@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\SavTicket;
 use App\Services\API\SavTicketService;
+use Illuminate\Http\Request;
 
 class SavTicketController extends Controller
 {
@@ -62,9 +63,9 @@ class SavTicketController extends Controller
             200
         );
     }
-    public function planifierAffectationSav($id)
+    public function planifierAffectationSav(Request $request)
     {
-        $this->ticketService->planifierAffectationSav($id);
+        $this->ticketService->planifierAffectationSav($request);
         // return response()->json(
         //     [
         //         'success' => true,
