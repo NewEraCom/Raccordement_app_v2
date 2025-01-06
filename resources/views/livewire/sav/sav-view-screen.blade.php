@@ -64,8 +64,7 @@
                     <div class="row mb-2 align-middle">
                         <label for="inputEmail3" class="col-5 col-form-label fw-bold">Login internet</label>
                         <div class="col-7">
-                            <input type="text" readonly class="form-control-plaintext" id="example-static"
-                                value="{{ $client->client_id }}">
+                                <p>{{ $client->login }}</p>
                         </div>
                     </div>
                     <div class="row mb-2 align-middle">
@@ -102,19 +101,19 @@
                                 value="{{ $client->type }}">
                         </div>
                     </div> --}}
-                    <div class="row mb-2 align-middle">
+                    <!-- <div class="row mb-2 align-middle">
                         <label for="inputEmail3" class="col-5 col-form-label fw-bold">Type Probleme</label>
                         <div class="col-7">
                             <p>{{ $client->type  }}</p>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="row mb-2 align-middle">
                         <label for="inputEmail3" class="col-5 col-form-label fw-bold">Commentaire</label>
                         <div class="col-7">
-                            <p>{{ $client->description }}</p>
+                            <p>{{ $client->comment }}</p>
                         </div>
                     </div>
-                    <div class="row mb-2 align-middle">
+                    <!-- <div class="row mb-2 align-middle">
                         <label for="inputEmail3" class="col-5 col-form-label fw-bold">Equipement</label>
                         <div class="col-7">
                             <input type="text" readonly class="form-control-plaintext" id="example-static"
@@ -127,15 +126,14 @@
                             <input type="text" readonly class="form-control-plaintext" id="example-static"
                                 value="{{ $client->debit != '-' ? $client->debit . ' Méga' : '-' }} ">
                         </div>
-                    </div>
-
-                    <div class="row mb-2 align-middle">
+                    </div> 
+                     <div class="row mb-2 align-middle">
                         <label for="inputEmail3" class="col-5 col-form-label fw-bold">Status du client</label>
                         <div class="col-7">
                             <input type="text" readonly class="form-control-plaintext" id="example-static"
                                 value="{{ $client->status }}">
                         </div>
-                    </div>
+                    </div> -->
                     <div class="row mb-2 align-middle">
                         <label for="inputEmail3" class="col-5 col-form-label fw-bold">Date de création</label>
                         <div class="col-7">
