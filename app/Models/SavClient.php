@@ -26,6 +26,7 @@ class SavClient extends Model
         'lng',                 
         'comment',             
         'service_activities', 
+        'status'
     ];
 
 
@@ -43,6 +44,29 @@ class SavClient extends Model
     public function plaque()
     {
         return $this->belongsTo(Plaque::class);
+    }
+    public function getStatusSavColor()
+    {
+        switch ($this->status) { 
+            case 'Affecté':
+                return 'warning';
+            case 'Saisie':
+                return 'primary';
+            case 'En cours':
+                return 'primary';
+            case 'Planifié':
+                return 'warning';
+            case 'Terminé':
+                return 'success';
+            case 'Bloqué':
+                return 'danger';
+            default:
+                return 'secondary';
+        }
+    }
+    public function savTickets()
+    {
+        return $this->hasMany(SavTicket::class, 'client_id');
     }
 
 

@@ -98,11 +98,13 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-12 col-sm-12 col-md-12 col-lg-3 col-xl-4 col-xxl-3 mb-1">
-                            <div class="form-floating">
-                                <input type="text" class="form-control" id="floatingInput"
-                                    placeholder="Ex : Ville, Téléphone, SIP Ou Code Plaque " wire:model="search" />
-                                <label for="floatingInput">Ville, Téléphone, SIP Ou Code Plaque</label>
-                            </div>
+                    
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="floatingInput"
+                                        placeholder="Ex : Ville, Téléphone,SIP, " wire:model="search" />
+                                        <label for="floatingInput">Rechercher par ID Case, Ville, Nom Client ou SIP</label>
+                                </div>
+                           
                         </div>
                         <div class="col-12 col-sm-12 col-md-12 col-lg-3 col-xl-4 col-xxl-3 mb-1">
                             <div class="form-floating">
@@ -111,6 +113,7 @@
                                     <option value="Down">Down</option>
                                     <option value="Affecté">Affecté</option>
                                     <option value="Connecté">Connecté</option>
+                                    <option value="Saisie">Saisie</option>
                                 </select>
                                 <label for="floatingSelect">Status du client</label>
                             </div>
@@ -204,6 +207,12 @@
                                             wire:click="setClient({{ $client->id }})" data-bs-toggle="modal"
                                             data-bs-target="#edit-modal"><i class="uil-pen"></i>
                                         </button>
+                                        <a class="btn btn-primary btn-sm shadow-none" target="_blank"
+
+                                        href="{{ route('sav.clients.screen', $client) }}"><i
+                                            class="uil-eye"></i>
+                                    </a>
+                                        
                                     </div>
                                 </td>                       
                             </tr>
@@ -493,22 +502,54 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control border-primary shadow-sm" id="serviceActivitiesInput" wire:model.lazy="new_service_activities1" placeholder="" required />
+                                    <select class="form-select border-primary shadow-sm" id="serviceActivitiesInput" wire:model.lazy="new_service_activities1" required>
+                                        <option value="" selected >Sélectionnez une activité de service</option>
+                                        <option value="Incompatibilité">Incompatibilité</option>
+                                        <option value="Accès">Accès</option>
+                                        <option value="Emplacement équipement">Emplacement équipement</option>
+                                        <option value="Lenteur débit">Lenteur débit</option>
+                                        <option value="Microcoupure data">Microcoupure data</option>
+                                        <option value="Réception">Réception</option>
+                                    </select>
                                     <label for="serviceActivitiesInput">Activités de service</label>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <select class="form-select border-primary shadow-sm" id="cityInput" wire:model.lazy="new_city_id1" required>
+
+                                        <option selected value="">Sélectionnez une ville</option>
+                                        @foreach ($cities as $city)
+                                        
+                                            <option value="{{ $city->id }}">{{ $city->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    <label for="cityInput">Ville</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <input type="date" class="form-control border-primary shadow-sm" id="dateDmdInput" wire:model.lazy="new_dmd_date1" placeholder=" " required />
+                                    <label for="dateDmdInput">Date demande</label>
                                 </div>
                             </div>
                         </div>
     
                         <div class="mb-3">
                             <div class="">
-                                <input type="text" class="form-control border-primary shadow-sm" id="addressInput" wire:model.lazy="new_address1" placeholder="" required />
+
                                 <label for="addressInput">Adresse</label>
+                                <textarea class="form-control border-primary shadow-sm" id="commentInput" wire:model.lazy="new_address1" rows=3 placeholder=""></textarea>
                             </div>
                         </div>
     
                         <div class="">
+                            <label for="commentInput">Commentaire</label>
                             <textarea class="form-control border-primary shadow-sm" id="commentInput" wire:model.lazy="new_comment1" rows=3 placeholder=""></textarea>
-                            <label for "commentInput">Commentaire</label>
+                         
                         </div>
     
                     </div>
@@ -529,7 +570,7 @@
     
 
   
-    <div id="affecter-modal" class="modal fade" tabindex="-1" role="dialog"
+    {{-- <div id="affecter-modal" class="modal fade" tabindex="-1" role="dialog"
         aria-labelledby="importation-modalLabel" aria-hidden="true" wire:ignore.self>
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -577,7 +618,7 @@
                             </select>
                             <label for="floatingSelect">Techniciens </label>
                         </div> --}}
-                    </div>
+                   {{-- </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light shadow-none"
                             data-bs-dismiss="modal">Fermer</button>
@@ -593,7 +634,62 @@
                 </form>
             </div>
         </div>
+    </div> --}}
+    <div id="affecter-modal" class="modal fade" tabindex="-1" role="dialog"
+    aria-labelledby="importation-modalLabel" aria-hidden="true" wire:ignore.self>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form wire:submit.prevent="affectation">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="importation-modalLabel">Affectation des clients</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+                </div>
+                <div class="modal-body">
+                    @error('soustraitant_affectation')
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>{{ $message }}</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @enderror
+                    @error('selectedItems')
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>{{ $message }}</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @enderror
+
+                    <!-- Search Bar -->
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="searchSubcontractor"
+                            placeholder="Rechercher un sous-traitant" wire:model="searchTerm">
+                        <label for="searchSubcontractor">Rechercher un sous-traitant</label>
+                    </div>
+
+                    <!-- Display Subcontractor Items -->
+                    <div class="list-group">
+                        @foreach ($filteredSousTraitant as $item)
+                            <button type="button" class="list-group-item list-group-item-action"
+                                wire:click="$set('soustraitant_affectation', {{ $item->id }})">
+                                {{ $item->name }}
+                            </button>
+                        @endforeach
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light shadow-none" data-bs-dismiss="modal">Fermer</button>
+                    <button type="submit" class="btn btn-primary shadow-none">
+                        <span wire:loading.remove wire:target="affectation">Affecter</span>
+                        <span wire:loading wire:target="affectation">
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            Chargement...
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
+</div>
+
 
     <div id="relance-modal" class="modal fade" tabindex="-1" role="dialog"
         aria-labelledby="importation-modalLabel" aria-hidden="true" wire:ignore.self>

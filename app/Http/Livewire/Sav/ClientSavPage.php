@@ -34,18 +34,21 @@ class ClientSavPage extends Component
     protected $paginationTheme = 'bootstrap';
 
     public $client_name = '', $client_sip = '', $client_status = '', $technicien = '', $start_date = '', $end_date = '';
-    public $client_id = '', $selectedItems = [];
+    public $client_id = '', $selectedItems = [] ,$searchTerm = ''; // Declare the search term
     public $file;
     public $new_login_internet, $new_activites, $new_description, $new_type_prob;
     public $technicien_affectation, $cause, $resetPage = false;
-    public $soustraitant_affectation;
+    public $soustraitant_affectation ;
 
     public $new_debit, $new_sip, $new_phone, $new_name, $new_id, $new_type, $new_offre, $new_routeur;
     public $e_address, $e_debit, $e_sip, $e_phone, $e_name, $e_id, $e_city, $e_type, $e_offre, $e_routeur, $e_login_internet, $e_activites, $e_description, $e_type_prob;
     public $search, $status_client, $causeDeblocage;
     public $deblocage_start_date, $deblocage_end_date;
-    public $new_id_case1, $new_network_access1, $new_line_number1, $new_full_name1, $new_contact_number1, $new_service_activities1,$new_address1, $new_comment1 ;
-    public $new_id_case, $new_network_access, $new_line_number, $new_full_name, $new_contact_number, $new_service_activities,$new_address, $new_comment ;
+    public $new_id_case1, $new_network_access1, $new_line_number1, $new_full_name1, $new_contact_number1, $new_service_activities1,$new_address1, $new_comment1 ,$new_city_id1 , $new_dmd_date1;
+    public $new_id_case, $new_network_access, $new_line_number, $new_full_name, $new_contact_number, $new_service_activities,$new_address, $new_comment ,$new_city_id;
+    public $filteredSousTraitant = [], $sousTraitant; // Filtered list
+
+
 
     public function export()
     {
@@ -99,7 +102,7 @@ class ClientSavPage extends Component
                 $affectation =  SavTicket::updateOrCreate([
                     'client_id' => $item,
                     'id_case'=>$client->n_case,
-                    'status' => 'En cours',
+                    'status' => 'Affecté',
                     'soustraitant_id' => $this->soustraitant_affectation,
                     'technicien_id' => null,
                     'affected_by' => Auth::user()->id,
@@ -107,10 +110,18 @@ class ClientSavPage extends Component
                     'status' => 'Affecté',
 
                 ]);
-                // $client = $affectation->client;
-                // Client::find($affectation->client_id)->update([
-                //     'statusSav' => 'Affecté',
-                // ]);
+                if ($client) {
+                    $client->update([
+                        'status' => 'Affecté',  // Properly update statusSav
+                    ]);
+                }
+                Savhistory::create([
+                    'savticket_id' => $affectation->id,
+                    'technicien_id' => null,
+                    'soustraitant_id' => $this->soustraitant_affectation ,
+                    'status' => 'Affecté',
+                    'description' => 'Affectation du ticket au Soustraitant',
+                ]);
 
                 // if ($this->selectedTech != null) {
                 //     $affectation->update([
@@ -149,6 +160,7 @@ class ClientSavPage extends Component
             'new_network_access' => 'required',
             'new_line_number' => 'required',
             'new_full_name' => 'required',
+            'new_city_id' => 'required',
             'new_contact_number' => 'required',
             'new_service_activities' => 'required',
             'new_address' => 'required',
@@ -162,6 +174,7 @@ class ClientSavPage extends Component
             'login' => $data['new_network_access'],
             'sip' => $data['new_line_number'],
             'address' => $data['new_address'],
+            'new_city_id' => $data['new_city_id'],
             'client_name' => $data['new_full_name'],
             'contact' => $data['new_contact_number'],
             'comment' => $data['new_comment'],
@@ -228,15 +241,18 @@ class ClientSavPage extends Component
    
     public function Insert()
     {
+      
         $validatedData = $this->validate([
             'new_id_case1' => 'required|string|max:255',
             'new_network_access1' => 'required|string|max:255',
             'new_line_number1' => 'required|string|max:255',
+            'new_dmd_date1'=>'required|date',
             'new_full_name1' => 'required|string|max:255',
             'new_contact_number1' => 'required|string|max:15',
             'new_service_activities1' => 'required|string|max:255',
             'new_address1' => 'required|string|max:500',
             'new_comment1' => 'nullable|string|max:1000',
+             'new_city_id1' => 'required|exists:cities,id'
         ]);
         $address = $this->new_address1;
         Log::info('Fetching GPS coordinates for address: ' . $address);
@@ -255,36 +271,39 @@ class ClientSavPage extends Component
         }
     
         ModelsClientSav::create([
+            
             'n_case' => $this->new_id_case1,
             'login' => $this->new_network_access1,
             'sip' => $this->new_line_number1,
             'address' => $this->new_address1,
             'client_name' => $this->new_full_name1,
             'contact' => $this->new_contact_number1,
+            'date_demande'=>$this->new_dmd_date1,
          //   'date_demande' => $this->new_date_demande,
-          //  'city_id' => $this->new_city_id,
+            'city_id' => $this->new_city_id1,
           //  'plaque_id' => $this->new_plaque_id,
             'lat' => $lat,
-           'lng' => $lng,
+            'lng' => $lng,
+            'status' =>'Saisie',
             'comment' => $this->new_comment1,
             'service_activities' => $this->new_service_activities1,
         ]);
+      
     
         // Réinitialiser les champs du formulaire
         $this->reset([
-            'new_id_case',
-            'new_network_access', 
-            'new_line_number',
-            'new_address',
-            'new_full_name', 
-            'new_contact_number',
-            'new_comment',
-            'new_service_activities', 
-          // 'new_lat',
-        // 'new_lng', 
-          //  'new_comment',
-          //  'new_service_activities'
+            'new_id_case1',
+            'new_network_access1', 
+            'new_line_number1',
+            'new_address1',
+            'new_dmd_date1',
+            'new_full_name1', 
+            'new_contact_number1',
+            'new_comment1',
+            'new_service_activities1',
+            'new_city_id1', // Reset the city field as well
         ]);
+
         $this->emit('success');
         $this->dispatchBrowserEvent('contentChanged', ['item' => 'Client ajouté avec succès']);
     
@@ -443,6 +462,23 @@ class ClientSavPage extends Component
             dd($th->getMessage());
         }
     }
+    public function mount()
+{
+    $this->sousTraitant = Soustraitant::all();
+    $this->filteredSousTraitant = $this->sousTraitant; // Initialize with all subcontractors
+}
+
+    public function updatedSearchTerm()
+    {
+        if (!empty($this->searchTerm)) {
+            $this->filteredSousTraitant = $this->sousTraitant->filter(function ($item) {
+                return stripos($item->name, $this->searchTerm) !== false;
+            });
+        } else {
+            $this->filteredSousTraitant = $this->sousTraitant; // Reset to full list if no search term
+        }
+    }
+    
 
 
 
@@ -457,18 +493,23 @@ class ClientSavPage extends Component
             'Client_Affecte' => $client_Affecte->count(),
             'Client_Bloque' => $clientBloque->count(),
         ];
+
         $clientsCount = 0;
+        $clients = ClientSavService::getClients($this->search, $this->client_status, $this->start_date, $this->end_date);
         $problem = 0;
-        $clients = SavClient::orderBy('date_demande','desc')->paginate(15);  //ClientSavService::index($this->start_date, $this->end_date, $this->search, $this->client_status)->paginate(15);
+        //$clients = SavClient::orderBy('date_demande','desc')->paginate(15);  //ClientSavService::index($this->start_date, $this->end_date, $this->search, $this->client_status)->paginate(15);
         $clientsCount = SavClient::count();
         $data = ClientSavService::getClientsSavStatistic();
         $techniciens = Technicien::with('user')->get();
-        $sousTraitant = Soustraitant::all();
+        $this->sousTraitant = Soustraitant::all();
+        if (empty($this->searchTerm)) {
+            $this->filteredSousTraitant = $this->sousTraitant;
+        }
         $cities = City::get(['id', 'name']);
         $blocages = Blocage::groupBy('cause')->get('cause');
 
 
-        return view('livewire.sav.client-sav-page', compact(['clients', 'techniciens', 'cities', 'clientsCount', 'problem', 'blocages','kpisData','sousTraitant']), ['data' => $data])->layout('layouts.app', [
+        return view('livewire.sav.client-sav-page', compact(['clients', 'techniciens', 'cities', 'clientsCount', 'problem', 'blocages','kpisData']), ['data' => $data])->layout('layouts.app', [
             'title' => 'Clients',
         ]);
     }

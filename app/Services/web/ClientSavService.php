@@ -70,6 +70,38 @@ class ClientSavService
     //         return $e->getMessage();
     //     }
     // }
+    static public function getClients($search = null, $client_status = null, $start_date = null, $end_date = null)
+    {
+        return SavClient::with(['city'])
+            ->when($search, function ($q, $search) {
+                $q->where(function ($q) use ($search) {
+                    $q->where('client_name', 'like', '%' . $search . '%')
+                      ->orWhere('sip', 'like', '%' . $search . '%')
+                      ->orWhere('n_case', 'like', '%' . $search . '%')
+                      ->orWhereHas('city', function ($q) use ($search) {
+                          $q->where('name', 'like', '%' . $search . '%');
+                      });
+                });
+            })
+            ->when($client_status, function ($q, $client_status) {
+                if (is_array($client_status)) {
+                    $q->whereIn('status', $client_status);
+                } else {
+                    $q->where('status', $client_status);
+                }
+            })
+            ->when($start_date, function ($q, $start_date) {
+                // Filter by start date
+                $q->whereDate('date_demande', '>=', $start_date);
+            })
+            ->when($end_date, function ($q, $end_date) {
+                // Filter by end date
+                $q->whereDate('date_demande', '<=', $end_date);
+            })
+            ->orderByDesc('date_demande')
+            ->paginate(15);
+    }
+    
     static function ImportAuto()
 {
     try {
