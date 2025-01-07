@@ -13,6 +13,7 @@ use App\Models\ClientSav;
 use App\Models\Notification;
 use App\Models\Plaque;
 use App\Models\SavClient;
+use App\Models\SavTicket;
 use App\Models\Soustraitant;
 use Carbon\Carbon;
 use DOMDocument;
@@ -101,6 +102,21 @@ class ClientSavService
             ->orderByDesc('date_demande')
             ->paginate(15);
     }
+    static public function getTechnicienTickets($searchTerm, $technicienId)
+    {
+        return SavTicket::with(['client', 'sousTraitant', 'blocage'])
+            ->where('technicien_id', $technicienId) // Filter by technicien_id
+            ->when($searchTerm, function ($q) use ($searchTerm) {
+                $q->whereHas('client', function ($q) use ($searchTerm) {
+                    $q->where('n_case', 'like', '%' . $searchTerm . '%') // Search by n_case
+                      ->orWhere('client_name', 'like', '%' . $searchTerm . '%') // Search by client name
+                      ->orWhere('sip', 'like', '%' . $searchTerm . '%'); // Search by SIP
+                });
+            })
+            ->orderByDesc('created_at')
+            ->paginate(15);
+    }
+    
     
     static function ImportAuto()
 {
