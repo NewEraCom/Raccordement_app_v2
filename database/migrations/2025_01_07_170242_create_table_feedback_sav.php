@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTableBlocagesSav extends Migration
+class CreateTableFeedbackSav extends Migration
 {
     /**
      * Run the migrations.
@@ -13,18 +13,16 @@ class CreateTableBlocagesSav extends Migration
      */
     public function up()
     {
-        Schema::create('blocages_sav', function (Blueprint $table) {
+        Schema::create('feedback_sav', function (Blueprint $table) {
             $table->id();
             $table->string('uuid')->uniqid();
             $table->foreignId('sav_ticket_id')->nullable()->constrained('sav_tickets')->onDelete('cascade')->onUpdate('cascade');
-            $table->string('cause',250);
-            $table->string('justification',1000)->nullable();
-            // $table->string('lat')->nullable();
-            // $table->string('lng')->nullable();
-            $table->string('comment')->nullable();
-            $table->tinyInteger('resolue');
+            $table->string('root_cause');
+            $table->integer('unite')->nullable();
+            $table->string('type')->nullable();
+            $table->string('before_picture')->nullable();
+            $table->string('after_picture')->nullable();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -35,6 +33,6 @@ class CreateTableBlocagesSav extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('blocages_sav');
+        Schema::dropIfExists('feedback_sav');
     }
 }

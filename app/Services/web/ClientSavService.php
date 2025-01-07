@@ -124,6 +124,16 @@ class ClientSavService
                     // Extract client data
                     $data = self::ImportsClientSAV($stringWithNewline);
                     $date = $message->getDate()->toDate();
+                    $gps = self::mapSurvey($data['code_plaque']);
+                    if (isset($gps->latitude) && isset($gps->longitude)) {
+                        $lat = $gps->latitude;
+                        $lng = $gps->longitude;
+                    } else {
+                        Log::error('Failed to fetch GPS coordinates');
+                        // Handle the error appropriately, e.g., set default values or show an error message
+                        $lat = null;
+                        $lng = null;
+                    }
 
                     Log::info('Extracted Data:', $data);
 
@@ -142,6 +152,8 @@ class ClientSavService
                             'date_demande' => $date,
                             'city_id' => $data['city_id'],
                             'plaque_id' => $data['plaque_id'],
+                            'lat' => $lat,
+                            'lng' => $lng,
                         ]
                     );
                 }
@@ -255,6 +267,7 @@ static public function ImportsClientSAV($content)
             'date_demande' => Carbon::now(),
             'plaque_id' => $plaque->id ?? 114,
             'city_id' => $plaque->city_id ?? 12,
+            'code_plaque' => $results['code_plaque'],
         ];
     } catch (\Throwable $th) {
         Log::error('Error in ImportsClientSAV: ' . $th->getMessage());
@@ -998,40 +1011,6 @@ static function index($start_date, $end_date, $search, $status)
                 $ms->move('INBOX.RaccoArchive');
                 $ms->setFlag('Seen');
             }
-        }
-    }
-
-    static function getLatLongFromOpenCage($address) {
-        $apiKey = env('OPENCAGE_API_KEY');
-        $address = urlencode($address);
-    
-        // OpenCage Geocoding API endpoint
-        $url = "https://api.opencagedata.com/geocode/v1/json?q={$address}&key={$apiKey}";
-    
-        // Send the request using cURL
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-    
-        // Decode the response
-        $responseData = json_decode($response, true);
-    
-        // Check if the response contains data
-        if ($httpCode == 200 && isset($responseData['results'][0])) {
-            return [
-                'latitude' => $responseData['results'][0]['geometry']['lat'],
-                'longitude' => $responseData['results'][0]['geometry']['lng']
-            ];
-        } else {
-            Log::error('OpenCage Geocoding API error', [
-                'http_code' => $httpCode,
-                'response' => $responseData,
-                'address' => $address
-            ]);
-            return ['error' => 'No results found'];
         }
     }
 }
