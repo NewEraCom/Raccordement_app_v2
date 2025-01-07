@@ -31,5 +31,9 @@ class ClientSav extends Model
     {
         return $this->belongsTo(City::class);
     }
+    public function plaque()
+    {
+        return $this->belongsTo(Plaque::class);
+    }
 
 }

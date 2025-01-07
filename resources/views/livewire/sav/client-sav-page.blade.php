@@ -424,12 +424,41 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <select class="form-select border-primary shadow-sm" id="cityInput" wire:model.lazy="new_city_id" required>
+
+                                        <option selected value="">Sélectionnez une ville</option>
+                                        @foreach ($cities as $city)
+                                        
+                                            <option value="{{ $city->id }}">{{ $city->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    <label for="cityInput">Ville</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <input type="date" class="form-control border-primary shadow-sm" id="dateDmdInput" wire:model.lazy="new_dmd_date" placeholder=" " required />
+                                    <label for="dateDmdInput">Date demande</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control border-primary shadow-sm" id="idCaseInput" wire:model.lazy="new_plaque" placeholder=" " pattern="^(\d{2}\.\d{1,2}\.\d{2})$" required  />
+                                    <label for="idCaseInput">Plaque</label>
+                                    @error('new_plaque1') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+                            </div>
+                        </div>
     
                         <div class="mb-3">
                             <div class="">
                                 <label for="addressInput">Adresse</label>
-                                <input type="text" class="form-control border-primary shadow-sm" id="addressInput" wire:model.lazy="new_address" placeholder="" required />
-                                
+                                <textarea class="form-control border-primary shadow-sm" id="addressInput" wire:model.lazy="new_address" rows=3 placeholder=""></textarea>
                             </div>
                         </div>
     
@@ -534,6 +563,15 @@
                                 <div class="form-floating">
                                     <input type="date" class="form-control border-primary shadow-sm" id="dateDmdInput" wire:model.lazy="new_dmd_date1" placeholder=" " required />
                                     <label for="dateDmdInput">Date demande</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control border-primary shadow-sm" id="idCaseInput" wire:model.lazy="new_plaque1" placeholder=" " pattern="^(\d{2}\.\d{1,2}\.\d{2})$" required  />
+                                    <label for="idCaseInput">Plaque</label>
+                                    @error('new_plaque1') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
                         </div>
@@ -825,5 +863,21 @@
             </div>
         </div>
     </div>
+
+
+    <script>
+               
+    function formatPlaque(input) {
+        let value = input.value.replace(/\D/g, ''); // Remove all non-digit characters
+        if (value.length > 2) {
+            value = value.slice(0, 2) + '.' + value.slice(2);
+        }
+        if (value.length > 5) {
+            value = value.slice(0, 5) + '.' + value.slice(5);
+        }
+        input.value = value;
+    }
+        
+    </script>
 
 </div>
