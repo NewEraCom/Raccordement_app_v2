@@ -27,7 +27,7 @@ class SavTicket extends Model
         
     ];
     public function client(){
-        return $this->belongsTo(ClientSav::class, 'client_id');
+        return $this->belongsTo(SavClient::class, 'client_id');
     }
 
     public function clientSav(){
