@@ -66,15 +66,9 @@ class SavTicketController extends Controller
     public function planifierAffectationSav(Request $request)
     {
         $this->ticketService->planifierAffectationSav($request);
-        // return response()->json(
-        //     [
-        //         'success' => true,
-        //         'message' => 'The data has been successfully returned.',
-        //         'affectations' => $ticket
-        //     ],
-
-
-        //     200
-        // );
+    }
+    public function declarationBlocageSav(Request $request)
+    {
+        $this->ticketService->declarationBlocageSav($request);
     }
 }

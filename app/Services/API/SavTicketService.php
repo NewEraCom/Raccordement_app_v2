@@ -78,7 +78,7 @@ class SavTicketService
     }
 
 
-    static public function declarationBlocage(Request $request)
+    static public function declarationBlocageSav(Request $request)
     {
 
 
@@ -105,8 +105,7 @@ class SavTicketService
 
         ]);
 
-        return $blocage;
-        // response()->json(['updated' => $user->update(), 'user' => $user,], 200);
+        response()->json(['blocage' => $blocage], 200);
 
 
         // else {
