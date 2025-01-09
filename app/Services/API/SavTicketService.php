@@ -5,8 +5,11 @@ namespace App\Services\API;
 use App\Models\SavTicket;
 use App\Models\Blocage;
 use App\Models\Technicien;
+use App\Models\BlocageSav;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+
 
 
 class SavTicketService
@@ -72,5 +75,44 @@ class SavTicketService
 
         // Retourner la réponse avec l'affectation mise à jour
         return response()->json(['Affectation' => $affectation], 200);
+    }
+
+
+    static public function declarationBlocage(Request $request)
+    {
+
+
+
+        // $validator = Validator::make($request->all(), [
+        //     'id' => 'required',
+        // ]);
+        // if ($validator->fails()) {
+        //     return response()->json(['error' => $validator->errors()], 401);
+        // }
+
+        // $blocage = new Blocage;
+        // // $userRating = ($request->input('user_rating') + ($user->user_rating * $user->nb_rating)) / $user->nb_rating + 1;
+
+        // $blocage->uuid = Str::uuid();
+        // $blocage->affectation_id = $request->input('affectation_id');
+        // $blocage->cause =  $request->input('cause');
+        // '', 'cause', 'justification','comment','resolue'
+        $blocage = BlocageSav::create([
+            'uuid' => Str::uuid(),
+            'sav_ticket_id' => $request->input('sav_ticket_id'),
+            'comment' =>  $request->input('comment'),
+            'justification' =>  $request->input('justification'),
+
+        ]);
+
+        return $blocage;
+        // response()->json(['updated' => $user->update(), 'user' => $user,], 200);
+
+
+        // else {
+        //     return response(['created' => false, 'message' => 'user already exists'], 401);
+        // }
+
+
     }
 }
