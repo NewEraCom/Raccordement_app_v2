@@ -80,38 +80,27 @@ class SavTicketService
 
     static public function declarationBlocageSav(Request $request)
     {
+        // Validation des données d'entrée
+        $validator = Validator::make($request->all(), [
+            'sav_ticket_id' => 'required|integer',
+            'comment' => 'nullable|string',
+            'justification' => 'nullable|string',
+        ]);
 
+        // Vérification si la validation échoue
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 422);
+        }
 
-
-        // $validator = Validator::make($request->all(), [
-        //     'id' => 'required',
-        // ]);
-        // if ($validator->fails()) {
-        //     return response()->json(['error' => $validator->errors()], 401);
-        // }
-
-        // $blocage = new Blocage;
-        // // $userRating = ($request->input('user_rating') + ($user->user_rating * $user->nb_rating)) / $user->nb_rating + 1;
-
-        // $blocage->uuid = Str::uuid();
-        // $blocage->affectation_id = $request->input('affectation_id');
-        // $blocage->cause =  $request->input('cause');
-        // '', 'cause', 'justification','comment','resolue'
+        // Création du blocage
         $blocage = BlocageSav::create([
             'uuid' => Str::uuid(),
             'sav_ticket_id' => $request->input('sav_ticket_id'),
-            'comment' =>  $request->input('comment'),
-            'justification' =>  $request->input('justification'),
-
+            'comment' => $request->input('comment'),
+            'justification' => $request->input('justification'),
         ]);
 
-        response()->json(['blocage' => $blocage], 200);
-
-
-        // else {
-        //     return response(['created' => false, 'message' => 'user already exists'], 401);
-        // }
-
-
+        // Réponse JSON en cas de succès
+        return response()->json(['blocage' => $blocage], 200);
     }
 }
