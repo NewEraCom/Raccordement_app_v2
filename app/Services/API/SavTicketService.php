@@ -81,36 +81,8 @@ class SavTicketService
 
     public function declarationBlocageSav(Request $request)
     {
-        try {
-            // Validation des données d'entrée
-            $validatedData = $request->validate([
-                'sav_ticket_id' => 'required|integer',
-                'comment' => 'nullable|string',
-                'justification' => 'nullable|string',
-            ]);
-
-            // Création du blocage
-            $blocage = BlocageSav::create([
-                'uuid' => Str::uuid(),
-                'sav_ticket_id' => $validatedData['sav_ticket_id'],
-                'comment' => $validatedData['comment'] ?? null,
-                'justification' => $validatedData['justification'] ?? null,
-            ]);
-
-            // Réponse JSON en cas de succès
-            return response()->json(['blocage' => $blocage], 201);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            // Retourne les erreurs de validation
-            return response()->json([
-                'message' => 'Échec de la validation des données',
-                'errors' => $e->errors(),
-            ], 422);
-        } catch (\Exception $e) {
-            // Gestion des autres exceptions
-            return response()->json([
-                'message' => 'Une erreur est survenue',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
+        return response()->json([
+            'message' => 'Une erreur inattendue est survenue.',
+        ], 200);
     }
 }
