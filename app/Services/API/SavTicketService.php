@@ -6,6 +6,7 @@ use App\Models\SavTicket;
 use App\Models\Blocage;
 use App\Models\Technicien;
 use App\Models\BlocageSav;
+use App\Models\BlocageSavPictures;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
@@ -112,6 +113,33 @@ class SavTicketService
 
             // Return a generic error response
             return response()->json(['error' => 'An unexpected error occurred.'], 500);
+        }
+    }
+
+
+
+    public function storeImageBlocage(Request $request)
+    {
+
+
+
+
+
+
+        $blocagePicture = BlocageSavPictures::create([
+            'uuid' => Str::uuid(),
+            'description' => $request->input('image'),
+            'attachement' => $request->input('attachement'),
+            'blocage_sav_id' =>  $request->input('blocage_sav_id')
+
+
+        ]);
+
+
+
+
+        if ($blocagePicture->save()) {
+            return response()->json(['images' => $blocagePicture], 200);
         }
     }
 }
