@@ -120,26 +120,28 @@ class SavTicketService
 
     public function storeImageBlocageSav(Request $request)
     {
+        // Validate the incoming request
+        $validated = $request->validate([
+            'image' => 'nullable|string|max:255', // Optional description
+            'attachement' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048', // Validate file type and size
+            'blocage_sav_id' => 'required|integer|exists:blocage_savs,id', // Ensure blocage_sav_id exists
+        ]);
 
+        // Handle file upload
+        $filePath = null;
+        if ($request->hasFile('attachement')) {
+            $filePath = $request->file('attachement')->store('uploads', 'public');
+        }
 
-
-
-
-
+        // Create the record in the database
         $blocagePicture = BlocageSavPictures::create([
             'uuid' => Str::uuid(),
             'description' => $request->input('image'),
-            'attachement' => $request->input('attachement'),
-            'blocage_sav_id' =>  $request->input('blocage_sav_id')
-
-
+            'attachement' => $filePath, // Save the file path in the database
+            'blocage_sav_id' => $request->input('blocage_sav_id'),
         ]);
 
-
-
-
-        if ($blocagePicture->save()) {
-            return response()->json(['images' => $blocagePicture], 200);
-        }
+        // Return success response
+        return response()->json(['images' => $blocagePicture], 200);
     }
 }
