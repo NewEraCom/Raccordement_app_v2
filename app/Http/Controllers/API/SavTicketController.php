@@ -65,10 +65,10 @@ class SavTicketController extends Controller
     }
     public function planifierAffectationSav(Request $request)
     {
-        $this->ticketService->planifierAffectationSav($request);
+        return  $this->ticketService->planifierAffectationSav($request);
     }
     public function declarationBlocageSav(Request $request)
     {
-        $this->ticketService->declarationBlocageSav($request);
+        return    $this->ticketService->declarationBlocageSav($request);
     }
 }
