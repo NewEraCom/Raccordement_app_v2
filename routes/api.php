@@ -79,7 +79,7 @@ Route::get('/getSavTickets/{id}', [SavTicketController::class, 'getAllTicket']);
 Route::get('/getSavTicketSavBlocage/{id}', [SavTicketController::class, 'getSavTicketSavBlocage']);
 Route::get('/getPlanifiedTicket/{id}', [SavTicketController::class, 'getPlanifiedTicket']);
 Route::post('/planifierAffectationSav', [SavTicketController::class, 'planifierAffectationSav']);
-Route::post('/declarationBlocageSav1', [SavTicketController::class, 'declarationBlocageSav1']);
+Route::post('/declarationBlocageSav', [SavTicketController::class, 'declarationBlocageSav']);
 /*
 |
 */
