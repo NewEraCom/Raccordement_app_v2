@@ -79,29 +79,38 @@ class SavTicketService
     }
 
 
-    static public function declarationBlocageSav(Request $request)
+    public function declarationBlocageSav(Request $request)
     {
-        // Validation des données d'entrée
-        $validator = Validator::make($request->all(), [
-            'sav_ticket_id' => 'required|integer',
-            'comment' => 'nullable|string',
-            'justification' => 'nullable|string',
-        ]);
+        try {
+            // Validation des données d'entrée
+            $validatedData = $request->validate([
+                'sav_ticket_id' => 'required|integer',
+                'comment' => 'nullable|string',
+                'justification' => 'nullable|string',
+            ]);
 
-        // Vérification si la validation échoue
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 422);
+            // Création du blocage
+            $blocage = BlocageSav::create([
+                'uuid' => Str::uuid(),
+                'sav_ticket_id' => $validatedData['sav_ticket_id'],
+                'comment' => $validatedData['comment'] ?? null,
+                'justification' => $validatedData['justification'] ?? null,
+            ]);
+
+            // Réponse JSON en cas de succès
+            return response()->json(['blocage' => $blocage], 201);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Retourne les erreurs de validation
+            return response()->json([
+                'message' => 'Échec de la validation des données',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            // Gestion des autres exceptions
+            return response()->json([
+                'message' => 'Une erreur est survenue',
+                'error' => $e->getMessage(),
+            ], 500);
         }
-
-        // Création du blocage
-        $blocage = BlocageSav::create([
-            'uuid' => Str::uuid(),
-            'sav_ticket_id' => $request->input('sav_ticket_id'),
-            'comment' => $request->input('comment'),
-            'justification' => $request->input('justification'),
-        ]);
-
-        // Réponse JSON en cas de succès
-        return response()->json(['blocage' => $blocage], 200);
     }
 }
