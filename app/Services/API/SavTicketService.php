@@ -81,19 +81,14 @@ class SavTicketService
 
     static public function declarationBlocageSav(Request $request)
     {
-        // Validation des données d'entrée
-        $validator = Validator::make($request->all(), [
+        // Automatically validate the input data
+        $validated = $request->validate([
             'sav_ticket_id' => 'required|integer',
             'cause' => 'required|string|max:255',
             'justification' => 'nullable|string|max:500',
         ]);
 
-        // Vérification si la validation échoue
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 422);
-        }
-
-        // Création du blocage
+        // If validation passes, proceed to create the blocage
         $blocage = BlocageSav::create([
             'uuid' => Str::uuid(),
             'sav_ticket_id' => $request->input('sav_ticket_id'),
@@ -101,7 +96,7 @@ class SavTicketService
             'justification' => $request->input('justification'),
         ]);
 
-        // Réponse JSON en cas de succès
+        // Return the created blocage object with a 200 OK status
         return response()->json(['blocage' => $blocage], 200);
     }
 }
