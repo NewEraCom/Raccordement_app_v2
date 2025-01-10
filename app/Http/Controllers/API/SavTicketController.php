@@ -71,4 +71,8 @@ class SavTicketController extends Controller
     {
         return    $this->ticketService->declarationBlocageSav($request);
     }
+    public function storeImageBlocageSav(Request $request)
+    {
+        return    $this->ticketService->storeImageBlocageSav($request);
+    }
 }

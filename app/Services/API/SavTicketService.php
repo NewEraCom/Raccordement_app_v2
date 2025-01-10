@@ -118,7 +118,7 @@ class SavTicketService
 
 
 
-    public function storeImageBlocage(Request $request)
+    public function storeImageBlocageSav(Request $request)
     {
 
 
