@@ -6,7 +6,7 @@ use App\Models\SavTicket;
 use App\Models\Blocage;
 use App\Models\Technicien;
 use App\Models\BlocageSav;
-use App\Services\API\Validator;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -82,24 +82,22 @@ class SavTicketService
     static public function declarationBlocageSav(Request $request)
     {
         // Validation des données d'entrée
-        // $validator =
+        $validator = Validator::make($request->all(), [
+            'sav_ticket_id' => 'required|integer',
+            'cause' => 'required|string|max:255',
+            'justification' => 'nullable|string|max:500',
+        ]);
 
-        // Validator::make($request->all(), [
-        //     'sav_ticket_id' => 'required|integer',
-        //     'comment' => 'nullable|string',
-        //     'justification' => 'nullable|string',
-        // ]);
-
-        // // Vérification si la validation échoue
-        // if ($validator->fails()) {
-        //     return response()->json(['error' => $validator->errors()], 422);
-        // }
+        // Vérification si la validation échoue
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 422);
+        }
 
         // Création du blocage
         $blocage = BlocageSav::create([
             'uuid' => Str::uuid(),
             'sav_ticket_id' => $request->input('sav_ticket_id'),
-            'comment' => $request->input('comment'),
+            'cause' => $request->input('cause'),
             'justification' => $request->input('justification'),
         ]);
 
