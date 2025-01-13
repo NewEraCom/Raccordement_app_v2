@@ -18,7 +18,7 @@ class SavTicketService
 {
     public function getSavTicketApi($id)
     {
-        $affectation = SavTicket::with(['client'])->where('status', 'En cours')->get();
+        $affectation = SavTicket::with(['client'])->where('status', 'En cours')->where('technicien_id', $id)->get();
         return  $affectation;
     }
 
@@ -90,7 +90,6 @@ class SavTicketService
                 'cause' => 'required|string|max:255',
                 'justification' => 'nullable|string|max:500',
             ]);
-
 
 
             // If validation passes, proceed to create the blocage

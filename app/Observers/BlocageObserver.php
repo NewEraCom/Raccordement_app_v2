@@ -16,17 +16,15 @@ class BlocageObserver
      */
     public function created(Blocage $blocage)
     {
-        
- 
-$checkDeclaration = Declaration::where('affectation_id', $blocage->affectation_id)->first();
-
-if ($checkDeclaration) {
-    Blocage::where("affectation_id", $blocage->affectation_id)->update([
-        'declared' => 'Déclaré',
-    ]);
-}
 
 
+        $checkDeclaration = Declaration::where('affectation_id', $blocage->affectation_id)->first();
+
+        if ($checkDeclaration) {
+            Blocage::where("affectation_id", $blocage->affectation_id)->update([
+                'declared' => 'Déclaré',
+            ]);
+        }
         Affectation::find($blocage->affectation_id)->update([
             'status' => "Bloqué"
         ]);
