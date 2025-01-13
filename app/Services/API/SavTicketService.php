@@ -18,7 +18,7 @@ class SavTicketService
 {
     public function getSavTicketApi($id)
     {
-        $affectation = SavTicket::with(['client'])->where('status', 'En cours')->get();
+        $affectation = SavTicket::with(['client'])->where('technicien_id', $id)->where('status', 'En cours')->get();
         return  $affectation;
     }
 
