@@ -4,7 +4,6 @@ namespace App\Services\API;
 
 use App\Models\SavTicket;
 use App\Models\Blocage;
-use App\Models\BlocageSav;
 use App\Models\Technicien;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
@@ -20,7 +19,7 @@ class SavTicketService
 
     public function getSavTicketSavBlocageApi($id)
     {
-        $affectation = BlocageSav::whereHas('savTicket', function ($query)  use ($id) {
+        $affectation = Blocage::whereHas('savTicket', function ($query)  use ($id) {
             $query->where('technicien_id', $id)->where('status', "Bloqué");
         })->with(
             'savTicket',
@@ -28,8 +27,7 @@ class SavTicketService
                 $query->with(['client']);
             }
 
-        );
-        // ->where('declared', null)->where('resolue', 0)->orderBy('id', 'desc')->get()
+        )->where('declared', null)->where('resolue', 0)->orderBy('id', 'desc')->get();
         return  $affectation;
     }
 

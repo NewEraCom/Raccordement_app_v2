@@ -319,24 +319,28 @@
 
             <!-- Attachments -->
             @if ($blocage->pictures && $blocage->pictures->isNotEmpty())
-                <div class="blocage-pictures mt-3">
-                    <div class="row g-2">
-                        @foreach ($blocage->pictures as $picture)
-                            <div class="col-md-4 col-sm-6">
-                                <div class="card">
-                                    <img src="{{ asset('storage/' .$picture->attachement) }}" width="320" height="220"
-                                    alt="{{ $picture->description ?? 'Attachment' }}">
-                                    <div class="card-body text-center p-2">
-                                        <p class="small text-muted mb-0"><strong>Description:</strong> 
-                                            {{ $picture->description ?? 'No description available.' }}
-                                        </p>
-                                    </div>
+            <div class="blocage-pictures mt-4 text-center">
+                <h5 class="mb-4">Attachments</h5>
+                <div class="row justify-content-center g-3">
+                    @foreach ($blocage->pictures as $picture)
+                        <div class="col-md-4 col-sm-6 d-flex justify-content-center">
+                            <div class="card shadow-sm">
+                                <img src="{{ asset('storage/' . $picture->attachement) }}" 
+                                     class="card-img-top img-fluid rounded" 
+                                     alt="{{ $picture->description ?? 'Attachment' }}" 
+                                     style="max-height: 220px; object-fit: cover;">
+                                <div class="card-body text-center p-3">
+                                    <p class="small text-muted mb-0"><strong>Description:</strong> 
+                                        {{ $picture->description ?? 'No description available.' }}
+                                    </p>
                                 </div>
                             </div>
-                        @endforeach
-                    </div>
+                        </div>
+                    @endforeach
                 </div>
-            @endif
+            </div>
+        @endif
+        
         </div>
     </div>
 @endforeach
