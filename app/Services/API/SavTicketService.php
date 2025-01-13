@@ -5,15 +5,20 @@ namespace App\Services\API;
 use App\Models\SavTicket;
 use App\Models\Blocage;
 use App\Models\Technicien;
+use App\Models\BlocageSav;
+use App\Models\BlocageSavPictures;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+
 
 
 class SavTicketService
 {
     public function getSavTicketApi($id)
     {
-        $affectation = SavTicket::with(['client'])->where('status', 'En cours')->get();
+        $affectation = SavTicket::with(['client'])->where('technicien_id', $id)->where('status', 'En cours')->get();
         return  $affectation;
     }
 
@@ -72,5 +77,71 @@ class SavTicketService
 
         // Retourner la réponse avec l'affectation mise à jour
         return response()->json(['Affectation' => $affectation], 200);
+    }
+
+
+    static public function declarationBlocageSav(Request $request)
+    {
+
+        try {
+            // Automatically validate the input data
+            $validated = $request->validate([
+                'sav_ticket_id' => 'required|integer',
+                'cause' => 'required|string|max:255',
+                'justification' => 'nullable|string|max:500',
+            ]);
+
+
+
+            // If validation passes, proceed to create the blocage
+            $blocage = BlocageSav::create([
+                'uuid' => Str::uuid(),
+                'sav_ticket_id' => $validated['sav_ticket_id'],
+                'cause' => $validated['cause'],
+                'justification' => $validated['justification'] ?? null,
+            ]);
+
+            // Return the created blocage object with a 200 OK status
+            return response()->json(['blocage' => $blocage], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Log validation errors
+
+
+            // Return validation errors
+            return response()->json(['errors' => $e->errors()], 422);
+        } catch (\Exception $e) {
+
+            // Return a generic error response
+            return response()->json(['error' => 'An unexpected error occurred.'], 500);
+        }
+    }
+
+
+
+    public function storeImageBlocageSav(Request $request)
+    {
+        // Validate the incoming request
+        // $validated = $request->validate([
+        //     'image' => 'nullable|string|max:255', // Optional description
+        //     'image_file' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048', // Validate file type and size
+        //     'blocage_sav_id' => 'required|integer|exists:blocage_savs,id', // Ensure blocage_sav_id exists
+        // ]);
+
+        // Handle file upload
+        $filePath = null;
+        if ($request->hasFile('image_file')) {
+            $filePath = $request->file('image_file')->store('uploads', 'public');
+        }
+
+        // Create the record in the database
+        $blocagePicture = BlocageSavPictures::create([
+            'uuid' => Str::uuid(),
+            'description' => $request->input('image'),
+            'attachement' => $filePath, // Save the file path in the database
+            'blocage_sav_id' => $request->input('blocage_sav_id'),
+        ]);
+
+        // Return success response
+        return response()->json(['images' => $blocagePicture], 200);
     }
 }
