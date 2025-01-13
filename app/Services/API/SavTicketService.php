@@ -174,7 +174,7 @@ class SavTicketService
 
             // Validate the request
             $validated = $request->validate([
-                'test_debit_image_url' => 'image|mimes:jpeg,png,jpg|max:10240',
+                'before_picture' => 'image|mimes:jpeg,png,jpg|max:10240',
                 'after_picture' => 'image|mimes:jpeg,png,jpg|max:10240',
 
             ]);
