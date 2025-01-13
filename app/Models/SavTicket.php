@@ -41,7 +41,7 @@ class SavTicket extends Model
 
     public function blocages()
     {
-        return $this->hasMany(Blocage::class);
+        return $this->hasMany(BlocageSav::class);
     }
     // public function technicien(){
     //     return $this->belongsTo(Technicien::class , 'technicien_id');

@@ -110,7 +110,7 @@
                             <div class="form-floating">
                                 <select class="form-select" id="floatingSelect" wire:model="client_status">
                                     <option value="" selected>Tous</option>
-                                    <option value="Down">Down</option>
+                                    <option value="Bloqué">Down</option>
                                     <option value="Affecté">Affecté</option>
                                     <option value="Connecté">Connecté</option>
                                     <option value="Saisie">Saisie</option>
@@ -181,11 +181,13 @@
                                 <td class="text-center">
                                     {{$client->date_demande}}
                                 </td>   
-                                <td>
+                                <td class="text-center">
                                     @if ($client->status == 'Bloqué')
                                         <span class="badge bg-danger p-1">{{ $client->status }}</span>
                                     @elseif($client->status == 'Planifié')
-                                        <span class="badge bg-warning p-1">{{ $client->status }}</span>
+                                        <span class="badge bg-warning p-1">{{ $client->status }}</span> <br>
+                                        <span class="badge badge-warning-lighten p-1 ps-2 pe-2 mt-1">{{
+                                            $client->savTickets->last()->planification_date ?? '-' }}</span>
                                     @elseif($client->status == 'Saisie')
                                         <span class="badge bg-primary p-1">{{ $client->status }}</span>
                                     @elseif($client->status == 'En cours')

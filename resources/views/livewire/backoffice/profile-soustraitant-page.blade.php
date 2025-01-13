@@ -4,7 +4,7 @@
         <div class="col-12">
             <div class="page-title-box">
                 <div class="page-title-right">
-                    @if($user->status == 1)
+                    @if($user && $user->status == 1)
                         <button class="btn btn-danger btn-sm shadow-none" data-bs-toggle="modal" data-bs-target="#toggle-status-modal">
                             <i class="uil-user-times me-2"></i> Désactiver
                         </button>
@@ -25,7 +25,7 @@
                 <h4 class="page-title">{{ $soustraitant->name }}</h4>
             </div>
         </div>
-    </div>
+    </div>  
 
     <div class="row">
         <div class="col-12 col-sm-6 col-xl-3">
@@ -155,14 +155,14 @@
         </div>
     </div>
 
-    <div class="d-flex gap-3 px-2">
+    <div class="d-flex gap-2 px-2">
         <div class="card col-md-6">
             <div class="card-header">
                 <h4 class="title-head">Clients</h4>
             </div>
             <div class="card-body p-0">
                 <div class="row">
-                    <div class="col-12">
+                    <div class="col-12" style="overflow-x: auto; white-space: nowrap; padding-bottom: 10px;">
                         <table class="table table-centered table-responsive mb-0">
                             <thead class="table-dark">
                                 <tr>
@@ -180,20 +180,16 @@
                                     <tr>
                                         <td class="text-center">{{ $client->sip }}</td>
                                         <td>
-                                            <h5 class="font-14 my-1">{{ Str::limit($client->address, 30) }}
-                                            </h5>
+                                            <h5 class="font-14 my-1">{{ Str::limit($client->address, 30) }}</h5>
                                             <span class="text-muted font-13">{{ $client->city->name }}</span>
                                         </td>
                                         <td>{{ $client->name }}</td>
                                         <td>{{ $client->phone_no }}</td>
-                                        <td>{{ $client->technicien ? $client->technicien->user->getFullname() : '-' }}
+                                        <td>{{ $client->technicien ? $client->technicien->user->getFullname() : '-' }}</td>
                                         <td class="text-center">
-                                            <span
-                                                class="badge badge-{{ $client->getStatusColor() }}-lighten p-1 ps-2 pe-2">{{ $client->status }}</span>
+                                            <span class="badge badge-{{ $client->getStatusColor() }}-lighten p-1 ps-2 pe-2">{{ $client->status }}</span>
                                         </td>
-                                        <td class="text-center">
-                                            {{ $client->created_at->format('d-m-Y H:i') }}
-                                        </td>
+                                        <td class="text-center">{{ $client->created_at->format('d-m-Y H:i') }}</td>
                                     </tr>
                                 @empty
                                     <tr>
@@ -219,17 +215,16 @@
             </div>
             <div class="card-body p-0">
                 <div class="row">
-                    <div class="col-12">
+                    <div class="col-12" style="overflow-x: auto; white-space: nowrap; padding-bottom: 10px;">
                         <table class="table table-centered table-responsive mb-0">
                             <thead class="table-dark">
                                 <tr>
-                                    <th class="text-center">case</th>
+                                    <th class="text-center">Case</th>
                                     <th>Adresse</th>
                                     <th>Nom du client</th>
                                     <th>Numéro de téléphone</th>
                                     <th>Technicien</th>
                                     <th class="text-center">Etat</th>
-                                    
                                 </tr>
                             </thead>
                             <tbody>
@@ -237,18 +232,15 @@
                                     <tr>
                                         <td class="text-center">{{ $client->id_case }}</td>
                                         <td>
-                                            <h5 class="font-14 my-1">{{ Str::limit($client->client->address, 30) }}
-                                            </h5>
+                                            <h5 class="font-14 my-1">{{ Str::limit($client->client->address, 30) }}</h5>
                                             <span class="text-muted font-13">{{ $client->client->city->name }}</span>
                                         </td>
                                         <td>{{ $client->client->client_name }}</td>
                                         <td>{{ $client->client->contact }}</td>
-                                        <td>{{ $client->technicien ? $client->technicien->user->getFullname() : '-' }}
+                                        <td>{{ $client->technicien ? $client->technicien->user->getFullname() : '-' }}</td>
                                         <td class="text-center">
-                                            <span
-                                                class="badge badge-{{ $client->getStatusColor() }}-lighten p-1 ps-2 pe-2">{{ $client->status }}</span>
+                                            <span class="badge badge-{{ $client->getStatusColor() }}-lighten p-1 ps-2 pe-2">{{ $client->status }}</span>
                                         </td>
-                                        
                                     </tr>
                                 @empty
                                     <tr>
@@ -268,8 +260,9 @@
                 </div>
             </div>
         </div>
-
     </div>
+    
+    
 
 
     <div id="associer-modal" class="modal fade" tabindex="-1" role="dialog"
@@ -407,7 +400,7 @@
                 <form wire:submit.prevent="toggleStatus">
                     <div class="modal-header">
                         <h4 class="modal-title" id="toggle-status-modalLabel">
-                            @if($user->status == 1)
+                            @if($user && $user->status == 1)
                                 Désactiver le Sous traitant
                             @else
                                 Activer le Sous traitant
@@ -417,7 +410,7 @@
                     </div>
                     <div class="modal-body">
                         <p class="fw-bold f-16">
-                            @if($user->status == 1)
+                            @if($user && $user->status == 1)
                                 Es-tu sûr de désactiver ce sous traitant ?
                             @else
                                 Es-tu sûr d'activer ce sous traitant ?
@@ -426,8 +419,8 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light shadow-none" data-bs-dismiss="modal">Fermer</button>
-                        <button type="submit" class="btn btn-{{ $user->status == 1 ? 'danger' : 'success' }} shadow-none">
-                            <span wire:loading.remove wire:target="toggleStatus">{{ $user->status == 1 ? 'Oui, désactiver' : 'Oui, activer' }}</span>
+                        <button type="submit" class="btn btn-{{$user &&  $user->status == 1 ? 'danger' : 'success' }} shadow-none">
+                            <span wire:loading.remove wire:target="toggleStatus">{{$user &&  $user->status == 1 ? 'Oui, désactiver' : 'Oui, activer' }}</span>
                             <span wire:loading wire:target="toggleStatus">
                                 <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                                 Chargement...

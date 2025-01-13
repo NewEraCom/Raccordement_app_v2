@@ -284,6 +284,75 @@
                         @endforelse
                     </div>
 
+{{-- Blocages Section --}}
+@if ($client->savTickets->last()->blocages ?? false)
+<div class="blocages-section">
+    {{-- <h4 class="header-title bg-light p-2 mt-0 mb-1"> <i class="uil-chart me-2"></i> Blocage</h4> --}}
+    @foreach ($client->savTickets->last()->blocages as $blocage)
+    <div class="blocage-item card mb-3 shadow-sm">
+        <div class="card-header bg-danger text-white">
+            <h6 class="mb-0">Blocage Details</h6>
+        </div>
+        <div class="card-body text-center" >
+            <!-- Cause -->
+            <p><strong>Cause:</strong> {{ $blocage->cause ?? 'Unknown Cause' }}</p>
+
+
+            
+            <!-- Justification -->
+            <p><strong>Justification:</strong> 
+                {{ $blocage->justification ?? 'No justification provided.' }}
+            </p>
+
+            <!-- Comment -->
+            <p><strong>Comment:</strong> 
+                {{ $blocage->comment ?? 'No comment provided.' }}
+            </p>
+
+            <!-- Status -->
+            <p>
+                <strong>Status:</strong>
+                <span class="badge {{ $blocage->resolue ? 'bg-success' : 'bg-danger' }}">
+                    {{ $blocage->resolue ? 'Resolved' : 'Unresolved' }}
+                </span>
+            </p>
+
+            <!-- Attachments -->
+            @if ($blocage->pictures && $blocage->pictures->isNotEmpty())
+            <div class="blocage-pictures mt-4 text-center">
+                <h5 class="mb-4">Attachments</h5>
+                <div class="row justify-content-center g-3">
+                    @foreach ($blocage->pictures as $picture)
+                        <div class="col-md-4 col-sm-6 d-flex justify-content-center">
+                            <div class="card shadow-sm">
+                                <img src="{{ asset('storage/' . $picture->attachement) }}" 
+                                     class="card-img-top img-fluid rounded" 
+                                     alt="{{ $picture->description ?? 'Attachment' }}" 
+                                     style="max-height: 220px; object-fit: cover;">
+                                <div class="card-body text-center p-3">
+                                    <p class="small text-muted mb-0"><strong>Description:</strong> 
+                                        {{ $picture->description ?? 'No description available.' }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+        
+        </div>
+    </div>
+@endforeach
+
+</div>
+@else
+<div class="text-center">
+    {{-- <h3>Blocages</h3> --}}
+    <p>Il n'y a pas de blocages</p>
+</div>
+@endif
+
                 </div>
             </div>
         </div>

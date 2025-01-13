@@ -19,6 +19,17 @@ class SavClientExport implements FromCollection, WithHeadings, ShouldAutoSize, W
 {
     use Exportable;
 
+    protected $startDate;
+    protected $endDate;
+
+
+    public function __construct($startDate = null, $endDate = null)
+    {
+        $this->startDate = $startDate;
+        $this->endDate = $endDate;
+    }
+    
+
     public function headings(): array
     {
         return [
@@ -29,9 +40,10 @@ class SavClientExport implements FromCollection, WithHeadings, ShouldAutoSize, W
             'Ville',
             'Contact',
             'Date demande',
+            'Equipe',
             'Date d\'intervention',
             'Root Cause',
-            'Equipe',
+            
 
         ];
     }
@@ -56,12 +68,28 @@ class SavClientExport implements FromCollection, WithHeadings, ShouldAutoSize, W
 
     public function collection()
     {
-        $data = SavClient::select('n_case', 'login', 'address', 'client_name', 'cities.name as ville', 'contact', 'date_demande',)
-            ->join('cities', 'sav_client.city_id', '=', 'cities.id')
-            ->orderBy('date_demande', 'desc')
-            ->get();
-      
-        return $data;
+        // Start building the query
+        $query = SavClient::select(
+            'n_case',
+            'login',
+            'address',
+            'client_name',
+            'cities.name as ville',
+            'contact',
+            'date_demande'
+        )
+        ->join('cities', 'sav_client.city_id', '=', 'cities.id');
+    
+        // Apply date filtering if dates are provided
+        if ($this->startDate) {
+            $query->where('date_demande', '>=', $this->startDate);
+        }
+        if ($this->endDate) {
+            $query->where('date_demande', '<=', $this->endDate);
+        }
+    
+        // Order by date and fetch results
+        return $query->orderBy('date_demande', 'desc')->get();
     }
 
     public function title(): string
