@@ -170,6 +170,7 @@ class ClientSavService
                             'plaque_id' => $data['plaque_id'],
                             'lat' => $lat,
                             'lng' => $lng,
+                            'status' => 'Saisie'
                         ]
                     );
                 }
