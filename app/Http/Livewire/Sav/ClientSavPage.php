@@ -473,11 +473,11 @@ class ClientSavPage extends Component
 
     public function exportToCsv(){
         try {
-            $this->emit('success');
-            return (new SavClientExport())->download('Ticket_' . now()->format('d_m_Y_H_i_s') . '.xlsx');
-        } catch (\Throwable $th) {
-            dd($th->getMessage());
-        }
+        $this->emit('success');
+        return (new SavClientExport($this->start_date, $this->end_date))->download('Ticket_' . now()->format('d_m_Y_H_i_s') . '.xlsx');
+    } catch (\Throwable $th) {
+        dd($th->getMessage());
+    }
     }
     public function mount()
 {
