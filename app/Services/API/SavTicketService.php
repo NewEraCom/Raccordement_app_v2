@@ -168,7 +168,15 @@ class SavTicketService
 
     static public function getFeedbackSav($id)
     {
-        $feedBackSav = FeedBackSav::where('technicien_id', $id)->get();
+        $feedBackSav = FeedBackSav::whereHas('savTicket', function ($query)  use ($id) {
+            $query->where('technicien_id', $id);
+        })->with(
+            'savTicket',
+            function ($query) {
+                $query->with(['client']);
+            }
+
+        )->get();
         return
             response()->json(
                 [
