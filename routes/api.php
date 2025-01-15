@@ -78,8 +78,10 @@ Route::get('/getClientsThecnicien/{id}', [ClientController::class, 'getClientsTh
 Route::get('/getSavTickets/{id}', [SavTicketController::class, 'getAllTicket']);
 Route::get('/getSavTicketSavBlocage/{id}', [SavTicketController::class, 'getSavTicketSavBlocage']);
 Route::get('/getPlanifiedTicket/{id}', [SavTicketController::class, 'getPlanifiedTicket']);
+Route::get('/getFeedbackSav/{id}', [SavTicketController::class, 'getFeedbackSav']);
 Route::post('/planifierAffectationSav', [SavTicketController::class, 'planifierAffectationSav']);
 Route::post('/declarationBlocageSav', [SavTicketController::class, 'declarationBlocageSav']);
+Route::post('/feedbackSav', [SavTicketController::class, 'feedbackSav']);
 Route::post('/storeImageBlocageSav', [SavTicketController::class, 'storeImageBlocageSav']);
 /*
 |

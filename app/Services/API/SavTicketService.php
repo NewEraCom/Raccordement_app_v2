@@ -7,6 +7,7 @@ use App\Models\Blocage;
 use App\Models\Technicien;
 use App\Models\BlocageSav;
 use App\Models\BlocageSavPictures;
+use App\Models\FeedBackSav;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
@@ -24,7 +25,7 @@ class SavTicketService
 
     public function getSavTicketSavBlocageApi($id)
     {
-        $affectation = Blocage::whereHas('savTicket', function ($query)  use ($id) {
+        $affectation = BlocageSav::whereHas('savTicket', function ($query)  use ($id) {
             $query->where('technicien_id', $id)->where('status', "Bloqué");
         })->with(
             'savTicket',
@@ -32,7 +33,7 @@ class SavTicketService
                 $query->with(['client']);
             }
 
-        )->where('declared', null)->where('resolue', 0)->orderBy('id', 'desc')->get();
+        )->where('resolue', 0)->orderBy('id', 'desc')->get();
         return  $affectation;
     }
 
@@ -122,6 +123,9 @@ $affectation->save();
 
 
 
+
+
+
     public function storeImageBlocageSav(Request $request)
     {
         // Validate the incoming request
@@ -147,5 +151,100 @@ $affectation->save();
 
         // Return success response
         return response()->json(['images' => $blocagePicture], 200);
+    }
+    /**
+     * Handles the upload and storage of images.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param array $validated
+     * @return array
+     */
+    protected static function handleUploadedImages(Request $request, array $validated): array
+    {
+        $imagePaths = [];
+        foreach ($validated as $fieldName => $file) {
+            if ($request->hasFile($fieldName)) {
+                $imagePaths[$fieldName] = $request->file($fieldName)->store('uploads', 'public');
+            }
+        }
+        return $imagePaths;
+    }
+
+    static public function getFeedbackSav($id)
+    {
+        $feedBackSav = FeedBackSav::whereHas('savTicket', function ($query)  use ($id) {
+            $query->where('technicien_id', $id);
+        })->with(
+            'savTicket',
+            function ($query) {
+                $query->with(['client']);
+            }
+
+        )->get();
+        return
+            response()->json(
+                [
+                    'success' => true,
+                    'message' => 'The data has been successfully returned.',
+                    'feedBack_sav' => $feedBackSav
+                ],
+
+
+                200
+            );
+    }
+
+    static public function feedbackSav(Request $request)
+    {
+
+        try {
+
+
+            // Validate the request
+            $validated = $request->validate([
+                'before_picture' => 'image|mimes:jpeg,png,jpg|max:10240',
+                'after_picture' => 'image|mimes:jpeg,png,jpg|max:10240',
+
+            ]);
+
+            // Process and store uploaded images
+            $imagePaths = self::handleUploadedImages($request, $validated);
+
+
+
+            // Automatically validate the input data
+            $validated = $request->validate([
+                'sav_ticket_id' => 'required|integer',
+                'root_cause' => 'required|string|max:255',
+                'unite' => 'nullable|string|max:500',
+            ]);
+
+
+
+            // If validation passes, proceed to create the blocage
+            $feedBackSav = FeedBackSav::create([
+                'uuid' => Str::uuid(),
+                'sav_ticket_id' => $validated['sav_ticket_id'],
+                'root_cause' => $validated['root_cause'],
+                'unite' => $validated['unite'] ?? null,
+                'after_picture' =>     $imagePaths['after_picture'] ?? null,
+                'before_picture' =>     $imagePaths['before_picture'] ?? null,
+
+
+            ]);
+
+            // Return the created blocage object with a 200 OK status
+            return response()->json(['feedBackSav' => $feedBackSav], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Log validation errors
+
+
+            // Return validation errors
+            return response()->json(['errors' => $e->errors()], 422);
+        } catch (\Exception $e) {
+
+            // Return a generic error response
+            return response()->json(['error' => $e], 500);
+        }
     }
 }
