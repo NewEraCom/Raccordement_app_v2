@@ -83,7 +83,7 @@ class SavTicket extends Model
     }
 
     public function feedback(){
-        return $this->hasMany(feedback::class);
+        return $this->hasMany(FeedBackSav::class);
     }
     public function savhistories(){
         return $this->hasMany(Savhistory::class,'savticket_id','id');

@@ -26,6 +26,7 @@ class ClientSav extends Model
         'lng',                 
         'comment',             
         'service_activities', 
+        'created_by'
     ];
     public function city()
     {
@@ -34,6 +35,10 @@ class ClientSav extends Model
     public function plaque()
     {
         return $this->belongsTo(Plaque::class);
+    }
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 
 }
