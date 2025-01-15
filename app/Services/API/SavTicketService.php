@@ -33,7 +33,7 @@ class SavTicketService
                 $query->with(['client']);
             }
 
-        )->where('declared', null)->where('resolue', 0)->orderBy('id', 'desc')->get();
+        )->where('resolue', 0)->orderBy('id', 'desc')->get();
         return  $affectation;
     }
 
