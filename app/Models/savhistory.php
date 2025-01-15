@@ -35,6 +35,14 @@ class Savhistory extends Model
             case 'Down':
                 $data = 'primary';
                 break;
+            case 'Affecté':
+                $data = 'warning';
+                break;
+                
+            case 'En cours':
+                $data = 'primary';
+                break;
+                    
             case 'Planifié':
                 $data = 'warning';
                 break;

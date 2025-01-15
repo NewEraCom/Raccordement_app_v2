@@ -145,11 +145,13 @@
                                     </td>
                                     <td> {{ $affectation->technicien ?  $affectation->technicien->user->getFullname() : '-' }}</td>
 
-                                    <td>
+                                    <td class="text-center">
                                         @if ($affectation->status == 'Bloqué')
                                             <span class="badge bg-danger p-1">{{ $affectation->status }}</span>
                                         @elseif($affectation->status == 'Planifié')
-                                            <span class="badge bg-warning p-1">{{ $affectation->status }}</span>
+                                            <span class="badge bg-warning p-1">{{ $affectation->status }}</span> <br>
+                                            <span class="badge badge-warning-lighten p-1 ps-2 pe-2 mt-1">{{
+                                                $affectation->planification_date ?? '-' }}</span>
                                         @elseif($affectation->status == 'En cours')
                                             <span class="badge bg-primary p-1">{{ $affectation->status }}</span>
                                         @elseif($affectation->status == 'Validé')
