@@ -94,6 +94,13 @@
                                 value="{{ $client->city->name }}">
                         </div>
                     </div>
+                    <div class="row mb-2 align-middle">
+                        <label for="inputEmail3" class="col-5 col-form-label fw-bold">Plaque</label>
+                        <div class="col-7">
+                            <input type="text" readonly class="form-control-plaintext" id="example-static"
+                                value="{{ $clientt->plaque->code_plaque }}">
+                        </div>
+                    </div>
                     {{-- <div class="row mb-2 align-middle">
                         <label for="inputEmail3" class="col-5 col-form-label fw-bold">Type</label>
                         <div class="col-7">
@@ -240,7 +247,7 @@
                             </div>
                         @endforelse
                     </div> 
-                    <h4 class="header-title bg-light p-2 mt-2 mb-3"> <i class="uil-file me-2"></i> Rapports</h4>
+                    <h4 class="header-title bg-light p-2 mt-2 mb-3"> <i class="uil-file me-2"></i> Feedback</h4>
                     <br>
 
                     <div class="timeline-alt">
@@ -322,7 +329,7 @@
                 <div class="blocage-pictures mt-3">
                     <div class="row g-2">
                         @foreach ($blocage->pictures as $picture)
-                            <div class="col-md-4 col-sm-6">
+                            <div class="col-md-12 col-sm-12">
                                 <div class="card">
                                     <img src="{{ asset('storage/' .$picture->attachement) }}" width="320" height="220"
                                     alt="{{ $picture->description ?? 'Attachment' }}">

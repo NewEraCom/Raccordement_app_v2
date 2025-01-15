@@ -268,9 +268,14 @@ static public function ImportsClientSAV($content)
         Log::info('Extracted Data:', ['raw' => $content, 'results' => $results]);
 
         // Fetch plaque if code_plaque is matched
+        $originalCodePlaque = $results['code_plaque'];
+        $segments = explode('.', $originalCodePlaque);
+
+        // Extract the first three segments and join them with a dot
+        $extractedCodePlaque = implode('.', array_slice($segments, 0, 3));
         $plaque = null;
-        if (!empty($results['code_plaque'])) {
-            $plaque = Plaque::with('city')->where('code_plaque', 'LIKE', $results['code_plaque'])->first();
+        if (!empty($extractedCodePlaque)) {
+            $plaque = Plaque::with('city')->where('code_plaque', 'LIKE', $extractedCodePlaque)->first();
         }
 
         return [

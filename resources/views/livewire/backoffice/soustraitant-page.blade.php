@@ -37,12 +37,12 @@
     <div class="row">
         @forelse ($soustraitant as $item)
             <div class="col-12 col-sm-12 col-lg-12 col-xl-6 col-xxl-4">
-            @hasanyrole('admin|sav')
+                    @hasanyrole('admin|sav')
                     <a href="{{ route('admin.soustraitant.profile', $item) }}">
                     @endhasanyrole
                     @role('supervisor')
                         <a href="{{ route('supervisor.soustraitant.profile', $item) }}">
-                        @endrole
+                    @endrole
                         <div class="card">
                             <div class="card-body">
                                 <span class="float-start m-2 me-4">
