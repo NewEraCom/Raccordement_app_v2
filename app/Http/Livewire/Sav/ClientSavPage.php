@@ -175,6 +175,17 @@ class ClientSavPage extends Component
         ]);
         Log::info($this->client_id);
         Log::info( $data);
+        $address = $this->new_address;
+        $gps = ClientsService::mapSurvey($this->new_plaque1);
+        if (isset($gps->latitude) && isset($gps->longitude)) {
+            $lat = $gps->latitude;
+            $lng = $gps->longitude;
+        } else {
+            Log::error('Failed to fetch GPS coordinates', ['address' => $address, 'gps' => $gps]);
+            // Handle the error appropriately, e.g., set default values or show an error message
+            $lat = null;
+            $lng = null;
+        }
         $client = ModelsClientSav::find($this->client_id);
         $client->update([
             'n_case' => $data['new_id_case'] ?? '0',
@@ -186,6 +197,8 @@ class ClientSavPage extends Component
             'contact' => $data['new_contact_number'],
             'comment' => $data['new_comment'],
             'service_activities' => $data['new_service_activities'],
+            'lat' => $lat,
+            'lng' => $lng,
       
         ]);
         $this->emit('success');
