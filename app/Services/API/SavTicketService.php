@@ -166,6 +166,22 @@ class SavTicketService
         return $imagePaths;
     }
 
+    static public function getFeedbackSav($id)
+    {
+        $feedBackSav = FeedBackSav::where('technicien_id', $id)->get();
+        return
+            response()->json(
+                [
+                    'success' => true,
+                    'message' => 'The data has been successfully returned.',
+                    'affectations' => $feedBackSav
+                ],
+
+
+                200
+            );
+    }
+
     static public function feedbackSav(Request $request)
     {
 
