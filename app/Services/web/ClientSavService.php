@@ -160,8 +160,8 @@ class ClientSavService
                         ],
                         [
                             'n_case' => $data['n_case'],
-                            'sip' => $data['sip'],
-                            'login' => $data['login'],
+                            'sip' => $data['login'],
+                            // 'login' => $data['login'],
                             'address' => Str::title(Str::lower($data['address'])),
                             'client_name' => Str::title(Str::lower($data['client_name'])),
                             'contact' => $data['contact'],
@@ -174,6 +174,8 @@ class ClientSavService
                         ]
                     );
                 }
+                $message->move('INBOX.savArchive');
+                $message->setFlag('Seen');
             }
         }
     } catch (Exception $e) {

@@ -165,7 +165,7 @@ class ClientSavPage extends Component
         $data = $this->validate([
             'new_id_case' => 'required',
             'new_network_access' => 'required',
-            'new_line_number' => 'required',
+           // 'new_line_number' => 'required',
             'new_full_name' => 'required',
             'new_city_id' => 'required',
             'new_contact_number' => 'required',
@@ -189,8 +189,9 @@ class ClientSavPage extends Component
         $client = ModelsClientSav::find($this->client_id);
         $client->update([
             'n_case' => $data['new_id_case'] ?? '0',
-            'login' => $data['new_network_access'],
-            'sip' => $data['new_line_number'],
+            // 'login' => $data['new_network_access'],
+            // 'sip' => $data['new_line_number'],
+            'sip' => $data['new_network_access'],
             'address' => $data['new_address'],
             'new_city_id' => $data['new_city_id'],
             'client_name' => $data['new_full_name'],
@@ -265,7 +266,7 @@ class ClientSavPage extends Component
         $validatedData = $this->validate([
             'new_id_case1' => 'required|string|max:255',
             'new_network_access1' => 'required|string|max:255',
-            'new_line_number1' => 'required|string|max:255',
+           // 'new_line_number1' => 'required|string|max:255',
             'new_dmd_date1'=>'required|date',
             'new_full_name1' => 'required|string|max:255',
             'new_contact_number1' => 'required|string|max:15',
@@ -324,8 +325,9 @@ class ClientSavPage extends Component
         // ]);
 $clientSav = new SavClient();
 $clientSav->n_case = $this->new_id_case1;
-$clientSav->login = $this->new_network_access1;
-$clientSav->sip = $this->new_line_number1;
+//$clientSav->login = $this->new_network_access1;
+//$clientSav->sip = $this->new_line_number1;
+$clientSav->sip = $this->new_network_access1;
 $clientSav->address = $this->new_address1;
 $clientSav->client_name = $this->new_full_name1;
 $clientSav->contact = $this->new_contact_number1;
@@ -345,7 +347,7 @@ $clientSav->save();
         $this->reset([
             'new_id_case1',
             'new_network_access1', 
-            'new_line_number1',
+           // 'new_line_number1',
             'new_address1',
             'new_dmd_date1',
             'new_full_name1', 
@@ -375,8 +377,8 @@ $clientSav->save();
             // Assignation des propriétés Livewire avec les valeurs du SavClient
             $this->client_id = $id;                             // Assurez-vous de l'id du SavClient
             $this->new_id_case = $SavClient->n_case;               // ID CASE
-            $this->new_network_access = $SavClient->login;         // Accès réseau (login)
-            $this->new_line_number = $SavClient->sip;              // N° de ligne (sip)
+         //   $this->new_network_access = $SavClient->login;         // Accès réseau (login)
+         $this->new_network_access = $SavClient->sip;              // N° de ligne (sip)
             $this->new_address = $SavClient->address;              // Adresse
             $this->new_full_name = $SavClient->client_name;        // Nom complet du SavClient
             $this->new_contact_number = $SavClient->contact;       // Numéro de contact
@@ -522,7 +524,7 @@ $clientSav->save();
     $this->filteredSousTraitant = $this->sousTraitant; // Initialize with all subcontractors
     $this->filteredPlaques = Plaque::with('city')
     ->where('status', 1)
-    ->take(20) // Limit results to 20
+    ->take(6) // Limit results to 20
     ->get();
    // $this->filteredPlaques = $this->plaques;
 }
@@ -534,7 +536,7 @@ public function updatedSearchPlaque($value)
         ->orWhereHas('city', function ($query) use ($value) {
             $query->where('name', 'like', '%' . $value . '%');
         })
-        ->take(20) // Limit results
+        ->take(6) // Limit results
         ->get();
 }
 public function selectPlaque($code_plaque)

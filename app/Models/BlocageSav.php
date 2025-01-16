@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class BlocageSav extends Model
 {
     use HasFactory;
-    protected $table = 'blocages_sav';
+  //  protected $table = 'blocages_sav';
 
     protected $fillable = ['sav_ticket_id', 'cause', 'justification','comment','resolue'];
     

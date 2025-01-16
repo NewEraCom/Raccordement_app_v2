@@ -155,7 +155,7 @@
                         <tr><th class="text-center"></th>
                             <th>ID Case</th>
                             <th class="text-center">SIP</th>
-                            <th class="text-center">Access</th>
+                            {{-- <th class="text-center">Access</th> --}}
                             <th>Adresse</th>
                             <th>Client</th>
                             <th class="text-center">Telephone</th>
@@ -173,7 +173,7 @@
                                 </td>                        
                                 <td>{{ $client->n_case }}</td>
                                 <td class="text-center">{{ $client->sip }}</td>
-                                <td class="text-center">{{ $client->login }}</td>
+                                {{-- <td class="text-center">{{ $client->login }}</td> --}}
                                 <td>
                                     <h5 class="font-14 my-1">{{ Str::limit($client->address, 40) }}</h5>
                                     <span class="text-muted font-13">{{ $client->city->name ?? '-' }}</span>
@@ -398,19 +398,19 @@
                             <div class="col-md-6 mb-3">
                                 <div class="form-floating">
                                     <input type="text" class="form-control border-primary shadow-sm" id="networkAccessInput" wire:model.lazy="new_network_access" placeholder=" " required />
-                                    <label for="networkAccessInput">Accès réseau</label>
+                                    <label for="networkAccessInput">SIP</label>
                                 </div>
                             </div>
                         </div>
     
                         <div class="row">
-                            <div class="col-md-6 mb-3">
+                            {{-- <div class="col-md-6 mb-3">
                                 <div class="form-floating">
                                     <input type="text" class="form-control border-primary shadow-sm" id="lineNumberInput" wire:model.lazy="new_line_number" placeholder=" " required />
                                     <label for="lineNumberInput">N° de la ligne</label>
                                 </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
+                            </div> --}}
+                            <div class="col-md-12 mb-3">
                                 <div class="form-floating">
                                     <input type="text" class="form-control border-primary shadow-sm" id="fullNameInput" wire:model.lazy="new_full_name" placeholder=" " required />
                                     <label for="fullNameInput">Nom et prénom</label>
@@ -510,19 +510,19 @@
                             <div class="col-md-6 mb-3">
                                 <div class="form-floating">
                                     <input type="text" class="form-control border-primary shadow-sm" id="networkAccessInput" wire:model.lazy="new_network_access1" placeholder=" " required />
-                                    <label for="networkAccessInput">Accès réseau</label>
+                                    <label for="networkAccessInput">SIP</label>
                                 </div>
                             </div>
                         </div>
     
                         <div class="row">
-                            <div class="col-md-6 mb-3">
+                            {{-- <div class="col-md-6 mb-3">
                                 <div class="form-floating">
                                     <input type="text" class="form-control border-primary shadow-sm" id="lineNumberInput" wire:model.lazy="new_line_number1" placeholder=" " required />
                                     <label for="lineNumberInput">N° de la ligne</label>
                                 </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
+                            </div> --}}
+                            <div class="col-md-12 mb-3">
                                 <div class="form-floating">
                                     <input type="text" class="form-control border-primary shadow-sm" id="fullNameInput" wire:model.lazy="new_full_name1" placeholder=" " required />
                                     <label for="fullNameInput">Nom et prénom</label>
