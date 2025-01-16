@@ -170,6 +170,7 @@ class ClientSavService
                             'plaque_id' => $data['plaque_id'],
                             'lat' => $lat,
                             'lng' => $lng,
+                            'service_activities' => $data['activite_service'],
                         ]
                     );
                 }
@@ -255,6 +256,7 @@ static public function ImportsClientSAV($content)
             'address_installation' => '/Adresse Installation\s*:\s*(.+?)\s*(Login Internet|$)/i',
             'code_plaque' => '/Code\s*([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/i',
             'sip' => '/Login Internet\s*:\s*([\d]+)/i',
+            'activite_service' => '/Activités de service\s*:\s*(.*?)(?=\s*Type de problème|$)/i'
         ];
 
         // Extract data using patterns
@@ -278,6 +280,8 @@ static public function ImportsClientSAV($content)
             $plaque = Plaque::with('city')->where('code_plaque', 'LIKE', $extractedCodePlaque)->first();
         }
 
+        Log::info($results['activite_service'] );
+
         return [
             'n_case' => $results['id_case'], // id_case without extra characters
             'sip' => $results['sip'],
@@ -289,6 +293,7 @@ static public function ImportsClientSAV($content)
             'plaque_id' => $plaque->id ?? 114,
             'city_id' => $plaque->city_id ?? 12,
             'code_plaque' => $results['code_plaque'],
+            'activite_service' => $results['activite_service'] 
         ];
     } catch (\Throwable $th) {
         Log::error('Error in ImportsClientSAV: ' . $th->getMessage());
