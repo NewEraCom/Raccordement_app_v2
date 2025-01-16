@@ -75,6 +75,12 @@
                         </div>
                     </div>
                     <div class="row mb-2 align-middle">
+                        <label for="inputEmail3" class="col-5 col-form-label fw-bold">Activités de service</label>
+                        <div class="col-7">
+                            <p>{{ $client->service_activities }}</p>
+                        </div>
+                    </div>
+                    <div class="row mb-2 align-middle">
                         <label for="inputEmail3" class="col-5 col-form-label fw-bold">Adresse</label>
                         <div class="col-7">
                             <p>{{ $client->address }}</p>
@@ -301,25 +307,68 @@
                     
                                 <!-- Before and After Pictures -->
                                 @if ($item->before_picture || $item->after_picture)
-                                    <div class="row g-2">
-                                        @if ($item->before_picture)
-                                            <div class="col-md-6 text-center">
-                                                <h6 class="text-muted small">Avant</h6>
-                                                <img src="{{ asset('storage/' . $item->before_picture) }}" 
-                                                     class="img-fluid rounded shadow-sm" 
-                                                     alt="Before Picture">
+                                <div class="row g-2">
+                                    @if ($item->before_picture)
+                                        <div class="col-md-6 text-center">
+                                            <h6 class="text-muted small">Avant</h6>
+                                            <img src="{{ asset('storage/' . $item->before_picture) }}" 
+                                                 class="img-fluid rounded shadow-sm" 
+                                                 alt="Before Picture" 
+                                                 data-bs-toggle="modal" 
+                                                 data-bs-target="#beforePictureModal">
+                                        </div>
+                                    @endif
+                                    @if ($item->after_picture)
+                                        <div class="col-md-6 text-center">
+                                            <h6 class="text-muted small">Après</h6>
+                                            <img src="{{ asset('storage/' . $item->after_picture) }}" 
+                                                 class="img-fluid rounded shadow-sm" 
+                                                 alt="After Picture" 
+                                                 data-bs-toggle="modal" 
+                                                 data-bs-target="#afterPictureModal">
+                                        </div>
+                                    @endif
+                                </div>
+                            
+                                <!-- Modals -->
+                                @if ($item->before_picture)
+                                    <div class="modal fade" id="beforePictureModal" tabindex="-1" aria-labelledby="beforePictureModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="beforePictureModalLabel">Avant</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body text-center">
+                                                    <img src="{{ asset('storage/' . $item->before_picture) }}" 
+                                                         class="img-fluid rounded" 
+                                                         alt="Before Picture">
+                                                </div>
                                             </div>
-                                        @endif
-                                        @if ($item->after_picture)
-                                            <div class="col-md-6 text-center">
-                                                <h6 class="text-muted small">Après</h6>
-                                                <img src="{{ asset('storage/' . $item->after_picture) }}" 
-                                                     class="img-fluid rounded shadow-sm" 
-                                                     alt="After Picture">
-                                            </div>
-                                        @endif
+                                        </div>
                                     </div>
                                 @endif
+                            
+                                @if ($item->after_picture)
+                                    <div class="modal fade" id="afterPictureModal" tabindex="-1" aria-labelledby="afterPictureModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="afterPictureModalLabel">Après</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body text-center">
+                                                    <img src="{{ asset('storage/' . $item->after_picture) }}" 
+                                                         class="img-fluid rounded" 
+                                                         alt="After Picture">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                            @endif
+                            
+                            
                             </div>
                         @empty
                             <div class="text-center">
@@ -363,13 +412,15 @@
             <!-- Pièces jointes -->
             @if ($blocage->pictures && $blocage->pictures->isNotEmpty())
             <div class="row justify-content-center g-3">
-                @foreach ($blocage->pictures as $picture)
+                @foreach ($blocage->pictures as $index => $picture)
                     <div class="col-12 d-flex justify-content-center">
                         <div class="card shadow-sm w-100">
                             <img src="{{ asset('storage/' . $picture->attachement) }}" 
                                  class="img-fluid rounded shadow-sm" 
                                  alt="{{ $picture->description ?? 'Pièce jointe' }}" 
-                                 style="max-height: 400px; object-fit: cover;">
+                                 style="max-height: 400px; object-fit: cover;" 
+                                 data-bs-toggle="modal" 
+                                 data-bs-target="#pictureModal{{ $index }}">
                             <div class="card-body text-center p-3">
                                 <p class="small text-muted mb-0"><strong>Description :</strong> 
                                     {{ $picture->description ?? 'Aucune description disponible.' }}
@@ -377,10 +428,28 @@
                             </div>
                         </div>
                     </div>
+        
+                    <!-- Modal -->
+                    <div class="modal fade" id="pictureModal{{ $index }}" tabindex="-1" aria-labelledby="pictureModalLabel{{ $index }}" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="pictureModalLabel{{ $index }}">Image</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body text-center">
+                                    <img src="{{ asset('storage/' . $picture->attachement) }}" 
+                                         class="img-fluid rounded" 
+                                         alt="{{ $picture->description ?? 'Pièce jointe' }}">
+                                    <p class="small text-muted mt-3">
+                                        {{ $picture->description ?? 'Aucune description disponible.' }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 @endforeach
             </div>
-            
-      
         @endif
         
         </div>
@@ -406,3 +475,12 @@
 
 
 </div>
+<style>
+    .modal-body img {
+    max-width: 100%;
+    height: auto;
+}
+
+</style>
+<link href="https://cdn.jsdelivr.net/npm/lightbox2@2.11.3/dist/css/lightbox.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/lightbox2@2.11.3/dist/js/lightbox.min.js"></script>
