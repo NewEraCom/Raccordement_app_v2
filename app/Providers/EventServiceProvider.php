@@ -9,6 +9,7 @@ use App\Models\Deblocage;
 use App\Models\Technicien;
 use App\Observers\TechnicienObserver;
 use App\Models\Declaration;
+use App\Models\FeedBackSav;
 use App\Models\SavTicket;
 use App\Models\Validation;
 use App\Observers\AffectationObserver;
@@ -17,6 +18,7 @@ use App\Observers\BlocageObserver;
 use App\Observers\BlocageSavObserver;
 use App\Observers\ValidationObserver;
 use App\Observers\DeclarationObserver;
+use App\Observers\FeedBackSavObserver;
 use App\Observers\SavTicketObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -60,6 +62,7 @@ class EventServiceProvider extends ServiceProvider
         Deblocage::observe(DeblocageObserver::class);
         BlocageSav::observe(BlocageSavObserver::class);
         SavTicket::observe(SavTicketObserver::class);
+        FeedBackSav::observe(FeedBackSavObserver::class);
 
 
     }

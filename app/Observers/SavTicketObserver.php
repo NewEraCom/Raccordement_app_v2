@@ -68,6 +68,39 @@ class SavTicketObserver
                 'description' => $description,
             ]);
         }
+
+
+
+         // Check if the status has changed to "Validé"
+    if ($savTicket->isDirty('status') && $savTicket->status === 'Validé') {
+        // Fetch client and technicien details
+        $client = SavClient::find($savTicket->client_id);
+        $technicien = Technicien::find($savTicket->technicien_id);
+
+        $technicienName = $technicien ? $technicien->user->getFullName() : 'N/A';
+        $clientSip = $client ? $client->sip : 'N/A';
+
+        // Generate description for the validation
+        $description = sprintf(
+            'Le technicien %s a validé le ticket SAV pour le client %s.',
+            $technicienName,
+            $clientSip
+        );
+
+        // Create the Savhistory entry
+        Savhistory::create([
+            'savticket_id' => $savTicket->id,
+            'technicien_id' => $savTicket->technicien_id,
+            'soustraitant_id' => $savTicket->soustraitant_id,
+            'status' => $savTicket->status,
+            'description' => $description,
+        ]);
+
+        // Optionally, update the client status
+        if ($client) {
+            $client->update(['status' => 'Validé']);
+        }
+    }
     }
     
 

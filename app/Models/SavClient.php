@@ -57,7 +57,7 @@ class SavClient extends Model
                 return 'primary';
             case 'Planifié':
                 return 'warning';
-            case 'Terminé':
+            case 'Validé':
                 return 'success';
             case 'Bloqué':
                 return 'danger';
