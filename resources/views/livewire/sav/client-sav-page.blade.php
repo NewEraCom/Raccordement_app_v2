@@ -1,3 +1,5 @@
+
+
 <div class="container-fluid">
 
     <div class="row">
@@ -110,10 +112,14 @@
                             <div class="form-floating">
                                 <select class="form-select" id="floatingSelect" wire:model="client_status">
                                     <option value="" selected>Tous</option>
-                                    <option value="Bloqué">Down</option>
-                                    <option value="Affecté">Affecté</option>
-                                    <option value="Connecté">Connecté</option>
                                     <option value="Saisie">Saisie</option>
+                                    <option value="Affecté">Affecté</option>
+                                    <option value="En cours">En cours</option>
+                                    <option value="Planifié">Planifié</option>
+                                    <option value="Validé">Validé</option>
+                                    <option value="Bloqué">Bloqué</option>
+                                   
+                                    
                                 </select>
                                 <label for="floatingSelect">Status du client</label>
                             </div>
@@ -149,7 +155,7 @@
                         <tr><th class="text-center"></th>
                             <th>ID Case</th>
                             <th class="text-center">SIP</th>
-                            <th class="text-center">Access</th>
+                            {{-- <th class="text-center">Access</th> --}}
                             <th>Adresse</th>
                             <th>Client</th>
                             <th class="text-center">Telephone</th>
@@ -167,7 +173,7 @@
                                 </td>                        
                                 <td>{{ $client->n_case }}</td>
                                 <td class="text-center">{{ $client->sip }}</td>
-                                <td class="text-center">{{ $client->login }}</td>
+                                {{-- <td class="text-center">{{ $client->login }}</td> --}}
                                 <td>
                                     <h5 class="font-14 my-1">{{ Str::limit($client->address, 40) }}</h5>
                                     <span class="text-muted font-13">{{ $client->city->name ?? '-' }}</span>
@@ -392,19 +398,19 @@
                             <div class="col-md-6 mb-3">
                                 <div class="form-floating">
                                     <input type="text" class="form-control border-primary shadow-sm" id="networkAccessInput" wire:model.lazy="new_network_access" placeholder=" " required />
-                                    <label for="networkAccessInput">Accès réseau</label>
+                                    <label for="networkAccessInput">SIP</label>
                                 </div>
                             </div>
                         </div>
     
                         <div class="row">
-                            <div class="col-md-6 mb-3">
+                            {{-- <div class="col-md-6 mb-3">
                                 <div class="form-floating">
                                     <input type="text" class="form-control border-primary shadow-sm" id="lineNumberInput" wire:model.lazy="new_line_number" placeholder=" " required />
                                     <label for="lineNumberInput">N° de la ligne</label>
                                 </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
+                            </div> --}}
+                            <div class="col-md-12 mb-3">
                                 <div class="form-floating">
                                     <input type="text" class="form-control border-primary shadow-sm" id="fullNameInput" wire:model.lazy="new_full_name" placeholder=" " required />
                                     <label for="fullNameInput">Nom et prénom</label>
@@ -504,19 +510,19 @@
                             <div class="col-md-6 mb-3">
                                 <div class="form-floating">
                                     <input type="text" class="form-control border-primary shadow-sm" id="networkAccessInput" wire:model.lazy="new_network_access1" placeholder=" " required />
-                                    <label for="networkAccessInput">Accès réseau</label>
+                                    <label for="networkAccessInput">SIP</label>
                                 </div>
                             </div>
                         </div>
     
                         <div class="row">
-                            <div class="col-md-6 mb-3">
+                            {{-- <div class="col-md-6 mb-3">
                                 <div class="form-floating">
                                     <input type="text" class="form-control border-primary shadow-sm" id="lineNumberInput" wire:model.lazy="new_line_number1" placeholder=" " required />
                                     <label for="lineNumberInput">N° de la ligne</label>
                                 </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
+                            </div> --}}
+                            <div class="col-md-12 mb-3">
                                 <div class="form-floating">
                                     <input type="text" class="form-control border-primary shadow-sm" id="fullNameInput" wire:model.lazy="new_full_name1" placeholder=" " required />
                                     <label for="fullNameInput">Nom et prénom</label>
@@ -568,7 +574,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
+                        {{-- <div class="row">
                             <div class="col-md-12 mb-3">
                                 <div class="form-floating">
                                     <input type="text" class="form-control border-primary shadow-sm" id="idCaseInput" wire:model.lazy="new_plaque1" placeholder=" " pattern="^(\d{2}\.\d{1,2}\.\d{2})$" required  />
@@ -576,7 +582,51 @@
                                     @error('new_plaque1') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
+                        </div> --}}
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <!-- Search Input -->
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control border-primary shadow-sm" id="searchPlaque"
+                                           placeholder="Rechercher une plaque" wire:model.debounce.300ms="searchPlaque">
+                                    <label for="searchPlaque" class="text-muted">🔍 Rechercher une plaque</label>
+                                </div>
+                        
+                                <!-- Display Plaques -->
+                                <div class="list-group shadow-sm">
+                                    @forelse ($filteredPlaques as $plaque)
+                                        <button type="button" 
+                                                class="list-group-item list-group-item-action d-flex justify-content-between align-items-center 
+                                                       {{ $new_plaque1 == $plaque->code_plaque ? 'active text-white bg-primary' : '' }}"
+                                                wire:click="selectPlaque('{{ $plaque->code_plaque }}')">
+                                            <div>
+                                                <strong>{{ $plaque->code_plaque }}</strong>
+                                                <span class="text-muted small">
+                                                    @if ($plaque->city)
+                                                        - {{ $plaque->city->name }}
+                                                    @else
+                                                        - <em>Ville non attribuée</em>
+                                                    @endif
+                                                </span>
+                                            </div>
+                                            @if ($new_plaque1 == $plaque->code_plaque)
+                                                <span class="badge bg-light text-primary">Selected</span>
+                                            @endif
+                                        </button>
+                                    @empty
+                                        <div class="alert alert-warning text-center shadow-sm">
+                                            <i class="bi bi-info-circle me-2"></i>Aucune plaque trouvée.
+                                        </div>
+                                    @endforelse
+                                </div>
+                            </div>
                         </div>
+                        
+                        
+                        
+                        
+                        
+                        
     
                         <div class="mb-3">
                             <div class="">
@@ -676,8 +726,8 @@
         </div>
     </div> --}}
     <div id="affecter-modal" class="modal fade" tabindex="-1" role="dialog"
-    aria-labelledby="importation-modalLabel" aria-hidden="true" wire:ignore.self>
-    <div class="modal-dialog modal-dialog-centered">
+         aria-labelledby="importation-modalLabel" aria-hidden="true" wire:ignore.self>
+         <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <form wire:submit.prevent="affectation">
                 <div class="modal-header">
@@ -879,7 +929,37 @@
         }
         input.value = value;
     }
+    function showPlaqueList() {
+    const plaqueList = document.getElementById('plaqueList');
+    plaqueList.style.display = 'block'; // Show the list when the input is clicked
+}
+
+function hidePlaqueList() {
+    setTimeout(() => {
+        const plaqueList = document.getElementById('plaqueList');
+        plaqueList.style.display = 'none'; // Hide the list when input loses focus
+    }, 200); // Delay to allow selection click to register
+}
+
         
     </script>
 
 </div>
+<style>
+    .list-group-item.active {
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+    border: 1px solid #0d6efd;
+}
+
+.list-group-item:hover {
+    background-color: #f8f9fa;
+    cursor: pointer;
+}
+
+.alert-warning {
+    background-color: #fff4e5;
+    border-color: #ffe8c1;
+    color: #856404;
+}
+</style>

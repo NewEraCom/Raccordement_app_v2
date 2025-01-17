@@ -10,7 +10,7 @@ class BlocageSavPictures extends Model
 
     use HasFactory;
 
-    protected $table = 'blocages_sav_pictures';
+    //protected $table = 'blocages_sav_pictures';
 
     protected $fillable = ['blocage_sav_id', 'description', 'attachement'];
 

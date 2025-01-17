@@ -47,6 +47,11 @@ class ClientSavPage extends Component
     public $new_id_case1, $new_network_access1, $new_line_number1, $new_full_name1, $new_contact_number1, $new_service_activities1,$new_address1, $new_comment1 ,$new_city_id1 , $new_dmd_date1,$new_plaque1;
     public $new_id_case, $new_network_access, $new_line_number, $new_full_name, $new_contact_number, $new_service_activities,$new_address, $new_comment ,$new_city_id,$new_dmd_date,$new_plaque;
     public $filteredSousTraitant = [], $sousTraitant; // Filtered list
+    public $plaques , $searchPlaque;
+    public $filteredPlaques = [], $selectedPlaque = null;
+    
+   
+
 
 
 
@@ -160,7 +165,7 @@ class ClientSavPage extends Component
         $data = $this->validate([
             'new_id_case' => 'required',
             'new_network_access' => 'required',
-            'new_line_number' => 'required',
+           // 'new_line_number' => 'required',
             'new_full_name' => 'required',
             'new_city_id' => 'required',
             'new_contact_number' => 'required',
@@ -170,17 +175,31 @@ class ClientSavPage extends Component
         ]);
         Log::info($this->client_id);
         Log::info( $data);
+        $address = $this->new_address;
+        $gps = ClientsService::mapSurvey($this->new_plaque1);
+        if (isset($gps->latitude) && isset($gps->longitude)) {
+            $lat = $gps->latitude;
+            $lng = $gps->longitude;
+        } else {
+            Log::error('Failed to fetch GPS coordinates', ['address' => $address, 'gps' => $gps]);
+            // Handle the error appropriately, e.g., set default values or show an error message
+            $lat = null;
+            $lng = null;
+        }
         $client = ModelsClientSav::find($this->client_id);
         $client->update([
             'n_case' => $data['new_id_case'] ?? '0',
-            'login' => $data['new_network_access'],
-            'sip' => $data['new_line_number'],
+            // 'login' => $data['new_network_access'],
+            // 'sip' => $data['new_line_number'],
+            'sip' => $data['new_network_access'],
             'address' => $data['new_address'],
             'new_city_id' => $data['new_city_id'],
             'client_name' => $data['new_full_name'],
             'contact' => $data['new_contact_number'],
             'comment' => $data['new_comment'],
             'service_activities' => $data['new_service_activities'],
+            'lat' => $lat,
+            'lng' => $lng,
       
         ]);
         $this->emit('success');
@@ -243,11 +262,11 @@ class ClientSavPage extends Component
    
     public function Insert()
     {
-      
+
         $validatedData = $this->validate([
             'new_id_case1' => 'required|string|max:255',
             'new_network_access1' => 'required|string|max:255',
-            'new_line_number1' => 'required|string|max:255',
+           // 'new_line_number1' => 'required|string|max:255',
             'new_dmd_date1'=>'required|date',
             'new_full_name1' => 'required|string|max:255',
             'new_contact_number1' => 'required|string|max:15',
@@ -255,8 +274,9 @@ class ClientSavPage extends Component
             'new_address1' => 'required|string|max:500',
             'new_comment1' => 'nullable|string|max:1000',
              'new_city_id1' => 'required|exists:cities,id',
-             'new_plaque1' => 'required|regex:/^\d{2}\.\d{1,2}\.\d{2}$/',
+            'new_plaque1' => 'required|string|max:255'
         ]);
+    
         $address = $this->new_address1;
         Log::info('Fetching GPS coordinates for address: ' . $address);
 
@@ -286,29 +306,48 @@ class ClientSavPage extends Component
             $plaque = Plaque::where('city_id', 12)->first();
         }
         
-        ModelsClientSav::create([
-            'n_case' => $this->new_id_case1,
-            'login' => $this->new_network_access1,
-            'sip' => $this->new_line_number1,
-            'address' => $this->new_address1,
-            'client_name' => $this->new_full_name1,
-            'contact' => $this->new_contact_number1,
-            'date_demande' => $this->new_dmd_date1,
-            'city_id' => $this->new_city_id1,
-            'plaque_id' => $plaque->id,
-            'lat' => $lat,
-            'lng' => $lng,
-            'status' => 'Saisie',
-            'comment' => $this->new_comment1,
-            'service_activities' => $this->new_service_activities1,
-        ]);
+        // ModelsClientSav::create([
+        //     'n_case' => $this->new_id_case1,
+        //     'login' => $this->new_network_access1,
+        //     'sip' => $this->new_line_number1,
+        //     'address' => $this->new_address1,
+        //     'client_name' => $this->new_full_name1,
+        //     'contact' => $this->new_contact_number1,
+        //     'date_demande' => $this->new_dmd_date1,
+        //     'city_id' => $this->new_city_id1,
+        //     'plaque_id' => $plaque->id,
+        //     'lat' => $lat,
+        //     'lng' => $lng,
+        //     'status' => 'Saisie',
+        //     'created_by' => auth()->user()->id,
+        //     'comment' => $this->new_comment1,
+        //     'service_activities' => $this->new_service_activities1,
+        // ]);
+$clientSav = new SavClient();
+$clientSav->n_case = $this->new_id_case1;
+//$clientSav->login = $this->new_network_access1;
+//$clientSav->sip = $this->new_line_number1;
+$clientSav->sip = $this->new_network_access1;
+$clientSav->address = $this->new_address1;
+$clientSav->client_name = $this->new_full_name1;
+$clientSav->contact = $this->new_contact_number1;
+$clientSav->date_demande = $this->new_dmd_date1;
+$clientSav->city_id = $this->new_city_id1;
+$clientSav->plaque_id = $plaque->id;
+$clientSav->lat = $lat;
+$clientSav->lng = $lng;
+$clientSav->status = 'Saisie';
+$clientSav->created_by = auth()->user()->id;
+$clientSav->comment = $this->new_comment1;
+$clientSav->service_activities = $this->new_service_activities1;
+$clientSav->save();
       
     
         // Réinitialiser les champs du formulaire
         $this->reset([
             'new_id_case1',
             'new_network_access1', 
-            'new_line_number1',
+           // 'new_line_number1',
             'new_address1',
             'new_dmd_date1',
             'new_full_name1', 
@@ -338,8 +377,8 @@ class ClientSavPage extends Component
             // Assignation des propriétés Livewire avec les valeurs du SavClient
             $this->client_id = $id;                             // Assurez-vous de l'id du SavClient
             $this->new_id_case = $SavClient->n_case;               // ID CASE
-            $this->new_network_access = $SavClient->login;         // Accès réseau (login)
-            $this->new_line_number = $SavClient->sip;              // N° de ligne (sip)
+         //   $this->new_network_access = $SavClient->login;         // Accès réseau (login)
+         $this->new_network_access = $SavClient->sip;              // N° de ligne (sip)
             $this->new_address = $SavClient->address;              // Adresse
             $this->new_full_name = $SavClient->client_name;        // Nom complet du SavClient
             $this->new_contact_number = $SavClient->contact;       // Numéro de contact
@@ -479,11 +518,33 @@ class ClientSavPage extends Component
         dd($th->getMessage());
     }
     }
-    public function mount()
+    public function mount()     
 {
     $this->sousTraitant = Soustraitant::all();
     $this->filteredSousTraitant = $this->sousTraitant; // Initialize with all subcontractors
+    $this->filteredPlaques = Plaque::with('city')
+    ->where('status', 1)
+    ->take(6) // Limit results to 20
+    ->get();
+   // $this->filteredPlaques = $this->plaques;
 }
+public function updatedSearchPlaque($value)
+{
+    // Dynamically filter plaques based on the search term
+    $this->filteredPlaques = Plaque::with('city')
+        ->where('code_plaque', 'like', '%' . $value . '%')
+        ->orWhereHas('city', function ($query) use ($value) {
+            $query->where('name', 'like', '%' . $value . '%');
+        })
+        ->take(6) // Limit results
+        ->get();
+}
+public function selectPlaque($code_plaque)
+{
+    $this->new_plaque1 = $code_plaque; // Store the selected plaque code
+    $this->searchPlaque = $code_plaque; // Reflect the selected value in the search input
+}
+
 
     public function updatedSearchTerm()
     {
@@ -512,6 +573,7 @@ class ClientSavPage extends Component
         ];
 
         $clientsCount = 0;
+     $filteredPlaques = $this->filteredPlaques;
         $clients = ClientSavService::getClients($this->search, $this->client_status, $this->start_date, $this->end_date);
         $problem = 0;
         //$clients = SavClient::orderBy('date_demande','desc')->paginate(15);  //ClientSavService::index($this->start_date, $this->end_date, $this->search, $this->client_status)->paginate(15);
@@ -526,7 +588,7 @@ class ClientSavPage extends Component
         $blocages = Blocage::groupBy('cause')->get('cause');
 
 
-        return view('livewire.sav.client-sav-page', compact(['clients', 'techniciens', 'cities', 'clientsCount', 'problem', 'blocages','kpisData']), ['data' => $data])->layout('layouts.app', [
+        return view('livewire.sav.client-sav-page', compact(['clients', 'techniciens', 'cities', 'clientsCount', 'problem', 'blocages','kpisData','filteredPlaques']), ['data' => $data])->layout('layouts.app', [
             'title' => 'Clients',
         ]);
     }

@@ -22,6 +22,8 @@ class Kernel extends ConsoleKernel
       $schedule->command('importation:auto')->hourly()->between('8:00','21:00');
       $schedule->command('send:recap')->dailyAt('10:00');
       $schedule->command('clean:logs')->dailyAt('8:35');
+      $schedule->command('importation-sav:auto')->hourly()->between('8:00','21:00');
+
     }
 
     /**

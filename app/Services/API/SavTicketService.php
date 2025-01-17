@@ -71,10 +71,14 @@ class SavTicketService
         //     return response()->json(['error' => 'Nombre maximal de planifications atteint pour ce technicien.'], 409);
         // }
 
-        $affectation->update([
-            'status' => 'Planifié',
-            'planification_date' => Carbon::parse($request->input('planification_date'))->format('Y-m-d H:i:s'),
-        ]);
+        // $affectation->update([
+        //     'status' => 'Planifié',
+        //     'planification_date' => Carbon::parse($request->input('planification_date'))->format('Y-m-d H:i:s'),
+        // ]);
+        
+$affectation->status = 'Planifié';
+$affectation->planification_date = Carbon::parse($request->input('planification_date'))->format('Y-m-d H:i:s');
+$affectation->save();
 
         // Retourner la réponse avec l'affectation mise à jour
         return response()->json(['Affectation' => $affectation], 200);

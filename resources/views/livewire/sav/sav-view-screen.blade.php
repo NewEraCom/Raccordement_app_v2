@@ -61,17 +61,23 @@
                                 value="{{ $client->sip }}">
                         </div>
                     </div>
-                    <div class="row mb-2 align-middle">
+                    {{-- <div class="row mb-2 align-middle">
                         <label for="inputEmail3" class="col-5 col-form-label fw-bold">Login internet</label>
                         <div class="col-7">
                                 <p>{{ $client->login }}</p>
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="row mb-2 align-middle">
                         <label for="inputEmail3" class="col-5 col-form-label fw-bold">Nom du client</label>
                         <div class="col-7">
                             <input type="text" readonly class="form-control-plaintext" id="example-static"
                                 value="{{ $client->client_name }}">
+                        </div>
+                    </div>
+                    <div class="row mb-2 align-middle">
+                        <label for="inputEmail3" class="col-5 col-form-label fw-bold">Activités de service</label>
+                        <div class="col-7">
+                            <p>{{ $client->service_activities }}</p>
                         </div>
                     </div>
                     <div class="row mb-2 align-middle">
@@ -92,6 +98,13 @@
                         <div class="col-7">
                             <input type="text" readonly class="form-control-plaintext" id="example-static"
                                 value="{{ $client->city->name }}">
+                        </div>
+                    </div>
+                    <div class="row mb-2 align-middle">
+                        <label for="inputEmail3" class="col-5 col-form-label fw-bold">Plaque</label>
+                        <div class="col-7">
+                            <input type="text" readonly class="form-control-plaintext" id="example-static"
+                                value="{{ $clientt->plaque->code_plaque }}">
                         </div>
                     </div>
                     {{-- <div class="row mb-2 align-middle">
@@ -141,13 +154,13 @@
                                 value="{{ $client->created_at->format('d-m-Y H:i:s') }}">
                         </div>
                     </div>
-                    <div class="row mb-2 align-middle">
+                    {{-- <div class="row mb-2 align-middle">
                         <label for="inputEmail3" class="col-5 col-form-label fw-bold">Rapport telecharger</label>
                         <div class="col-7">
                             <input type="text" readonly class="form-control-plaintext" id="example-static"
                                 value="{{ $client->updated_at->format('d-m-Y H:i:s') }}">
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="row mb-2 align-middle">
                         <label for="inputEmail3" class="col-5 col-form-label fw-bold">Date de la dernière mise à
                             jour</label>
@@ -218,63 +231,144 @@
                         @empty
                         
                         @endforelse --}}
-
-                        @forelse ( $client->savTickets->last()->savhistories ?? [] as $item)
-                        <div class="timeline-item">
-                            <i class="bg-{{ $item->getStatusSavColor($item->status) }}-lighten text-{{ $item->getStatusSavColor($item->status) }} ri-bookmark-fill timeline-icon"></i>
-                            <div class="timeline-item-info">
-                                <h5 class="mt-0 mb-1">{{ $item->status }}
-                                    <h6>
-                                        {{ $item->description }}
+                        @forelse ($client->savTickets->last()->savhistories ?? [] as $item)
+                        <div class="timeline-item border rounded p-2 mb-2 bg-light">
+                            <div class="d-flex align-items-start">
+                                <!-- Icon -->
+                                <i class="bg-{{ $item->getStatusSavColor($item->status) }}-lighten text-{{ $item->getStatusSavColor($item->status) }} ri-bookmark-fill fs-5 me-2"></i>
+                                
+                                <!-- Content -->
+                                <div class="flex-grow-1">
+                                    <!-- Status -->
+                                    <h6 class="mt-0 mb-1 text-{{ $item->getStatusSavColor($item->status) }} fw-bold">
+                                        {{ $item->status }}
                                     </h6>
-                                </h5>
-                                <p>
-                                    Sous-traitant: {{ optional($item->soustraitant)->name ?? 'N/A' }}
-                                </p>
+                    
+                                    <!-- Description -->
+                                    <p class="text-secondary mb-1 small">{{ $item->description }}</p>
+                                           <!-- Sous-traitant (Only for 'Affecté') -->
+                                           @if ($item->status === 'Affecté')
+                                           <p class="text-dark small mb-0">
+                                               <i class="ri-user-line me-1 text-primary"></i>
+                                               Sous-traitant: {{ optional($item->soustraitant)->name ?? 'N/A' }}
+                                           </p>
+                                       @endif
+                    
+                                    <!-- Date -->
+                                    <p class="text-muted mb-1 small">
+                                        <i class="ri-calendar-2-line me-1"></i>
+                                        Créé le: {{ $item->created_at ? $item->created_at->format('d/m/Y H:i') : 'N/A' }}
+                                    </p>
+                    
+                             
+                                </div>
                             </div>
                         </div>
                     @empty
-                            <div class="text-center">
-                                <h1><i class="uil-times-circle"></i></h1>
-                                <h4>Il n'y a pas encore d'affectations.</h4>
-                            </div>
-                        @endforelse
+                        <div class="text-center">
+                            <h1><i class="uil-times-circle"></i></h1>
+                            <h4>Il n'y a pas encore d'affectations.</h4>
+                        </div>
+                    @endforelse
+                    
+                    
+                    
                     </div> 
-                    <h4 class="header-title bg-light p-2 mt-2 mb-3"> <i class="uil-file me-2"></i> Rapports</h4>
-                    <br>
 
+
+                    <h4 class="header-title bg-light p-2 mt-2 mb-1"> <i class="uil-file me-2"></i> Feed-back</h4>
+                    
                     <div class="timeline-alt">
-
                         @forelse ($client->savTickets->last()->feedback ?? [] as $item)
-                            <div class="timeline-item">
-                                <i
-                                    class="bg-{{ $item->getStatusSavColor($item->type) }}-lighten text-{{ $item->getStatusSavColor($item->status) }} ri-bookmark-fill timeline-icon"></i>
-                                <div class="timeline-item-info">
-                                    <h5 class="mt-0 mb-1">{{ $item->type }}
-                                        <h6>
-                                            {{ $item->description }}
-                                        </h6>
-                                    </h5>
-
-                                    @if ($item->test_signal != null)
-                                        <div class="text-center">
-                                            <img src="data:image/png;base64,{{ $item->test_signal }}" width="320"
-                                                height="220">
+                            <div class="timeline-item border rounded shadow-lg p-4 mb-4 bg-light">
+                                <!-- Header with Icon and Type -->
+                    
+                                <p class="text-muted">
+                                    <i class="ri-information-line me-1 text-info"></i>
+                                    <strong>Type:</strong> {{ $item->type }}
+                                </p>
+                                
+                    
+                                <!-- Root Cause -->
+                                @if ($item->root_cause)
+                                    <p class="text-muted mb-3">
+                                        <i class="ri-alert-line me-1 text-danger"></i>
+                                        <strong>Cause Racine:</strong> {{ $item->root_cause }}
+                                    </p>
+                                @endif
+                    
+                                <!-- Unite -->
+                                @if ($item->unite)
+                                    <p class="text-muted mb-3">
+                                        <i class="ri-hashtag me-1 text-primary"></i>
+                                        <strong>Unité:</strong> {{ $item->unite }}
+                                    </p>
+                                @endif
+                    
+                                <!-- Before and After Pictures -->
+                                @if ($item->before_picture || $item->after_picture)
+                                <div class="row g-2">
+                                    @if ($item->before_picture)
+                                        <div class="col-md-6 text-center">
+                                            <h6 class="text-muted small">Avant</h6>
+                                            <img src="{{ asset('storage/' . $item->before_picture) }}" 
+                                                 class="img-fluid rounded shadow-sm" 
+                                                 alt="Before Picture" 
+                                                 data-bs-toggle="modal" 
+                                                 data-bs-target="#beforePictureModal">
                                         </div>
-                                    @else
-                                        @if ($item->image_facultatif != null)
-                                            <h6>
-                                                {{ $item->type_blockage }}
-                                            </h6>
-
-                                            <div class="text-center">
-                                                <img src="data:image/png;base64,{{ $item->image_facultatif }}"
-                                                    width="320" height="220">
-                                            </div>
-                                        @endif
                                     @endif
-
+                                    @if ($item->after_picture)
+                                        <div class="col-md-6 text-center">
+                                            <h6 class="text-muted small">Après</h6>
+                                            <img src="{{ asset('storage/' . $item->after_picture) }}" 
+                                                 class="img-fluid rounded shadow-sm" 
+                                                 alt="After Picture" 
+                                                 data-bs-toggle="modal" 
+                                                 data-bs-target="#afterPictureModal">
+                                        </div>
+                                    @endif
                                 </div>
+                            
+                                <!-- Modals -->
+                                @if ($item->before_picture)
+                                    <div class="modal fade" id="beforePictureModal" tabindex="-1" aria-labelledby="beforePictureModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="beforePictureModalLabel">Avant</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body text-center">
+                                                    <img src="{{ asset('storage/' . $item->before_picture) }}" 
+                                                         class="img-fluid rounded" 
+                                                         alt="Before Picture">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                            
+                                @if ($item->after_picture)
+                                    <div class="modal fade" id="afterPictureModal" tabindex="-1" aria-labelledby="afterPictureModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="afterPictureModalLabel">Après</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body text-center">
+                                                    <img src="{{ asset('storage/' . $item->after_picture) }}" 
+                                                         class="img-fluid rounded" 
+                                                         alt="After Picture">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                            @endif
+                            
+                            
                             </div>
                         @empty
                             <div class="text-center">
@@ -283,68 +377,84 @@
                             </div>
                         @endforelse
                     </div>
-
+                    
 {{-- Blocages Section --}}
 @if ($client->savTickets->last()->blocages ?? false)
 <div class="blocages-section">
     {{-- <h4 class="header-title bg-light p-2 mt-0 mb-1"> <i class="uil-chart me-2"></i> Blocage</h4> --}}
     @foreach ($client->savTickets->last()->blocages as $blocage)
-    <div class="blocage-item card mb-3 shadow-sm">
+    <div class="timeline-item border rounded shadow-lg p-4 mb-4 bg-light">
         <div class="card-header bg-danger text-white">
-            <h6 class="mb-0">Blocage Details</h6>
+            <h6 class="mb-0">Détails du Blocage</h6>
         </div>
-        <div class="card-body text-center" >
+        <div class="card-body text-center">
             <!-- Cause -->
-            <p><strong>Cause:</strong> {{ $blocage->cause ?? 'Unknown Cause' }}</p>
+            <p><strong>Cause :</strong> {{ $blocage->cause ?? 'Cause inconnue' }}</p>
 
-
-            
             <!-- Justification -->
-            <p><strong>Justification:</strong> 
-                {{ $blocage->justification ?? 'No justification provided.' }}
+            <p><strong>Justification :</strong> 
+                {{ $blocage->justification ?? 'Aucune justification fournie.' }}
             </p>
 
-            <!-- Comment -->
-            <p><strong>Comment:</strong> 
-                {{ $blocage->comment ?? 'No comment provided.' }}
+            <!-- Commentaire -->
+            <p><strong>Commentaire :</strong> 
+                {{ $blocage->comment ?? 'Aucun commentaire fourni.' }}
             </p>
 
-            <!-- Status -->
+            <!-- Statut -->
             <p>
-                <strong>Status:</strong>
+                <strong>Statut :</strong>
                 <span class="badge {{ $blocage->resolue ? 'bg-success' : 'bg-danger' }}">
-                    {{ $blocage->resolue ? 'Resolved' : 'Unresolved' }}
+                    {{ $blocage->resolue ? 'Résolu' : 'Non résolu' }}
                 </span>
             </p>
 
-            <!-- Attachments -->
+            <!-- Pièces jointes -->
             @if ($blocage->pictures && $blocage->pictures->isNotEmpty())
-            <div class="blocage-pictures mt-4 text-center">
-                <h5 class="mb-4">Attachments</h5>
-                <div class="row justify-content-center g-3">
-                    @foreach ($blocage->pictures as $picture)
-                        <div class="col-md-4 col-sm-6 d-flex justify-content-center">
-                            <div class="card shadow-sm">
-                                <img src="{{ asset('storage/' . $picture->attachement) }}" 
-                                     class="card-img-top img-fluid rounded" 
-                                     alt="{{ $picture->description ?? 'Attachment' }}" 
-                                     style="max-height: 220px; object-fit: cover;">
-                                <div class="card-body text-center p-3">
-                                    <p class="small text-muted mb-0"><strong>Description:</strong> 
-                                        {{ $picture->description ?? 'No description available.' }}
+            <div class="row justify-content-center g-3">
+                @foreach ($blocage->pictures as $index => $picture)
+                    <div class="col-12 d-flex justify-content-center">
+                        <div class="card shadow-sm w-100">
+                            <img src="{{ asset('storage/' . $picture->attachement) }}" 
+                                 class="img-fluid rounded shadow-sm" 
+                                 alt="{{ $picture->description ?? 'Pièce jointe' }}" 
+                                 style="max-height: 400px; object-fit: cover;" 
+                                 data-bs-toggle="modal" 
+                                 data-bs-target="#pictureModal{{ $index }}">
+                            <div class="card-body text-center p-3">
+                                <p class="small text-muted mb-0"><strong>Description :</strong> 
+                                    {{ $picture->description ?? 'Aucune description disponible.' }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <!-- Modal -->
+                    <div class="modal fade" id="pictureModal{{ $index }}" tabindex="-1" aria-labelledby="pictureModalLabel{{ $index }}" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="pictureModalLabel{{ $index }}">Image</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body text-center">
+                                    <img src="{{ asset('storage/' . $picture->attachement) }}" 
+                                         class="img-fluid rounded" 
+                                         alt="{{ $picture->description ?? 'Pièce jointe' }}">
+                                    <p class="small text-muted mt-3">
+                                        {{ $picture->description ?? 'Aucune description disponible.' }}
                                     </p>
                                 </div>
                             </div>
                         </div>
-                    @endforeach
-                </div>
+                    </div>
+                @endforeach
             </div>
         @endif
         
         </div>
     </div>
-@endforeach
-
+    @endforeach
 </div>
 @else
 <div class="text-center">
@@ -353,6 +463,9 @@
 </div>
 @endif
 
+
+
+
                 </div>
             </div>
         </div>
@@ -362,3 +475,12 @@
 
 
 </div>
+<style>
+    .modal-body img {
+    max-width: 100%;
+    height: auto;
+}
+
+</style>
+<link href="https://cdn.jsdelivr.net/npm/lightbox2@2.11.3/dist/css/lightbox.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/lightbox2@2.11.3/dist/js/lightbox.min.js"></script>

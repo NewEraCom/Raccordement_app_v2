@@ -26,7 +26,8 @@ class SavClient extends Model
         'lng',                 
         'comment',             
         'service_activities', 
-        'status'
+        'status',
+        'created_by'
     ];
 
 
@@ -56,7 +57,7 @@ class SavClient extends Model
                 return 'primary';
             case 'Planifié':
                 return 'warning';
-            case 'Terminé':
+            case 'Validé':
                 return 'success';
             case 'Bloqué':
                 return 'danger';
@@ -67,6 +68,10 @@ class SavClient extends Model
     public function savTickets()
     {
         return $this->hasMany(SavTicket::class, 'client_id');
+    }
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 
 
