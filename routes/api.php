@@ -85,6 +85,7 @@ Route::post('/updateBlocageSav', [SavTicketController::class, 'updateBlocageSav'
 Route::post('/feedbackSav', [SavTicketController::class, 'feedbackSav']);
 Route::post('/updateFeedbackSav', [SavTicketController::class, 'updateFeedbackSav']);
 Route::post('/storeImageBlocageSav', [SavTicketController::class, 'storeImageBlocageSav']);
+Route::post('/updateImageBlocageSav', [SavTicketController::class, 'updateImageBlocageSav']);
 /*
 |
 */
