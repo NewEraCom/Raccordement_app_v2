@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Sav;
 use App\Exports\ClientSav;
 use App\Imports\ClientsImport;
 use App\Exports\SavClientExport;
+use App\Exports\SavExport;
 use App\Models\Affectation;
 use App\Models\City;
 use App\Models\Blocage;
@@ -513,7 +514,7 @@ $clientSav->save();
     public function exportToCsv(){
         try {
         $this->emit('success');
-        return (new SavClientExport($this->start_date, $this->end_date))->download('Ticket_' . now()->format('d_m_Y_H_i_s') . '.xlsx');
+        return (new SavExport($this->technicien, $this->start_date, $this->end_date))->download('Ticket_' . now()->format('d_m_Y_H_i_s') . '.xlsx');
     } catch (\Throwable $th) {
         dd($th->getMessage());
     }
