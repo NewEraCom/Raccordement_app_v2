@@ -71,6 +71,10 @@ class SavTicketController extends Controller
     {
         return    $this->ticketService->declarationBlocageSav($request);
     }
+    public function updateBlocageSav(Request $request)
+    {
+        return    $this->ticketService->updateBlocageSav($request);
+    }
     public function feedbackSav(Request $request)
     {
         return    $this->ticketService->feedbackSav($request);

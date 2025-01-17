@@ -122,6 +122,39 @@ class SavTicketService
     }
 
 
+    static public function updateBlocageSav(Request $request)
+    {
+        try {
+            // Automatically validate the input data
+            $validated = $request->validate([
+                'sav_ticket_id' => 'required|integer',
+                'cause' => 'required|string|max:255',
+                'justification' => 'nullable|string|max:500',
+            ]);
+
+            // If validation passes, proceed to update or create the blocage
+            $blocage = BlocageSav::updateOrCreate(
+                ['sav_ticket_id' => $validated['sav_ticket_id']],
+                [
+                    'uuid' => Str::uuid(),
+                    'cause' => $validated['cause'],
+                    'justification' => $validated['justification'] ?? null,
+                ]
+            );
+
+            // Return the created or updated blocage object with a 200 OK status
+            return response()->json(['blocage' => $blocage], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Log validation errors
+
+            // Return validation errors
+            return response()->json(['errors' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            // Return a generic error response
+            return response()->json(['error' => 'An unexpected error occurred.'], 500);
+        }
+    }
+
 
 
 
