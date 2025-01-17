@@ -243,4 +243,50 @@ class SavTicketService
             return response()->json(['error' => $e], 500);
         }
     }
+
+
+
+    static public function updateFeedbackSav(Request $request)
+    {
+        try {
+            // Validate the request
+            $validated = $request->validate([
+                'before_picture' => 'image|mimes:jpeg,png,jpg|max:10240',
+                'after_picture' => 'image|mimes:jpeg,png,jpg|max:10240',
+            ]);
+
+            // Process and store uploaded images
+            $imagePaths = self::handleUploadedImages($request, $validated);
+
+            // Automatically validate the input data
+            $validated = $request->validate([
+                'sav_ticket_id' => 'required|integer',
+                'root_cause' => 'required|string|max:255',
+                'unite' => 'nullable|string|max:500',
+            ]);
+
+            // If validation passes, proceed to update or create the feedback
+            $feedBackSav = FeedBackSav::updateOrCreate(
+                ['sav_ticket_id' => $validated['sav_ticket_id']],
+                [
+                    'uuid' => Str::uuid(),
+                    'root_cause' => $validated['root_cause'],
+                    'unite' => $validated['unite'] ?? null,
+                    'after_picture' => $imagePaths['after_picture'] ?? null,
+                    'before_picture' => $imagePaths['before_picture'] ?? null,
+                ]
+            );
+
+            // Return the created or updated feedback object with a 200 OK status
+            return response()->json(['feedBackSav' => $feedBackSav], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Log validation errors
+
+            // Return validation errors
+            return response()->json(['errors' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            // Return a generic error response
+            return response()->json(['error' => $e], 500);
+        }
+    }
 }

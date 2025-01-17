@@ -75,6 +75,10 @@ class SavTicketController extends Controller
     {
         return    $this->ticketService->feedbackSav($request);
     }
+    public function updateFeedbackSav(Request $request)
+    {
+        return    $this->ticketService->updateFeedbackSav($request);
+    }
     public function getFeedbackSav($id)
     {
         return    $this->ticketService->getFeedbackSav($id);

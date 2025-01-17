@@ -82,6 +82,7 @@ Route::get('/getFeedbackSav/{id}', [SavTicketController::class, 'getFeedbackSav'
 Route::post('/planifierAffectationSav', [SavTicketController::class, 'planifierAffectationSav']);
 Route::post('/declarationBlocageSav', [SavTicketController::class, 'declarationBlocageSav']);
 Route::post('/feedbackSav', [SavTicketController::class, 'feedbackSav']);
+Route::post('/updateFeedbackSav', [SavTicketController::class, 'updateFeedbackSav']);
 Route::post('/storeImageBlocageSav', [SavTicketController::class, 'storeImageBlocageSav']);
 /*
 |
