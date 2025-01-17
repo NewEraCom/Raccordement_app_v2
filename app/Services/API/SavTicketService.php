@@ -33,7 +33,7 @@ class SavTicketService
                 $query->with(['client']);
             }
 
-        )->where('resolue', 0)->orderBy('id', 'desc')->get();
+        )->where('resolue', 0)->with(['pictures'])->orderBy('id', 'desc')->get();
         return  $affectation;
     }
 
@@ -75,10 +75,10 @@ class SavTicketService
         //     'status' => 'Planifié',
         //     'planification_date' => Carbon::parse($request->input('planification_date'))->format('Y-m-d H:i:s'),
         // ]);
-        
-$affectation->status = 'Planifié';
-$affectation->planification_date = Carbon::parse($request->input('planification_date'))->format('Y-m-d H:i:s');
-$affectation->save();
+
+        $affectation->status = 'Planifié';
+        $affectation->planification_date = Carbon::parse($request->input('planification_date'))->format('Y-m-d H:i:s');
+        $affectation->save();
 
         // Retourner la réponse avec l'affectation mise à jour
         return response()->json(['Affectation' => $affectation], 200);
