@@ -14,7 +14,7 @@ class AddCauseToSavClientTable extends Migration
     public function up()
     {
         Schema::table('sav_client', function (Blueprint $table) {
-            //
+            $table->string('cause')->nullable()->after('status'); 
         });
     }
 
@@ -26,7 +26,7 @@ class AddCauseToSavClientTable extends Migration
     public function down()
     {
         Schema::table('sav_client', function (Blueprint $table) {
-            //
+            $table->dropColumn('cause'); 
         });
     }
 }
