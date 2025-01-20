@@ -80,6 +80,9 @@ class SavClient extends Model
         if ($this->status == 'Validé') {
             return false;
         }
+        if ($this->status == 'Saisie') {
+            return false;
+        }
         return true;
     }
 

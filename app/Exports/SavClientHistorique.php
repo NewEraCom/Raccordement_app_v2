@@ -48,6 +48,7 @@ class SavClientHistorique implements FromCollection, WithHeadings, ShouldAutoSiz
                 DB::raw("CONCAT(u.first_name, ' ', u.last_name) AS Technicien"),
                 DB::raw('DATE_FORMAT(sh.created_at, "%d-%m-%Y %H:%i") AS Date'),
                 'sh.status AS Status',
+                'fb.root_cause AS Root Cause',
                 DB::raw("
                     CASE 
                         WHEN sh.status = 'Bloqué' THEN b.cause 
@@ -63,12 +64,20 @@ class SavClientHistorique implements FromCollection, WithHeadings, ShouldAutoSiz
             ->leftJoin('soustraitants AS s', 's.id', '=', 'sh.soustraitant_id')
             ->leftJoin('blocage_savs AS b', 'b.sav_ticket_id', '=', 'sh.savticket_id')
             ->leftJoin('feed_back_savs AS fb', 'fb.sav_ticket_id', '=', 'sh.savticket_id')
+            ->when($this->start_date && $this->end_date, function ($query) {
+                return $query->whereBetween('sh.created_at', [
+                    Carbon::parse($this->start_date)->startOfDay(),
+                    Carbon::parse($this->end_date)->endOfDay(),
+                ]);
+            })
+            ->when($this->technicien, function ($query) {
+                return $query->where('t.id', $this->technicien);
+            })
             ->orderBy('sc.n_case')
             ->orderBy('sh.created_at', 'asc')
             ->get();
     }
-    
-    
+        
     
     
     
