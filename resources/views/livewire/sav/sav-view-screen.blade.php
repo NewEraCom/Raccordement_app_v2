@@ -81,6 +81,12 @@
                         </div>
                     </div>
                     <div class="row mb-2 align-middle">
+                        <label for="inputEmail3" class="col-5 col-form-label fw-bold">Adresse Installation</label>
+                        <div class="col-7">
+                            <p>{{ $client->address_installation }}</p>
+                        </div>
+                    </div>
+                    <div class="row mb-2 align-middle">
                         <label for="inputEmail3" class="col-5 col-form-label fw-bold">Numéro de téléphone</label>
                         <div class="col-7">
                             <input type="text" readonly class="form-control-plaintext" id="example-static"

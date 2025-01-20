@@ -171,6 +171,7 @@ class ClientSavService
                             'lat' => $lat,
                             'lng' => $lng,
                             'service_activities' => $data['activite_service'],
+                            'address_installation' => $data['address_installation'],
                         ]
                     );
                 }
@@ -252,7 +253,7 @@ static public function ImportsClientSAV($content)
             'client_name' => '/Client\s*:\s*(.+?)\s*(Téléphone|$)/i',
             'phone_number' => '/Téléphone\s*:\s*([\d\s]+)/i',
             'acces_reseau' => '/Accès réseau\s*:\s*([\d\s]+)/i',
-            'address_client' => '/Adresse\s*:\s*([\s\S]+?)(?=\b(Ndc|Nombre|Id Connexion|Adresse Installation|Login Internet|Code|$))/i',
+            'address_client' => '/Adresse\s*:\s*(.+?)(?=\s*(NDC|Nombre d\'appareils connecté|après vérification sur PAPYRUS|Id connexion|Adresse Installation|Login Internet|Nom Plan Tarifaire|$))/i',
             'address_installation' => '/Adresse Installation\s*:\s*(.+?)\s*(Login Internet|$)/i',
             'code_plaque' => '/Code\s*([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/i',
             'sip' => '/Login Internet\s*:\s*([\d]+)/i',
@@ -293,7 +294,8 @@ static public function ImportsClientSAV($content)
             'plaque_id' => $plaque->id ?? 114,
             'city_id' => $plaque->city_id ?? 12,
             'code_plaque' => $results['code_plaque'],
-            'activite_service' => $results['activite_service'] 
+            'activite_service' => $results['activite_service'] ,
+            'address_installation'=> $results['address_installation']
         ];
     } catch (\Throwable $th) {
         Log::error('Error in ImportsClientSAV: ' . $th->getMessage());

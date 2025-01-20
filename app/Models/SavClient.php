@@ -26,7 +26,8 @@ class SavClient extends Model
         'lng',                 
         'comment',             
         'service_activities', 
-        'status'
+        'status',
+        'address_installation'
     ];
 
 
