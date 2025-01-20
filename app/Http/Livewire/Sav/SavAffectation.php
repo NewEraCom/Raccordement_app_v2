@@ -134,57 +134,57 @@ class SavAffectation extends Component
         return (new SavTicketExport)->download('Ticket_' . now()->format('d_m_Y_H_i_s') . '.xlsx');
     }
 
-    public function relance()
-    {
-        $this->validate([
-            'affectation_id' => 'required',
-        ]);
+    // public function relance()
+    // {
+    //     $this->validate([
+    //         'affectation_id' => 'required',
+    //     ]);
 
-        try {
-            DB::beginTransaction();
+    //     try {
+    //         DB::beginTransaction();
 
-            $affectation =  Affectation::find($this->affectation_id);
+    //         $affectation =  Affectation::find($this->affectation_id);
 
-            $text = 'En cours';
+    //         $text = 'En cours';
 
-            if ($affectation->declarations->count() != 0) {
-                $text = $affectation->status;
-            }
+    //         if ($affectation->declarations->count() != 0) {
+    //             $text = $affectation->status;
+    //         }
 
 
-            Affectation::find($this->affectation_id)->update([
-                'status' => $text,
-            ]);
+    //         Affectation::find($this->affectation_id)->update([
+    //             'status' => $text,
+    //         ]);
 
-            Blocage::where('affectation_id', $this->affectation_id)->update([
-                'resolue' => 1,
-            ]);
+    //         Blocage::where('affectation_id', $this->affectation_id)->update([
+    //             'resolue' => 1,
+    //         ]);
 
-            DB::commit();
+    //         DB::commit();
 
-            $technicien = Technicien::find($affectation->technicien_id);
-            $filedsh['include_player_ids'] = [$technicien->player_id];
-            $message = 'Le blocage de client ' . $affectation->client->sip . ' a été débloquer.';
-            OneSignal::sendPush($filedsh, $message);
-            Notification::create([
-                'uuid' => Str::uuid(),
-                'title' => 'Deblocage',
-                'data' => $message,
-                'user_id' => $technicien->user_id,
-                'affectation_id' => $this->affectation_id
-            ]);
+    //         $technicien = Technicien::find($affectation->technicien_id);
+    //         $filedsh['include_player_ids'] = [$technicien->player_id];
+    //         $message = 'Le blocage de client ' . $affectation->client->sip . ' a été débloquer.';
+    //         OneSignal::sendPush($filedsh, $message);
+    //         Notification::create([
+    //             'uuid' => Str::uuid(),
+    //             'title' => 'Deblocage',
+    //             'data' => $message,
+    //             'user_id' => $technicien->user_id,
+    //             'affectation_id' => $this->affectation_id
+    //         ]);
 
-            $this->affectation_id = null;
-            $this->emit('success');
-            $this->dispatchBrowserEvent('contentChanged', ['item' => 'Client relancé avec succès.']);
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            dd($th->getMessage());
-            $this->emit('success');
-            Log::channel('error')->error('Function Relance in AffectationsPage.php : ' . $th->getMessage());
-            $this->dispatchBrowserEvent('contentChanged', ['item' => 'Une erreur est survenue.']);
-        }
-    }
+    //         $this->affectation_id = null;
+    //         $this->emit('success');
+    //         $this->dispatchBrowserEvent('contentChanged', ['item' => 'Client relancé avec succès.']);
+    //     } catch (\Throwable $th) {
+    //         DB::rollBack();
+    //         dd($th->getMessage());
+    //         $this->emit('success');
+    //         Log::channel('error')->error('Function Relance in AffectationsPage.php : ' . $th->getMessage());
+    //         $this->dispatchBrowserEvent('contentChanged', ['item' => 'Une erreur est survenue.']);
+    //     }
+    // }
 
     public function render()
     {

@@ -27,7 +27,9 @@ class SavClient extends Model
         'comment',             
         'service_activities', 
         'status',
-        'created_by'
+        'created_by',
+        'cause',
+        'address_installation'
     ];
 
 
@@ -54,7 +56,7 @@ class SavClient extends Model
             case 'Saisie':
                 return 'primary';
             case 'En cours':
-                return 'primary';
+                return 'info';
             case 'Planifié':
                 return 'warning';
             case 'Validé':
@@ -73,7 +75,13 @@ class SavClient extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
-
+    public function relance()
+    {
+        if ($this->status == 'Validé') {
+            return false;
+        }
+        return true;
+    }
 
 
 }

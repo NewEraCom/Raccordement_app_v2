@@ -197,7 +197,7 @@
                                     @elseif($client->status == 'Saisie')
                                         <span class="badge bg-primary p-1">{{ $client->status }}</span>
                                     @elseif($client->status == 'En cours')
-                                        <span class="badge bg-primary p-1">{{ $client->status }}</span>
+                                        <span class="badge bg-info p-1">{{ $client->status }}</span>
                                     @elseif($client->status == 'Validé')
                                         <span class="badge bg-success p-1">{{ $client->status }}</span>
                                     @elseif($client->status == 'Affecté')
@@ -207,6 +207,13 @@
                                 </td>
                                 <td class="text-center"> 
                                     <div>
+                                        @if ($client->relance())
+                                        <button class="btn btn-sm btn-dark shadow-none"
+                                            wire:click="$set('client_id',{{ $client->id }})" data-bs-toggle="modal"
+                                            data-bs-target="#relance-modal">
+                                            <i class="uil-refresh"></i>
+                                        </button>
+                                        @endif
                                         <button class="btn btn-danger btn-sm shadow-none" data-bs-toggle="modal"
                                         data-bs-target="#delete-modal"
                                         wire:click="$set('client_id',{{ $client->id }})"><i

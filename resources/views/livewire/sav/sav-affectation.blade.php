@@ -153,7 +153,7 @@
                                             <span class="badge badge-warning-lighten p-1 ps-2 pe-2 mt-1">{{
                                                 $affectation->planification_date ?? '-' }}</span>
                                         @elseif($affectation->status == 'En cours')
-                                            <span class="badge bg-primary p-1">{{ $affectation->status }}</span>
+                                            <span class="badge bg-info p-1">{{ $affectation->status }}</span>
                                         @elseif($affectation->status == 'Validé')
                                             <span class="badge bg-success p-1">{{ $affectation->status }}</span>
                                         @elseif($affectation->status == 'Affecté')

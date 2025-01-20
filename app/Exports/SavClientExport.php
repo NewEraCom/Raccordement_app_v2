@@ -40,31 +40,55 @@ class SavClientExport implements FromCollection, WithHeadings, ShouldAutoSize, W
             'Ville',
             'Contact',
             'Date demande',
-            'Equipe',
-            'Date d\'intervention',
-            'Root Cause',
+          //  'Equipe',
+           // 'Date d\'intervention',
+            //'Root Cause',
+            'Statut',
             
 
         ];
     }
 
+ 
     public function registerEvents(): array
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
-                $lastRow = $event->sheet->getHighestRow();
-                $event->sheet->getStyle('A1:T1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
-                $event->sheet->getStyle('A1:T1')->getFont()->setBold(true);
-                $event->sheet->getStyle('A1:T1')->getFont()->getColor()->setARGB(\PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE);
-                $event->sheet->getStyle('A1:T1')->getFill()->getStartColor()->setARGB('002060');
-                $event->sheet->getStyle('A1:T' . $lastRow)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
-                $event->sheet->getStyle('A1:T' . $lastRow)->getFont()->setSize(10);
-                $event->sheet->getStyle('A1:T' . $lastRow)->getFont()->setName('Calibri');
-                $event->sheet->getStyle('A1:T' . $lastRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-                $event->sheet->getStyle('A1:T' . $lastRow)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+                // Get the last column dynamically based on the headings count
+                $lastColumn = chr(64 + count($this->headings())); // Convert number to column letter (A, B, ..., G)
+    
+                // Style the header row
+                $event->sheet->getStyle("A1:{$lastColumn}1")->applyFromArray([
+                    'font' => [
+                        'bold' => true,
+                        'color' => ['argb' => \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE], // White font color
+                        'size' => 12,
+                        'name' => 'Calibri',
+                    ],
+                    'fill' => [
+                        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                        'startColor' => ['argb' => '002060'], // Dark blue background
+                    ],
+                    'alignment' => [
+                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                        'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                    ],
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                            'color' => ['argb' => 'FFFFFF'], // White border for the header
+                        ],
+                    ],
+                ]);
+    
+                // Adjust column widths automatically for better visibility
+                foreach (range('A', $lastColumn) as $column) {
+                    $event->sheet->getColumnDimension($column)->setAutoSize(true);
+                }
             },
         ];
     }
+    
 
     public function collection()
     {
@@ -76,10 +100,11 @@ class SavClientExport implements FromCollection, WithHeadings, ShouldAutoSize, W
             'client_name',
             'cities.name as ville',
             'contact',
-            'date_demande'
+            'date_demande',
+            'sav_client.status' // Include the status column
         )
         ->join('cities', 'sav_client.city_id', '=', 'cities.id');
-    
+
         // Apply date filtering if dates are provided
         if ($this->startDate) {
             $query->where('date_demande', '>=', $this->startDate);
@@ -87,7 +112,7 @@ class SavClientExport implements FromCollection, WithHeadings, ShouldAutoSize, W
         if ($this->endDate) {
             $query->where('date_demande', '<=', $this->endDate);
         }
-    
+
         // Order by date and fetch results
         return $query->orderBy('date_demande', 'desc')->get();
     }
