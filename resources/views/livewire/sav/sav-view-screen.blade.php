@@ -231,45 +231,51 @@
                         @empty
                         
                         @endforelse --}}
-                        @forelse ($client->savTickets->last()->savhistories ?? [] as $item)
-                        <div class="timeline-item border rounded p-2 mb-2 bg-light">
-                            <div class="d-flex align-items-start">
-                                <!-- Icon -->
-                                <i class="bg-{{ $item->getStatusSavColor($item->status) }}-lighten text-{{ $item->getStatusSavColor($item->status) }} ri-bookmark-fill fs-5 me-2"></i>
-                                
-                                <!-- Content -->
-                                <div class="flex-grow-1">
-                                    <!-- Status -->
-                                    <h6 class="mt-0 mb-1 text-{{ $item->getStatusSavColor($item->status) }} fw-bold">
-                                        {{ $item->status }}
-                                    </h6>
+
+                        @foreach ($affe as $ticket)
+                        @forelse ($ticket->savhistories ?? [] as $item)
+                            <div class="timeline-item border rounded p-2 mb-2 bg-light">
+                                <div class="d-flex align-items-start">
+                                    <!-- Icon -->
+                                    <i class="bg-{{ $item->getStatusSavColor($item->status) }}-lighten text-{{ $item->getStatusSavColor($item->status) }} ri-bookmark-fill fs-5 me-2"></i>
                     
-                                    <!-- Description -->
-                                    <p class="text-secondary mb-1 small">{{ $item->description }}</p>
-                                           <!-- Sous-traitant (Only for 'Affecté') -->
-                                           @if ($item->status === 'Affecté')
-                                           <p class="text-dark small mb-0">
-                                               <i class="ri-user-line me-1 text-primary"></i>
-                                               Sous-traitant: {{ optional($item->soustraitant)->name ?? 'N/A' }}
-                                           </p>
-                                       @endif
+                                    <!-- Content -->
+                                    <div class="flex-grow-1">
+                                        <!-- Status -->
+                                        <h6 class="mt-0 mb-1 text-{{ $item->getStatusSavColor($item->status) }} fw-bold">
+                                            {{ $item->status }}
+                                        </h6>
                     
-                                    <!-- Date -->
-                                    <p class="text-muted mb-1 small">
-                                        <i class="ri-calendar-2-line me-1"></i>
-                                        Créé le: {{ $item->created_at ? $item->created_at->format('d/m/Y H:i') : 'N/A' }}
-                                    </p>
+                                        <!-- Description -->
+                                        <p class="text-secondary mb-1 small">{{ $item->description }}</p>
                     
-                             
+                                        <!-- Sous-traitant (Only for 'Affecté') -->
+                                        @if ($item->status === 'Affecté')
+                                            <p class="text-dark small mb-0">
+                                                <i class="ri-user-line me-1 text-primary"></i>
+                                                Sous-traitant: {{ optional($item->soustraitant)->name ?? 'N/A' }}
+                                            </p>
+                                        @endif
+                    
+                                        <!-- Date -->
+                                        <p class="text-muted mb-1 small">
+                                            <i class="ri-calendar-2-line me-1"></i>
+                                            Créé le: {{ $item->created_at ? $item->created_at->format('d/m/Y H:i') : 'N/A' }}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    @empty
+                            @endforeach
+                        @empty
+                        
+                       
                         <div class="text-center">
                             <h1><i class="uil-times-circle"></i></h1>
                             <h4>Il n'y a pas encore d'affectations.</h4>
                         </div>
-                    @endforelse
+                        @endforelse
+                  
+                    
                     
                     
                     

@@ -24,6 +24,7 @@ class SavViewScreen extends Component
         // Fetch all tickets related to this client
         $affe = SavTicket::
             with(['savhistories.soustraitant', 'technicien', 'sousTraitant','affectedBy','blocages.pictures','clientSav.plaque'])
+            ->where('client_id',$this->client->id)
             ->withTrashed() // Include soft-deleted tickets if applicable
             ->get();
         // Log::info($affe);

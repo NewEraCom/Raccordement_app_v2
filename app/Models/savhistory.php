@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Savhistory extends Model
 {
-    use HasFactory;
+    use HasFactory,SoftDeletes;
     
     protected $fillable = [
         'savticket_id',
@@ -32,15 +33,12 @@ class Savhistory extends Model
     public function getStatusSavColor($status){
         $data = 'success';
         switch ($status) {
-            case 'Down':
-                $data = 'primary';
-                break;
             case 'Affecté':
                 $data = 'warning';
                 break;
                 
             case 'En cours':
-                $data = 'primary';
+                $data = 'info';
                 break;
                     
             case 'Planifié':
@@ -54,6 +52,9 @@ class Savhistory extends Model
                 break;
             default:
                 $data = 'dark';
+                break;
+            case 'Saisie': 
+                $data = 'primary'; 
                 break;
         }
         return $data;

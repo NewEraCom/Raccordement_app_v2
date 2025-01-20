@@ -9,6 +9,7 @@ use App\Exports\SavExport;
 use App\Models\Affectation;
 use App\Models\City;
 use App\Models\Blocage;
+use App\Models\BlocageSav;
 use App\Models\Client;
 use App\Models\ClientSav as ModelsClientSav;
 use App\Models\Plaque;
@@ -237,18 +238,25 @@ class ClientSavPage extends Component
         try {
             DB::beginTransaction();
 
-            Client::find($this->client_id)->update([
-                'status' => '-',
+            SavClient::find($this->client_id)->update([
+                'status' => 'Saisie',
                 'cause' => $this->cause,
                 'technicien_id' => null,
             ]);
 
-            $affectation = Affectation::where('client_id', $this->client_id)->first();
-            if ($affectation != null) {
-                Blocage::where('affectation_id', $affectation->id)->delete();
-                $affectation->delete();
-            }
 
+            $affectation = SavTicket::where('client_id', $this->client_id)->first();
+            if ($affectation != null) {
+                BlocageSav::where('sav_ticket_id', $affectation->id)->delete();
+               $affectation->delete();
+            }
+            Savhistory::create([
+                'savticket_id' => $affectation->id,
+                'technicien_id' => null,
+                'status' => 'Saisie',
+                'description' => 'Relance du ticket',
+            ]); 
+         
             DB::commit();
             $this->cause = null;
             $this->client_id = null;

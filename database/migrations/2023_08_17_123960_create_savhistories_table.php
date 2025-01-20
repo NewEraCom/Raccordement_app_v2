@@ -15,8 +15,9 @@ class CreateSavhistoriesTable extends Migration
     {
         Schema::create('savhistories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('savticket_id')->constrained('sav_tickets')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('savticket_id')->constrained('sav_tickets')->onDelete('set null');
             $table->foreignId('technicien_id')->nullable()->constrained('techniciens')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('soustraitant_id')->nullable()->constrained('soustraitants')->onDelete('cascade')->onUpdate('cascade');
             $table->string('status');
             $table->string('description')->nullable();
             $table->timestamps();
