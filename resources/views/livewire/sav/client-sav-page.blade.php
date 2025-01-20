@@ -197,7 +197,7 @@
                                     @elseif($client->status == 'Saisie')
                                         <span class="badge bg-primary p-1">{{ $client->status }}</span>
                                     @elseif($client->status == 'En cours')
-                                        <span class="badge bg-primary p-1">{{ $client->status }}</span>
+                                        <span class="badge bg-info p-1">{{ $client->status }}</span>
                                     @elseif($client->status == 'Validé')
                                         <span class="badge bg-success p-1">{{ $client->status }}</span>
                                     @elseif($client->status == 'Affecté')
