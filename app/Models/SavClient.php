@@ -28,7 +28,8 @@ class SavClient extends Model
         'service_activities', 
         'status',
         'created_by',
-        'cause'
+        'cause',
+        'address_installation'
     ];
 
 
