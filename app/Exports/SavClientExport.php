@@ -95,7 +95,7 @@ class SavClientExport implements FromCollection, WithHeadings, ShouldAutoSize, W
         // Start building the query
         $query = SavClient::select(
             'n_case',
-            'login',
+            'sip',
             'address',
             'client_name',
             'cities.name as ville',
