@@ -254,7 +254,7 @@
                     </div>
                     <div class="col-12">
                         <div class="text-center">
-                            {{ $allClient->links() }}
+                            {{ $allClientSAV->links() }}
                         </div>
                     </div>
                 </div>
