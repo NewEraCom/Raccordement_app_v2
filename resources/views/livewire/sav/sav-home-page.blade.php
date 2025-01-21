@@ -33,7 +33,7 @@
                         <div class="float-end">
                             <i class="uil-envelope-add widget-icon"></i>
                         </div>
-                        <h5 class="text-muted fw-bold mt-0" title="Total Demande du jour">Total Down du jour</h5>
+                        <h5 class="text-muted fw-bold mt-0" title="Total Demande du jour">Total Blocage</h5>
                         <h3 class="mt-3 mb-1">{{ $kpisData['Total_Down'] }}</h3>
                     </div>
                 </a>

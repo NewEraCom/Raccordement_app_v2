@@ -11,6 +11,7 @@ use App\Charts\ClientsByCityChart;
 use App\Services\web\HomePageSAVService;
 use App\Http\Livewire\Soustraitant\HomePage;
 use App\Charts\StatisticForSoustraitantChart;
+use App\Models\SavClient;
 use Illuminate\Database\Eloquent\Collection;
 
 
@@ -20,14 +21,17 @@ class SavHomePage extends Component
 
     public function render(ClientsByCityChart $chart, BlocageSavChart $chart2)
     {
-        $savClients = Client::whereNotNull('statusSav')->get();
-        $Client_down = Client::where('statusSav', 'Down')->get();
-        $Ticket_soustraitant = SavTicket::where('status','!=','Valide');
-        $Ticket_technicien = SavTicket::where('status','!=','Valide')->whereNotNull('technicien_id');
-        $Client_Connecte = Client::where('statusSav', 'Connecté')->count();
-        $total_blocages_for_today = SavTicket::where('status', 'Bloqué')->get();
+        $savClients = SavClient::all();
+        $Client_down = SavClient::where('status', 'Bloqué')->get();
+        $Ticket_soustraitant = SavTicket::where('status','Affecté');
+        $Ticket_technicien = SavTicket::where('status','En cours')->whereNotNull('technicien_id');
+        $Client_Connecte = SavClient::where('status', 'Validé')->count();
+        $total_blocages_for_today = SavTicket::where('status', 'Bloqué')
+            ->whereDate('updated_at',today())
+            ->get();
+        
         $total_planification_for_today = SavTicket::whereDate('planification_date', today())->count();
-        $total_pipe = Client::where('statusSav', '!=', 'Connecté')
+        $total_pipe = SavClient::where('status', 'Saisie')
                 ->count();
 
         $kpisData = [

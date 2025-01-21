@@ -68,7 +68,7 @@ class SoustraitantService
                 $q->whereBetween('created_at', [Carbon::parse($start_date)->startOfDay(), Carbon::parse($end_date)->endOfDay()]);
             })->when($city_id, function ($q) use ($city_id) {
                 $q->where('city_id', $city_id);
-            })->orderBy('created_at', 'desc')->paginate(15);
+            })->orderBy('created_at', 'desc')->paginate(5);
     }
     static public function returnClientSoustraitantSAV($start_date, $end_date, $id)
     {
@@ -77,7 +77,7 @@ class SoustraitantService
             ->when($start_date && $end_date, function ($q) use ($start_date, $end_date) {
                 $q->whereBetween('created_at', [Carbon::parse($start_date)->startOfDay(), Carbon::parse($end_date)->endOfDay()]);
             })
-            ->orderBy('created_at', 'desc')->paginate(15);
+            ->orderBy('created_at', 'desc')->paginate(5);
             
     }
 }

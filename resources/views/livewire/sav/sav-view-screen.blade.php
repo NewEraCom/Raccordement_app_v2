@@ -247,8 +247,8 @@
                         
                         @endforelse --}}
 
-                        @foreach ($affe as $ticket)
-                        @forelse ($ticket->savhistories ?? [] as $item)
+                        @forelse ($affe as $ticket)
+                        @foreach ($ticket->savhistories ?? [] as $item)
                             <div class="timeline-item border rounded p-2 mb-2 bg-light">
                                 <div class="d-flex align-items-start">
                                     <!-- Icon -->
@@ -289,10 +289,7 @@
                             <h4>Il n'y a pas encore d'affectations.</h4>
                         </div>
                         @endforelse
-                  
-                    
-                    
-                    
+
                     
                     </div> 
 
@@ -303,12 +300,12 @@
                         @forelse ($client->savTickets->last()->feedback ?? [] as $item)
                             <div class="timeline-item border rounded shadow-lg p-4 mb-4 bg-light">
                                 <!-- Header with Icon and Type -->
-                    
+                                @if ($item->type)
                                 <p class="text-muted">
                                     <i class="ri-information-line me-1 text-info"></i>
                                     <strong>Type:</strong> {{ $item->type }}
                                 </p>
-                                
+                                @endif
                     
                                 <!-- Root Cause -->
                                 @if ($item->root_cause)
