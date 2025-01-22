@@ -61,7 +61,13 @@ class SavTicket extends Model
         $data = 'success';
         switch ($this->status) {
             case 'En cours':
+                $data = 'info';
+                break;
+            case 'Saisie':
                 $data = 'primary';
+                break;
+            case 'Affecté':
+                $data = 'warning';
                 break;
             case 'Planifié':
                 $data = 'warning';
@@ -69,7 +75,7 @@ class SavTicket extends Model
             case 'Bloqué':
                 $data = 'danger';
                 break;
-            case 'Terminé':
+            case 'Validé':
                 $data = 'success';
                 break;
             default:
