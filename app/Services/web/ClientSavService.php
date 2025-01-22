@@ -173,6 +173,7 @@ class ClientSavService
                             'status' => 'Saisie',
                             'service_activities' => $data['activite_service'],
                             'address_installation' => $data['address_installation'],
+                            'comment' => $data['commentaire'],
                         ]
                     );
                 }
@@ -260,8 +261,8 @@ static public function ImportsClientSAV($content)
             'address_installation' => '/Adresse Installation\s*:\s*(.+?)\s*(Login Internet|$)/i',
             'code_plaque' => '/Code\s*([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/i',
             'sip' => '/Login Internet\s*:\s*([\d]+)/i',
-            'activite_service' => '/Activités de service\s*:\s*(.*?)(?=\s*Type de problème|$)/i'
-        ];
+            'activite_service' => '/Activités de service\s*:\s*(.*?)(?=\s*Type de problème|$)/i',
+            'commentaire' => '/Commentaire\s*:\s*(.+?)(?=\s*(N de ligne|Nom et Prénom|Marque du routeur|N° de contact|adrresse|MAC|GPON|DSN|Câblage et Redémarrage Équipement|Id connexion|Adresse Installation|Login Internet|$))/i'        ];
 
         // Extract data using patterns
         $results = [];
@@ -298,7 +299,8 @@ static public function ImportsClientSAV($content)
             'city_id' => $plaque->city_id ?? 12,
             'code_plaque' => $results['code_plaque'],
             'activite_service' => $results['activite_service'] ,
-            'address_installation'=> $results['address_installation']
+            'address_installation'=> $results['address_installation'],
+            'commentaire'=> $results['commentaire'],
         ];
     } catch (\Throwable $th) {
         Log::error('Error in ImportsClientSAV: ' . $th->getMessage());
