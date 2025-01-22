@@ -25,6 +25,7 @@ class ProfileSoustraitantPage extends Component
     public $soustraitant, $start_date, $end_date,$city_id;
 
     public $email, $first_name, $last_name, $phone_no,$password,$cpassword;
+    public $search_term = '' ,$search = '';
 
     public function mount(Soustraitant $soustraitant)
     {
@@ -165,9 +166,8 @@ class ProfileSoustraitantPage extends Component
         $user = User::where('soustraitant_id',$this->soustraitant->id)->first();
         $cities = City::get();
         $clients = SoustraitantService::KpisSoustraitant($this->start_date, $this->end_date, $this->soustraitant->id,$this->city_id);
-        $allClient = SoustraitantService::returnClientSoustraitant($this->start_date, $this->end_date, $this->soustraitant->id,$this->city_id);
-        $allClientSAV = SoustraitantService::returnClientSoustraitantSAV($this->start_date, $this->end_date, $this->soustraitant->id);
-        Log::info($allClientSAV);
+        $allClient = SoustraitantService::returnClientSoustraitant($this->start_date, $this->end_date, $this->soustraitant->id,$this->city_id,$this->search);
+        $allClientSAV = SoustraitantService::returnClientSoustraitantSAV($this->start_date, $this->end_date, $this->soustraitant->id, $this->search_term);
         return view('livewire.backoffice.profile-soustraitant-page', compact(['clients', 'allClient','cities','allClientSAV','user']))->layout('layouts.app', [
             'title' => $this->soustraitant->name,
         ]);

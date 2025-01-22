@@ -157,8 +157,15 @@
 
     <div class="d-flex gap-2 px-2">
         <div class="card col-md-6">
-            <div class="card-header">
+            <div class="card-header  d-flex justify-content-between align-items-center"">
                 <h4 class="title-head">Clients</h4>
+                <div class="col-12 col-sm-12 col-md-6 col-lg-6">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="searchClients" placeholder="Rechercher par nom, ville, téléphone, SIP..."
+                            wire:model="search" />
+                        <label for="searchClients">Rechercher</label>
+                    </div>
+                </div>
             </div>
             <div class="card-body p-0">
                 <div class="row">
@@ -210,8 +217,15 @@
             </div>
         </div>
         <div class="card col-md-6">
-            <div class="card-header">
+            <div class="card-header  d-flex justify-content-between align-items-center"">
                 <h4 class="title-head">Clients SAV</h4>
+                <div class="col-12 col-sm-12 col-md-6 col-lg-6">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="searchClients" placeholder="Rechercher par nom, ville, téléphone, SIP..."
+                            wire:model="search_term" />
+                        <label for="search_term">Rechercher</label>
+                    </div>
+                </div>
             </div>
             <div class="card-body p-0">
                 <div class="row">
