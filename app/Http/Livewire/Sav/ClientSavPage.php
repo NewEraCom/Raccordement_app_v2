@@ -403,6 +403,7 @@ $clientSav->save();
         } else {
             $this->new_plaque = null;
         }
+        $this->searchPlaque = $SavClient->plaque->code_plaque;
         }
     }
 

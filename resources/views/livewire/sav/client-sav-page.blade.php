@@ -495,8 +495,8 @@
                                                     @endif
                                                 </span>
                                             </div>
-                                            @if ($new_plaque == $plaque->code_plaque)
-                                                <span class="badge bg-light text-primary">Selected</span>
+                                            @if ($new_plaque == $plaque->id)
+                                                <span class="badge bg-light text-primary">Sélectionné</span>
                                             @endif
                                         </button>
                                     @empty
