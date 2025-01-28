@@ -174,6 +174,7 @@ class ClientSavPage extends Component
             'new_service_activities' => 'required',
             'new_address' => 'required',
             'new_comment' => 'required',
+            'new_plaque' => 'required', 
         ]);
         Log::info($this->client_id);
         Log::info( $data);
@@ -188,7 +189,7 @@ class ClientSavPage extends Component
             $lat = null;
             $lng = null;
         }
-        $client = ModelsClientSav::find($this->client_id);
+        $client = SavClient::find($this->client_id);
         $client->update([
             'n_case' => $data['new_id_case'] ?? '0',
             // 'login' => $data['new_network_access'],
@@ -199,6 +200,7 @@ class ClientSavPage extends Component
             'client_name' => $data['new_full_name'],
             'contact' => $data['new_contact_number'],
             'comment' => $data['new_comment'],
+            'plaque_id' => $data['new_plaque'],
             'service_activities' => $data['new_service_activities'],
             'lat' => $lat,
             'lng' => $lng,
@@ -379,7 +381,7 @@ $clientSav->save();
     }
     public function setClient($id){
 
-        $SavClient = ModelsClientSav::find($id);
+        $SavClient = SavClient::find($id);
         
         // Assurez-vous que le client existe avant de l'assigner aux variables
         if ($SavClient) {
@@ -395,7 +397,12 @@ $clientSav->save();
             $this->new_service_activities = $SavClient->service_activities; // Activités de service
             $this->new_dmd_date = $SavClient->date_demande;        // Date demande
             $this->new_city_id = $SavClient->city_id;              // ID de la ville
-            $this->new_plaque = $SavClient->plaque->code_plaque; // Plaque
+         //  $this->new_plaque = $SavClient->plaque->id; // Plaque
+          if ($SavClient->plaque) {
+            $this->new_plaque = $SavClient->plaque->id;
+        } else {
+            $this->new_plaque = null;
+        }
         }
     }
 
@@ -552,6 +559,15 @@ public function selectPlaque($code_plaque)
 {
     $this->new_plaque1 = $code_plaque; // Store the selected plaque code
     $this->searchPlaque = $code_plaque; // Reflect the selected value in the search input
+}
+public function selectPlaqueEdit($plaqueCode, $plaqueId)
+{
+    // Store the plaque ID and code
+    $this->new_plaque = $plaqueId;  // Store the plaque ID (for storing in the database)
+    $this->searchPlaque = $plaqueCode; // Update the search field with the code_plaque for display purposes
+
+    // Optionally, log the selected plaque for debugging
+    Log::info("Plaque selected: ID - " . $plaqueId . " Code - " . $plaqueCode);
 }
 
 
