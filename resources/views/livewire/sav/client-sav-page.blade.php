@@ -460,7 +460,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
+                        {{-- <div class="row">
                             <div class="col-md-12 mb-3">
                                 <div class="form-floating">
                                     <input type="text" class="form-control border-primary shadow-sm" id="idCaseInput" wire:model.lazy="new_plaque" placeholder=" " pattern="^(\d{2}\.\d{1,2}\.\d{2})$" required  />
@@ -468,7 +468,49 @@
                                     @error('new_plaque1') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
                             </div>
+                        </div> --}}
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <!-- Search Input -->
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control border-primary shadow-sm" id="searchPlaque"
+                                           placeholder="Rechercher une plaque" wire:model.debounce.300ms="searchPlaque" value="{{ $searchPlaque }}">
+                                    <label for="searchPlaque" class="text-muted">🔍 Rechercher une plaque</label>
+                                </div>
+                        
+                                <!-- Display Plaques -->
+                                <div class="list-group shadow-sm">
+                                    @forelse ($filteredPlaques as $plaque)
+                                        <button type="button" 
+                                                class="list-group-item list-group-item-action d-flex justify-content-between align-items-center 
+                                                       {{ $new_plaque == $plaque->id ? 'active text-white bg-primary' : '' }}"
+                                                       wire:click="selectPlaqueEdit('{{ $plaque->code_plaque }}', '{{ $plaque->id }}')"> 
+                                            <div>
+                                                <strong>{{ $plaque->code_plaque }}</strong>
+                                                <span class="text-muted small">
+                                                    @if ($plaque->city)
+                                                        - {{ $plaque->city->name }}
+                                                    @else
+                                                        - <em>Ville non attribuée</em>
+                                                    @endif
+                                                </span>
+                                            </div>
+                                            @if ($new_plaque == $plaque->id)
+                                                <span class="badge bg-light text-primary">Sélectionné</span>
+                                            @endif
+                                        </button>
+                                    @empty
+                                        <div class="alert alert-warning text-center shadow-sm">
+                                            <i class="bi bi-info-circle me-2"></i>Aucune plaque trouvée.
+                                        </div>
+                                    @endforelse
+                                </div>
+                            </div>
                         </div>
+                        
+                        
+                        
+                        
     
                         <div class="mb-3">
                             <div class="">
