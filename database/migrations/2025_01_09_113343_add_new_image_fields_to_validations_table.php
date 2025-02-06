@@ -21,8 +21,7 @@ class AddNewImageFieldsToValidationsTable extends Migration
             $table->string('router_tel_image_url', 255)->nullable();
             $table->string('pv_image_url', 255)->nullable();
             $table->string('image_cin_url', 255)->nullable();
-            $table->string('test_debit_via_cable', 255)->nullable();
-            $table->string('test_debit_via_wifi', 255)->nullable();
+ 
         });
     }
 
