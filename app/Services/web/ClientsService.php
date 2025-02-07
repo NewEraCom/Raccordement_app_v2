@@ -100,7 +100,13 @@ public static function getClients($search_term, $client_status, $technicien, $st
                 $q->where('name', 'like', '%' . $search_term . '%')
                     ->orWhere('sip', 'like', '%' . $search_term . '%')
                     ->orWhere('client_id', 'like', '%' . $search_term . '%')
-                    ->orWhere('phone_no', 'like', '%' . $search_term . '%');
+                    ->orWhere('phone_no', 'like', '%' . $search_term . '%')
+                    ->orWhereHas('city', function ($q) use ($search_term) {
+                                                 $q->where('name', 'like', '%' . $search_term . '%');
+                                             })
+                                             ->orWhereHas('plaque', function ($q) use ($search_term) {
+                                                 $q->where('code_plaque', 'like', '%' . $search_term . '%');
+                                             });
             });
         })
         ->when($client_status, function ($query) use ($client_status) {
@@ -152,7 +158,7 @@ public static function getClients($search_term, $client_status, $technicien, $st
         preg_match('/CODE\s*(.{2})/', $content, $city);
         preg_match('/Login internet:\s*(\d*)/', $content, $client_login);
         preg_match('/Routeur.*(F\d{3,4})/', $content, $routeur);
-        preg_match('/Sous Type Opportunit�\s*: (.+)/', $content, $offre);
+        preg_match('/Sous Type Opportunit\s*: (.+)/', $content, $offre);
         preg_match('/Longitude\s*:\s*([+-]?\d+(\.\d+)?)/', $content, $lng);
         preg_match('/Latitude\s*:\s*([+-]?\d+(\.\d+)?)/', $content, $lat);
         preg_match('/Plan: FTTH (.*)/', $content, $typeClient);
@@ -172,7 +178,7 @@ public static function getClients($search_term, $client_status, $technicien, $st
             'city' => $plaque->city->id ?? 12,
             'phone' => $client_phone[1],
             'routeur' => $routeur ? 'ZTE ' . $routeur[1] : '-',
-            'offre' => $offre ? (trim($offre[1]) === 'D�m�nagement' ?  'Déménagement' : trim($offre[1])) : '-',
+            'offre' => $offre ? (trim($offre[1]) === 'Dmnagement' ?  'Déménagement' : trim($offre[1])) : '-',
         ];
     }
 
@@ -738,7 +744,7 @@ public static function getClients($search_term, $client_status, $technicien, $st
         return [
             'injoignable' => Blocage::where('cause', 'Injoignable/SMS')->where('resolue', 0)->count(),
             'indisponible' => Blocage::where('cause', 'Indisponible')->where('resolue', 0)->count(),
-            'cancel_client' => Blocage::where('cause', 'Client  a annulé sa demande')->where('resolue', 0)->count(),
+            'cancel_client' => Blocage::where('cause', 'Client  a annulé sa demande')->where('resolue', 0)->count(),
         ];
     }
 
