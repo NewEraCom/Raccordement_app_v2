@@ -43,6 +43,7 @@ class AffectationSoustraitant implements FromCollection, WithHeadings, ShouldAut
             'Telephone',
             'Debit',
             'Status d\'Affectation',
+            'Cause',
             'Dernière mise à jour',
             'Technicien',
         ];
@@ -50,25 +51,43 @@ class AffectationSoustraitant implements FromCollection, WithHeadings, ShouldAut
 
     public function collection()
     {
-        return Affectation::select(DB::raw('DATE_FORMAT(affectations.created_at, "%d-%m-%Y %H:%i")'), 'clients.address', 'clients.sip', 'clients.client_id', 'clients.routeur_type as routeur', 'routeurs.sn_gpon', 'routeurs.sn_mac','cities.name as city_name', 'clients.name', 'clients.phone_no as phoneNumber', 'clients.debit', 'affectations.status', DB::raw('DATE_FORMAT(affectations.updated_at, "%d-%m-%Y %H:%i")'), DB::raw("CONCAT(users.first_name,' ',users.last_name)"))
-            ->join('clients', 'clients.id', '=', 'affectations.client_id')
-            ->leftJoin('blocages', 'blocages.affectation_id', '=', 'blocages.id')
-            ->join('cities', 'cities.id', '=', 'clients.city_id')
-            ->join('techniciens', 'techniciens.id', '=', 'affectations.technicien_id')
-            ->join('users', 'users.id', '=', 'techniciens.user_id')
-            ->join('soustraitants', 'soustraitants.id', '=', 'techniciens.soustraitant_id')
-            ->leftJoin('declarations', 'declarations.affectation_id', '=', 'affectations.id')
-            ->leftJoin('routeurs','clients.id','=','routeurs.client_id')
-            ->when($this->technicien, function ($query, $technicien) {
-                return $query->where('techniciens.id', $technicien);
-            })->when($this->start_date && $this->end_date, function ($query) {
-                return $query->whereBetween('affectations.created_at', [Carbon::parse($this->start_date)->startOfDay(), Carbon::parse($this->end_date)->endOfDay()]);
-            })
-            ->whereNull('affectations.deleted_at')->whereNull('clients.deleted_at')
-            ->where('soustraitants.id', $this->soustraitant)
-            ->groupBy('clients.sip')
-            ->orderBy('affectations.created_at', 'desc')
-            ->get();
+        return Affectation::select(
+            DB::raw('DATE_FORMAT(affectations.created_at, "%d-%m-%Y %H:%i")'), 
+            'clients.address', 
+            'clients.sip', 
+            'clients.client_id', 
+            'clients.routeur_type as routeur', 
+            'routeurs.sn_gpon', 
+            'routeurs.sn_mac',
+            'cities.name as city_name', 
+            'clients.name', 
+            'clients.phone_no as phoneNumber', 
+            'clients.debit', 
+            'affectations.status',
+            DB::raw("IF(affectations.status = 'Bloqué', blocages.cause, NULL) as cause"),
+            DB::raw('DATE_FORMAT(affectations.updated_at, "%d-%m-%Y %H:%i")'), 
+            DB::raw("CONCAT(users.first_name,' ',users.last_name)")
+        )
+        ->join('clients', 'clients.id', '=', 'affectations.client_id')
+        ->leftJoin('blocages', 'blocages.affectation_id', '=', 'affectations.id')
+        ->join('cities', 'cities.id', '=', 'clients.city_id')
+        ->join('techniciens', 'techniciens.id', '=', 'affectations.technicien_id')
+        ->join('users', 'users.id', '=', 'techniciens.user_id')
+        ->join('soustraitants', 'soustraitants.id', '=', 'techniciens.soustraitant_id')
+        ->leftJoin('declarations', 'declarations.affectation_id', '=', 'affectations.id')
+        ->leftJoin('routeurs','clients.id','=','routeurs.client_id')
+        ->when($this->technicien, function ($query, $technicien) {
+            return $query->where('techniciens.id', $technicien);
+        })
+        ->when($this->start_date && $this->end_date, function ($query) {
+            return $query->whereBetween('affectations.created_at', [Carbon::parse($this->start_date)->startOfDay(), Carbon::parse($this->end_date)->endOfDay()]);
+        })
+        ->whereNull('affectations.deleted_at')
+        ->whereNull('clients.deleted_at')
+        ->where('soustraitants.id', $this->soustraitant)
+        ->groupBy('clients.sip')
+        ->orderBy('affectations.created_at', 'desc')
+        ->get();
     }
 
     public function registerEvents(): array
@@ -76,18 +95,24 @@ class AffectationSoustraitant implements FromCollection, WithHeadings, ShouldAut
         return [
             AfterSheet::class => function (AfterSheet $event) {
                 $lastRow = $event->sheet->getHighestRow();
-                $event->sheet->getStyle('A1:N1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
-                $event->sheet->getStyle('A1:N1')->getFont()->setBold(true);
-                $event->sheet->getStyle('A1:N1')->getFont()->getColor()->setARGB(\PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE);
-                $event->sheet->getStyle('A1:N1')->getFill()->getStartColor()->setARGB('002060');
-                $event->sheet->getStyle('A1:N' . $lastRow)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
-                $event->sheet->getStyle('A1:N' . $lastRow)->getFont()->setSize(10);
-                $event->sheet->getStyle('A1:N' . $lastRow)->getFont()->setName('Calibri');
-                $event->sheet->getStyle('A1:N' . $lastRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-                $event->sheet->getStyle('A1:N' . $lastRow)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+                $lastColumn = 'O'; // Adjusted for the new column "Technicien"
+                
+                // Header row styles (A1:O1)
+                $event->sheet->getStyle('A1:' . $lastColumn . '1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+                $event->sheet->getStyle('A1:' . $lastColumn . '1')->getFont()->setBold(true);
+                $event->sheet->getStyle('A1:' . $lastColumn . '1')->getFont()->getColor()->setARGB(\PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE);
+                $event->sheet->getStyle('A1:' . $lastColumn . '1')->getFill()->getStartColor()->setARGB('002060');
+                
+                // Data rows styles (A2:O[lastRow])
+                $event->sheet->getStyle('A1:' . $lastColumn . $lastRow)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+                $event->sheet->getStyle('A1:' . $lastColumn . $lastRow)->getFont()->setSize(10);
+                $event->sheet->getStyle('A1:' . $lastColumn . $lastRow)->getFont()->setName('Calibri');
+                $event->sheet->getStyle('A1:' . $lastColumn . $lastRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                $event->sheet->getStyle('A1:' . $lastColumn . $lastRow)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
             },
         ];
     }
+    
 
 
     public function title(): string

@@ -246,15 +246,18 @@
                                     <tr>
                                         <td class="text-center">{{ $client->id_case }}</td>
                                         <td>
-                                            <h5 class="font-14 my-1">{{ Str::limit($client->client->address, 30) }}</h5>
-                                            <span class="text-muted font-13">{{ $client->client->city->name }}</span>
+                                            <h5 class="font-14 my-1">{{ $client->client && $client->client->address ? Str::limit($client->client->address, 30) : 'Adresse non disponible'  }}</h5>
+
+                                            <span class="text-muted font-13">{{ $client->client && $client->client->city ? $client->client->city->name : 'Ville non disponible' }}</span>
+
                                         </td>
-                                        <td>{{ $client->client->client_name }}</td>
-                                        <td>{{ $client->client->contact }}</td>
-                                        <td>{{ $client->technicien ? $client->technicien->user->getFullname() : '-' }}</td>
+                                        <td>{{ $client->client ? $client->client->client_name : 'Nom non disponible' }}</td>
+                                        <td>{{ $client->client ? $client->client->contact : 'Contact non disponible' }}</td>
+                                        <td>{{ $client->technicien && $client->technicien->user ? $client->technicien->user->getFullname() : '-' }}</td>
                                         <td class="text-center">
-                                            <span class="badge badge-{{ $client->getStatusColor() }}-lighten p-1 ps-2 pe-2">{{ $client->status }}</span>
+                                            <span class="badge badge-{{ $client->getStatusColor() }}-lighten p-1 ps-2 pe-2">{{ $client->status ?? 'Statut non disponible' }}</span>
                                         </td>
+                                        
                                     </tr>
                                 @empty
                                     <tr>

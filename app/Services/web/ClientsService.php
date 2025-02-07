@@ -100,7 +100,13 @@ public static function getClients($search_term, $client_status, $technicien, $st
                 $q->where('name', 'like', '%' . $search_term . '%')
                     ->orWhere('sip', 'like', '%' . $search_term . '%')
                     ->orWhere('client_id', 'like', '%' . $search_term . '%')
-                    ->orWhere('phone_no', 'like', '%' . $search_term . '%');
+                    ->orWhere('phone_no', 'like', '%' . $search_term . '%')
+                    ->orWhereHas('city', function ($q) use ($search_term) {
+                                                 $q->where('name', 'like', '%' . $search_term . '%');
+                                             })
+                                             ->orWhereHas('plaque', function ($q) use ($search_term) {
+                                                 $q->where('code_plaque', 'like', '%' . $search_term . '%');
+                                             });
             });
         })
         ->when($client_status, function ($query) use ($client_status) {
@@ -152,7 +158,7 @@ public static function getClients($search_term, $client_status, $technicien, $st
         preg_match('/CODE\s*(.{2})/', $content, $city);
         preg_match('/Login internet:\s*(\d*)/', $content, $client_login);
         preg_match('/Routeur.*(F\d{3,4})/', $content, $routeur);
-        preg_match('/Sous Type Opportunit�\s*: (.+)/', $content, $offre);
+        preg_match('/Sous Type Opportunit\s*: (.+)/', $content, $offre);
         preg_match('/Longitude\s*:\s*([+-]?\d+(\.\d+)?)/', $content, $lng);
         preg_match('/Latitude\s*:\s*([+-]?\d+(\.\d+)?)/', $content, $lat);
         preg_match('/Plan: FTTH (.*)/', $content, $typeClient);
@@ -172,7 +178,7 @@ public static function getClients($search_term, $client_status, $technicien, $st
             'city' => $plaque->city->id ?? 12,
             'phone' => $client_phone[1],
             'routeur' => $routeur ? 'ZTE ' . $routeur[1] : '-',
-            'offre' => $offre ? (trim($offre[1]) === 'D�m�nagement' ?  'Déménagement' : trim($offre[1])) : '-',
+            'offre' => $offre ? (trim($offre[1]) === 'Dmnagement' ?  'Déménagement' : trim($offre[1])) : '-',
         ];
     }
 
@@ -291,7 +297,7 @@ public static function getClients($search_term, $client_status, $technicien, $st
             $countClient = 0;
             $cityIds = [];
             $oClient = ClientIMAP::account('default')->connect();
-            $inbox = $oClient->getFolder('RaccoB2B');
+            $inbox = $oClient->getFolder('Racco');
             $messages = $inbox->query()->unseen()->text('Installation Fibre Optique')->get();
             if (count($messages) > 0) {
                 foreach ($messages as $message) {
@@ -358,75 +364,75 @@ public static function getClients($search_term, $client_status, $technicien, $st
                 }
             }
 //B2B 
-            $messagesB2B = $inbox->query()->unseen()->text("Passage à l'étape Installation")->get();
-            if (count($messagesB2B) > 0) {
-                foreach ($messagesB2B as $ms) {
-                    $tech = null;
-                    $data = self::importB2BClient(str_replace('&nbsp;', ' ', strip_tags($ms->getHTMLBody(true))));
-                    preg_match('/\d{2}\.\d\.\d{2}\.\d{1,3}/', $data['address'], $code);
-                    $lat = $data['lat'];
-                    $lng = $data['lng'];
+            // $messagesB2B = $inbox->query()->unseen()->text("Passage à l'étape Installation")->get();
+            // if (count($messagesB2B) > 0) {
+            //     foreach ($messagesB2B as $ms) {
+            //         $tech = null;
+            //         $data = self::importB2BClient(str_replace('&nbsp;', ' ', strip_tags($ms->getHTMLBody(true))));
+            //         preg_match('/\d{2}\.\d\.\d{2}\.\d{1,3}/', $data['address'], $code);
+            //         $lat = $data['lat'];
+            //         $lng = $data['lng'];
 
 
-                    $item = null;
-                    if (isset($code[0])) {
-                        $item = Map::where('code', $code[0])->first();
-                    }
+            //         $item = null;
+            //         if (isset($code[0])) {
+            //             $item = Map::where('code', $code[0])->first();
+            //         }
 
-                    if ($code != null) {
-                        if ($item === null) {
-                            $gps = ClientsService::mapSurvey($code[0]);
-                            $lat = $gps->latitude;
-                            $lng = $gps->longitude;
-                            Map::create([
-                                'code' => $code[0],
-                                'lat' => $lat,
-                                'lng' => $lng,
-                            ]);
-                        } else {
-                            $lat = $item->lat;
-                            $lng = $item->lng;
-                        }
-                    }
-
-
-                    preg_match('/\d{2}\.\d\.\d{2}/', $data['address'], $plaq_sp);
-                    if ($plaq_sp != null) {
-                        if (in_array($plaq_sp[0], $array_code)) {
-                            $tech = 91;
-                        }
-                    }
+            //         if ($code != null) {
+            //             if ($item === null) {
+            //                 $gps = ClientsService::mapSurvey($code[0]);
+            //                 $lat = $gps->latitude;
+            //                 $lng = $gps->longitude;
+            //                 Map::create([
+            //                     'code' => $code[0],
+            //                     'lat' => $lat,
+            //                     'lng' => $lng,
+            //                 ]);
+            //             } else {
+            //                 $lat = $item->lat;
+            //                 $lng = $item->lng;
+            //             }
+            //         }
 
 
-                    $client = Client::where('sip', $data['sip'])
-                        ->where('offre', $data['offre'])->whereNull('deleted_at')
-                        ->first();
-                    if ($client === NULL || ($client->sip !== $data['sip'])) {
-                        $countClient++;
-                        Client::create([
-                            'uuid' => Str::uuid(),
-                            'client_id' => $data['login_internet'] ?? '0',
-                            'type' => 'B2B',
-                            'offre' => $data['offre'] ?? '-',
-                            'name' => Str::title($data['name']),
-                            'address' => Str::title($data['address']),
-                            'lat' => $lat,
-                            'technicien_id' => $tech == null ? null : $tech,
-                            'lng' => $lng,
-                            'city_id' => $data['city'],
-                            'plaque_id' => $data['plaque'],
-                            'debit' => $data['debit'],
-                            'sip' => $data['sip'],
-                            'phone_no' => $data['phone'],
-                            'routeur_type' => $data['routeur'],
-                            'status' => $tech == null ? ClientStatusEnum::NEW : ClientStatusEnum::AFFECTED,
-                            'promoteur' => $tech == null ? 0 : 1,
-                        ]);
-                    }
-                    $ms->move('INBOX.RaccoArchive');
-                    $ms->setFlag('Seen');
-                }
-            }
+            //         preg_match('/\d{2}\.\d\.\d{2}/', $data['address'], $plaq_sp);
+            //         if ($plaq_sp != null) {
+            //             if (in_array($plaq_sp[0], $array_code)) {
+            //                 $tech = 91;
+            //             }
+            //         }
+
+
+            //         $client = Client::where('sip', $data['sip'])
+            //             ->where('offre', $data['offre'])->whereNull('deleted_at')
+            //             ->first();
+            //         if ($client === NULL || ($client->sip !== $data['sip'])) {
+            //             $countClient++;
+            //             Client::create([
+            //                 'uuid' => Str::uuid(),
+            //                 'client_id' => $data['login_internet'] ?? '0',
+            //                 'type' => 'B2B',
+            //                 'offre' => $data['offre'] ?? '-',
+            //                 'name' => Str::title($data['name']),
+            //                 'address' => Str::title($data['address']),
+            //                 'lat' => $lat,
+            //                 'technicien_id' => $tech == null ? null : $tech,
+            //                 'lng' => $lng,
+            //                 'city_id' => $data['city'],
+            //                 'plaque_id' => $data['plaque'],
+            //                 'debit' => $data['debit'],
+            //                 'sip' => $data['sip'],
+            //                 'phone_no' => $data['phone'],
+            //                 'routeur_type' => $data['routeur'],
+            //                 'status' => $tech == null ? ClientStatusEnum::NEW : ClientStatusEnum::AFFECTED,
+            //                 'promoteur' => $tech == null ? 0 : 1,
+            //             ]);
+            //         }
+            //         $ms->move('INBOX.RaccoArchive');
+            //         $ms->setFlag('Seen');
+            //     }
+            // }
 
             /* $techniciens = Technicien::whereHas('cities', function ($query) use ($cityIds) {
                 $query->whereIn('city_id', $cityIds);
@@ -738,7 +744,7 @@ public static function getClients($search_term, $client_status, $technicien, $st
         return [
             'injoignable' => Blocage::where('cause', 'Injoignable/SMS')->where('resolue', 0)->count(),
             'indisponible' => Blocage::where('cause', 'Indisponible')->where('resolue', 0)->count(),
-            'cancel_client' => Blocage::where('cause', 'Client  a annulé sa demande')->where('resolue', 0)->count(),
+            'cancel_client' => Blocage::where('cause', 'Client  a annulé sa demande')->where('resolue', 0)->count(),
         ];
     }
 
