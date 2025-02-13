@@ -16,7 +16,7 @@ class LoginService
 {
     static public function login($email, $password)
     {
-        if (Auth::attempt(['email' => $email, 'password' => $password], true)) {
+        if (Auth::attempt(['email' => $email, 'password' => $password,'status' => 1], true)) {
             switch (Auth::user()->roles->first()->name) {
                 case 'admin':
                     Auth::user()->update(['is_online' => true]);

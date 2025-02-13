@@ -106,7 +106,8 @@ public static function getClients($search_term, $client_status, $technicien, $st
                                              })
                                              ->orWhereHas('plaque', function ($q) use ($search_term) {
                                                  $q->where('code_plaque', 'like', '%' . $search_term . '%');
-                                             });
+                                             })
+                                             ->orWhere('address', 'like', '%' . $search_term . '%');
             });
         })
         ->when($client_status, function ($query) use ($client_status) {
