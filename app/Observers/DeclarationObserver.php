@@ -32,11 +32,11 @@ class DeclarationObserver
             'status' => 'En cours',
         ]);
 
-        // AffectationHistory::create([
-        //     'affectation_id' => $affectation->id,
-        //     'technicien_id' => $affectation->technicien_id,
-        //     'status' => 'Déclaré',
-        // ]);
+        AffectationHistory::create([
+            'affectation_id' => $affectation->id,
+            'technicien_id' => $affectation->technicien_id,
+            'status' => 'Déclaré',
+        ]);
 
         // // DECREMENT STOCK
         // $soustraitant = SoustraitantStock::where('soustraitant_id', $affectation->technicien->soustraitant_id)->first();
@@ -56,9 +56,9 @@ class DeclarationObserver
 
 
 
-        // if ($affectation->client->sip != 'TEST') {
-        //     Mail::to(MailList::where([['type', 'orange'], ['status', 1]])->get('email'))->cc(MailList::where([['type', 'declaration'], ['status', 1]])->get('email'))->send(new DeclarationMail($declaration));
-        // }
+        if ($affectation->client->sip != 'TEST') {
+            Mail::to(MailList::where([['type', 'orange'], ['status', 1]])->get('email'))->cc(MailList::where([['type', 'declaration'], ['status', 1]])->get('email'))->send(new DeclarationMail($declaration));
+        }
 
 
     }
@@ -73,9 +73,9 @@ class DeclarationObserver
     {
         $affectation = Affectation::find($declaration->affectation_id);
 
-        // if ($affectation->client->sip != 'TEST') {
-        //     Mail::to(MailList::where([['type', 'orange'], ['status', 1]])->get('email'))->cc(MailList::where([['type', 'declaration'], ['status', 1]])->get('email'))->send(new DeclarationMail($declaration));
-        // }
+        if ($affectation->client->sip != 'TEST') {
+            Mail::to(MailList::where([['type', 'orange'], ['status', 1]])->get('email'))->cc(MailList::where([['type', 'declaration'], ['status', 1]])->get('email'))->send(new DeclarationMail($declaration));
+        }
     }
 
     /**
