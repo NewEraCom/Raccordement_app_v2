@@ -159,7 +159,7 @@ public static function getClients($search_term, $client_status, $technicien, $st
         preg_match('/CODE\s*(.{2})/', $content, $city);
         preg_match('/Login internet:\s*(\d*)/', $content, $client_login);
         preg_match('/Routeur.*(F\d{3,4})/', $content, $routeur);
-        preg_match('/Sous Type Opportunit\s*: (.+)/', $content, $offre);
+        preg_match('/Sous Type Opportunit�\s*: (.+)/', $content, $offre);
         preg_match('/Longitude\s*:\s*([+-]?\d+(\.\d+)?)/', $content, $lng);
         preg_match('/Latitude\s*:\s*([+-]?\d+(\.\d+)?)/', $content, $lat);
         preg_match('/Plan: FTTH (.*)/', $content, $typeClient);
@@ -179,7 +179,7 @@ public static function getClients($search_term, $client_status, $technicien, $st
             'city' => $plaque->city->id ?? 12,
             'phone' => $client_phone[1],
             'routeur' => $routeur ? 'ZTE ' . $routeur[1] : '-',
-            'offre' => $offre ? (trim($offre[1]) === 'Dmnagement' ?  'Déménagement' : trim($offre[1])) : '-',
+            'offre' => $offre ? (trim($offre[1]) === 'D�m�nagement' ?  'Déménagement' : trim($offre[1])) : '-',
         ];
     }
 
@@ -336,6 +336,30 @@ public static function getClients($search_term, $client_status, $technicien, $st
                     $client = Client::where('sip', $data['sip'])
                         ->where('offre', $data['offre'])->whereNull('deleted_at')
                         ->first();
+                        if ($client) {
+                            if ($client->status === 'Bloqué') {
+                                Client::create([
+                                    'uuid' => Str::uuid(),
+                                    'client_id' => $data['login_internet'] ?? '0',
+                                    'type' => 'B2C',
+                                    'offre' => $data['offre'] ?? '-',
+                                    'name' => Str::title($data['name']),
+                                    'address' => Str::title($data['address']),
+                                    'lat' => $lat,
+                                    'technicien_id' => $tech == null ? null : $tech,
+                                    'lng' => $lng,
+                                    'city_id' => $data['city'],
+                                    'plaque_id' => $data['plaque'],
+                                    'debit' => $data['debit'],
+                                    'sip' => '#'.$data['sip'],
+                                    'phone_no' => $data['phone'],
+                                    'routeur_type' => $data['routeur'],
+                                    'status' => $tech == null ? ClientStatusEnum::NEW : ClientStatusEnum::AFFECTED,
+                                    'promoteur' => $tech == null ? 0 : 1,
+                                ]);
+                                $cityIds[] = $data['city']; 
+                            }
+                        }
                     if ($client === NULL || ($client->sip !== $data['sip'] && $client->type !== $data['type'])) {
                         $countClient++;
                         Client::create([
@@ -745,7 +769,7 @@ public static function getClients($search_term, $client_status, $technicien, $st
         return [
             'injoignable' => Blocage::where('cause', 'Injoignable/SMS')->where('resolue', 0)->count(),
             'indisponible' => Blocage::where('cause', 'Indisponible')->where('resolue', 0)->count(),
-            'cancel_client' => Blocage::where('cause', 'Client  a annulé sa demande')->where('resolue', 0)->count(),
+            'cancel_client' => Blocage::where('cause', 'Client  a annulé sa demande')->where('resolue', 0)->count(),
         ];
     }
 

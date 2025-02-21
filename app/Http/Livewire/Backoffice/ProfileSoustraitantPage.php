@@ -103,7 +103,8 @@ class ProfileSoustraitantPage extends Component
 
 
             // $user = User::find($this->soustraitant->user->id);
-            $user = User::where('soustraitant_id',$this->soustraitant->id)->first();
+           // $user = User::where('soustraitant_id',$this->soustraitant->id)->first();
+           $user = User::where('soustraitant_id', $this->soustraitant->id)->latest()->first();
             $str = Soustraitant::find($this->soustraitant->id);
             $str->name = $this->first_name . ' ' . $this->last_name;
             $str->save();
@@ -128,7 +129,8 @@ class ProfileSoustraitantPage extends Component
     }
     public function setStr(){
 
-        $user = User::where('soustraitant_id',$this->soustraitant->id)->first();
+       // $user = User::where('soustraitant_id',$this->soustraitant->id)->first();
+       $user = User::where('soustraitant_id', $this->soustraitant->id)->latest()->first();
         $str = Soustraitant::find($this->soustraitant->id);
         
         // Assurez-vous que le client existe avant de l'assigner aux variables

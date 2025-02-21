@@ -6,6 +6,7 @@ namespace App\Http\Livewire\Auth;
 
 use App\Models\User;
 use App\Services\web\LoginService;
+use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
 
 class LoginPage extends Component
@@ -33,6 +34,12 @@ class LoginPage extends Component
         $this->addError('error', 'Votre compte est désactivé. Veuillez contacter le support IT pour plus d\'assistance.');
         return;
     }
+// Verify the password using Laravel's built-in Hash verification
+if (!Hash::check($this->password, $user->password)) {
+    // If the password does not match, show an error message
+    $this->addError('error', 'Erreur ! L\'adresse e-mail ou le mot de passe est incorrect.');
+    return;
+}
 
 
     // Call the LoginService to handle redirection
