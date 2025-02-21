@@ -92,22 +92,22 @@ class ClientsService
 //         ->where('status', '!=', '-')
 //         ->orderByDesc('created_at');
 // }
-public static function getClients($search_term, $client_status, $technicien, $start_date, $end_date, $affectation)
+public static function getClients($search_term, $client_status, $technicien, $start_date, $end_date)
 {
     return Client::query()
         ->when($search_term, function ($query) use ($search_term) {
-            $query->where(function ($q) use ($search_term) {
+            return $query->where(function ($q) use ($search_term) {
                 $q->where('name', 'like', '%' . $search_term . '%')
                     ->orWhere('sip', 'like', '%' . $search_term . '%')
                     ->orWhere('client_id', 'like', '%' . $search_term . '%')
                     ->orWhere('phone_no', 'like', '%' . $search_term . '%')
+                    ->orWhere('address', 'like', '%' . $search_term . '%')
                     ->orWhereHas('city', function ($q) use ($search_term) {
-                                                 $q->where('name', 'like', '%' . $search_term . '%');
-                                             })
-                                             ->orWhereHas('plaque', function ($q) use ($search_term) {
-                                                 $q->where('code_plaque', 'like', '%' . $search_term . '%');
-                                             })
-                                             ->orWhere('address', 'like', '%' . $search_term . '%');
+                        $q->where('name', 'like', '%' . $search_term . '%');
+                    })
+                    ->orWhereHas('plaque', function ($q) use ($search_term) {
+                        $q->where('code_plaque', 'like', '%' . $search_term . '%');
+                    });
             });
         })
         ->when($client_status, function ($query) use ($client_status) {
@@ -123,12 +123,14 @@ public static function getClients($search_term, $client_status, $technicien, $st
             return $query->where('technicien_id', $technicien);
         })
         ->when($start_date && $end_date, function ($query) use ($start_date, $end_date) {
-            return $query->whereBetween('created_at', [
-                Carbon::parse($start_date)->startOfDay(),
-                Carbon::parse($end_date)->endOfDay()
-            ]);
+            if ($start_date != '' && $end_date != '') {
+                return $query->whereBetween('created_at', [
+                    Carbon::parse($start_date)->startOfDay(),
+                    Carbon::parse($end_date)->endOfDay()
+                ]);
+            }
         })
-        ->where('deleted_at', null)
+        ->whereNull('deleted_at')
         ->whereNull('statusSav')
         ->orderBy('created_at', 'DESC');
 }

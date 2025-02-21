@@ -116,6 +116,7 @@
                                 value="{{ $client->offre }}">
                         </div>
                     </div>
+                    @unlessrole('sales')
                     <div class="row mb-2 align-middle">
                         <label for="inputEmail3" class="col-5 col-form-label fw-bold">Status du client</label>
                         <div class="col-7">
@@ -152,6 +153,7 @@
                                 value="{{ $client->createdBy === null ? 'Auto' : $client->createdBy->getFullname() }}">
                         </div>
                     </div>
+                    @endunlessrole
                     @if ($client->status == 'Affecté')
                     <div class="row mb-2 align-middle">
                         <label for="inputEmail3" class="col-5 col-form-label fw-bold">Type d'affectation</label>

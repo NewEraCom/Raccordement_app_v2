@@ -33,7 +33,7 @@ class SavTicketService
                 $query->with(['client']);
             }
 
-        )->where('resolue', 0)->orderBy('id', 'desc')->get();
+        )->where('resolue', 0)->with(['pictures'])->orderBy('id', 'desc')->get();
         return  $affectation;
     }
 
@@ -75,10 +75,10 @@ class SavTicketService
         //     'status' => 'Planifié',
         //     'planification_date' => Carbon::parse($request->input('planification_date'))->format('Y-m-d H:i:s'),
         // ]);
-        
-$affectation->status = 'Planifié';
-$affectation->planification_date = Carbon::parse($request->input('planification_date'))->format('Y-m-d H:i:s');
-$affectation->save();
+
+        $affectation->status = 'Planifié';
+        $affectation->planification_date = Carbon::parse($request->input('planification_date'))->format('Y-m-d H:i:s');
+        $affectation->save();
 
         // Retourner la réponse avec l'affectation mise à jour
         return response()->json(['Affectation' => $affectation], 200);
@@ -122,6 +122,39 @@ $affectation->save();
     }
 
 
+    static public function updateBlocageSav(Request $request)
+    {
+        try {
+            // Automatically validate the input data
+            $validated = $request->validate([
+                'sav_ticket_id' => 'required|integer',
+                'cause' => 'required|string|max:255',
+                'justification' => 'nullable|string|max:500',
+            ]);
+
+            // If validation passes, proceed to update or create the blocage
+            $blocage = BlocageSav::updateOrCreate(
+                ['sav_ticket_id' => $validated['sav_ticket_id']],
+                [
+                    'uuid' => Str::uuid(),
+                    'cause' => $validated['cause'],
+                    'justification' => $validated['justification'] ?? null,
+                ]
+            );
+
+            // Return the created or updated blocage object with a 200 OK status
+            return response()->json(['blocage' => $blocage], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Log validation errors
+
+            // Return validation errors
+            return response()->json(['errors' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            // Return a generic error response
+            return response()->json(['error' => 'An unexpected error occurred.'], 500);
+        }
+    }
+
 
 
 
@@ -148,6 +181,36 @@ $affectation->save();
             'attachement' => $filePath, // Save the file path in the database
             'blocage_sav_id' => $request->input('blocage_sav_id'),
         ]);
+
+        // Return success response
+        return response()->json(['images' => $blocagePicture], 200);
+    }
+
+
+    public function updateImageBlocageSav(Request $request)
+    {
+        // Validate the incoming request
+        $validated = $request->validate([
+            'image' => 'nullable|string|max:255', // Optional description
+            'image_file' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048', // Validate file type and size
+            'blocage_sav_id' => 'required|integer|exists:blocage_savs,id', // Ensure blocage_sav_id exists
+        ]);
+
+        // Handle file upload
+        $filePath = null;
+        if ($request->hasFile('image_file')) {
+            $filePath = $request->file('image_file')->store('uploads', 'public');
+        }
+
+        // Update or create the record in the database
+        $blocagePicture = BlocageSavPictures::updateOrCreate(
+            ['blocage_sav_id' => $validated['blocage_sav_id']],
+            [
+                'uuid' => Str::uuid(),
+                'description' => $validated['image'],
+                'attachement' => $filePath, // Save the file path in the database
+            ]
+        );
 
         // Return success response
         return response()->json(['images' => $blocagePicture], 200);
@@ -243,6 +306,52 @@ $affectation->save();
             return response()->json(['errors' => $e->errors()], 422);
         } catch (\Exception $e) {
 
+            // Return a generic error response
+            return response()->json(['error' => $e], 500);
+        }
+    }
+
+
+
+    static public function updateFeedbackSav(Request $request)
+    {
+        try {
+            // Validate the request
+            $validated = $request->validate([
+                'before_picture' => 'image|mimes:jpeg,png,jpg|max:10240',
+                'after_picture' => 'image|mimes:jpeg,png,jpg|max:10240',
+            ]);
+
+            // Process and store uploaded images
+            $imagePaths = self::handleUploadedImages($request, $validated);
+
+            // Automatically validate the input data
+            $validated = $request->validate([
+                'sav_ticket_id' => 'required|integer',
+                'root_cause' => 'required|string|max:255',
+                'unite' => 'nullable|string|max:500',
+            ]);
+
+            // If validation passes, proceed to update or create the feedback
+            $feedBackSav = FeedBackSav::updateOrCreate(
+                ['sav_ticket_id' => $validated['sav_ticket_id']],
+                [
+                    'uuid' => Str::uuid(),
+                    'root_cause' => $validated['root_cause'],
+                    'unite' => $validated['unite'] ?? null,
+                    'after_picture' => $imagePaths['after_picture'] ?? null,
+                    'before_picture' => $imagePaths['before_picture'] ?? null,
+                ]
+            );
+
+            // Return the created or updated feedback object with a 200 OK status
+            return response()->json(['feedBackSav' => $feedBackSav], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Log validation errors
+
+            // Return validation errors
+            return response()->json(['errors' => $e->errors()], 422);
+        } catch (\Exception $e) {
             // Return a generic error response
             return response()->json(['error' => $e], 500);
         }
