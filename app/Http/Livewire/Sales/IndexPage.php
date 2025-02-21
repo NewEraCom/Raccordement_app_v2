@@ -8,6 +8,7 @@ use App\Models\Client;
 use App\Models\Soustraitant;
 use App\Models\Technicien;
 use App\Services\web\ClientsService;
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -16,7 +17,7 @@ class IndexPage extends Component
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
 
-    public $client_name = '', $client_sip = '', $client_status = '', $technicien = '', $start_date = '', $end_date = '';
+    public $client_name = '', $search = '', $client_sip = '', $client_status = '', $technicien = '', $start_date = '', $end_date = '';
 
     public function export()
     {
@@ -28,8 +29,13 @@ class IndexPage extends Component
     {
         $soustraitant = Soustraitant::get();
         $techniciens = Technicien::get();
-        $clients = ClientsService::getClients($this->client_name, $this->client_sip, $this->client_status, $this->technicien, $this->start_date, $this->end_date)->paginate(15);
-
+        $clients = ClientsService::getClients(
+            $this->search,
+            $this->client_status,
+            $this->technicien,
+            $this->start_date,
+            $this->end_date
+        )->paginate(15);
         return view('livewire.sales.index-page',compact('clients','soustraitant','techniciens'))->layout('layouts.app',[ 'title' => 'Commercial']);
     }
 }
