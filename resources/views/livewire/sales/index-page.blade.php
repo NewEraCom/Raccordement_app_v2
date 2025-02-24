@@ -34,7 +34,7 @@
                                 <label for="floatingInput">SIP,Telephone Ou Nom Client</label>
                             </div>
                         </div>
-                        <div class="col-12 col-sm-12 col-md-12 col-lg-3 col-xl-4 col-xxl-2 mb-1">
+                        {{-- <div class="col-12 col-sm-12 col-md-12 col-lg-3 col-xl-4 col-xxl-2 mb-1">
                             <div class="form-floating">
                                 <select class="form-select" id="floatingSelect" wire:model="client_status">
                                     <option value="" selected>Tous</option>
@@ -72,7 +72,7 @@
                                     wire:model="end_date" />
                                 <label for="floatingInput">Au</label>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </div>

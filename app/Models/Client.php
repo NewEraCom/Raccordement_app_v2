@@ -117,6 +117,9 @@ class Client extends Model
             case 'Saisie':
                 $data = 'primary';
                 break;
+            case 'Bloqué':
+                $data = 'danger';
+                break;
             case 'Affecté':
                 $data = 'warning';
                 break;
