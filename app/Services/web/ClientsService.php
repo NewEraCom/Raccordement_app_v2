@@ -339,7 +339,10 @@ public static function getClients($search_term, $client_status, $technicien, $st
                         ->where('offre', $data['offre'])->whereNull('deleted_at')
                         ->first();
                         if ($client) {
-                            if ($client->status === 'Bloqué') {
+                            // Get the latest affectation with status 'Bloqué'
+                            $latestAffectation = $client->affectations->sortByDesc('created_at')->first(); 
+                            // Check if the latest affectation has the status 'Bloqué'
+                            if ($latestAffectation && $latestAffectation->status === 'Bloqué') {
                                 Client::create([
                                     'uuid' => Str::uuid(),
                                     'client_id' => $data['login_internet'] ?? '0',
