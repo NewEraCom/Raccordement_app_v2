@@ -32,6 +32,7 @@ class ClientsFiltrage implements FromCollection, WithHeadings, ShouldAutoSize,Wi
             'Type',
             'Débit',
             'Date de creation',
+            'Heure de creation',
         ];
     }
 
@@ -47,7 +48,8 @@ class ClientsFiltrage implements FromCollection, WithHeadings, ShouldAutoSize,Wi
 
       public function collection()
     {
-        return Client::select('sip','client_id','clients.name','address','cities.name as city_name','phone_no','type','debit','clients.created_at')->join('cities','cities.id','=','clients.city_id')
+        return Client::select('sip','client_id','clients.name','address','cities.name as city_name','phone_no','type','debit',DB::raw('DATE_FORMAT(clients.created_at, "%d-%m-%Y") as creation_date'),
+        DB::raw('DATE_FORMAT(clients.created_at, "%H:%i") as creation_time'),)->join('cities','cities.id','=','clients.city_id')
         ->orderBy('clients.created_at','desc')
         ->get();
     }

@@ -40,6 +40,7 @@ class SavClientExport implements FromCollection, WithHeadings, ShouldAutoSize, W
             'Ville',
             'Contact',
             'Date demande',
+            'Heure demande',
           //  'Equipe',
            // 'Date d\'intervention',
             //'Root Cause',
@@ -101,6 +102,7 @@ class SavClientExport implements FromCollection, WithHeadings, ShouldAutoSize, W
             'cities.name as ville',
             'contact',
             'date_demande',
+            DB::raw('DATE_FORMAT(date_demande, "%H:%i") as heure_demande'),
             'sav_client.status' // Include the status column
         )
         ->join('cities', 'sav_client.city_id', '=', 'cities.id');
