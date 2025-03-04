@@ -28,6 +28,7 @@ class RouteurAll implements FromCollection, WithHeadings, ShouldAutoSize, WithTi
             'Technicien',
             'Status',
             'Date de creation',
+            'Heure de creation',
         ];
     }
 
@@ -38,7 +39,8 @@ class RouteurAll implements FromCollection, WithHeadings, ShouldAutoSize, WithTi
                   WHEN 2 THEN "Besoin de vérification" 
                   WHEN 1 THEN "Actif" 
                   ELSE "unknown" 
-                END AS status_text'), DB::raw('DATE_FORMAT(routeurs.created_at, "%d-%m-%Y %H:%i")'))
+                END AS status_text'), DB::raw('DATE_FORMAT(routeurs.created_at, "%d-%m-%Y %H:%i")'),
+                DB::raw('DATE_FORMAT(routeurs.created_at, "%H:%i")'))
             ->leftJoin('clients', 'clients.id', '=', 'routeurs.client_id')
             ->leftJoin('techniciens', 'techniciens.id', '=', 'routeurs.technicien_id')
             ->leftJoin('users', 'users.id', '=', 'techniciens.user_id')

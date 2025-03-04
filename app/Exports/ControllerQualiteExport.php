@@ -35,6 +35,7 @@ class ControllerQualiteExport implements FromCollection,WithHeadings,ShouldAutoS
             'Nom Client',
             'Telephone',
             'Date de traitemant',
+            'Heure de traitemant',
             'Status de client',
             'Etat',
             'Commentaire',
@@ -67,7 +68,7 @@ class ControllerQualiteExport implements FromCollection,WithHeadings,ShouldAutoS
 
 
     public function collection(){
-        return Client::select('address','sip','clients.client_id','name','phone_no',DB::raw('DATE_FORMAT(controler_clients.created_at, "%d-%m-%Y")'),'affectations.status','comment','controler_clients.note','blocages.cause')
+        return Client::select('address','sip','clients.client_id','name','phone_no',DB::raw('DATE_FORMAT(controler_clients.created_at, "%d-%m-%Y")'),DB::raw('DATE_FORMAT(controler_clients.created_at, "%H:%i")'),'affectations.status','comment','controler_clients.note','blocages.cause')
         ->leftJoin('controler_clients', 'controler_clients.id', '=', 'clients.controler_client_id')
         ->leftJoin('affectations','affectations.client_id','=','clients.id')
         ->leftJoin('blocages','blocages.affectation_id','=','affectations.id')

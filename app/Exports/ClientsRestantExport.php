@@ -31,6 +31,7 @@ class ClientsRestantExport implements FromCollection, WithHeadings, ShouldAutoSi
             'Type',
             'Débit',
             'Date de creation',
+            'Heure de creation',
         ];
     }
 
@@ -59,7 +60,7 @@ class ClientsRestantExport implements FromCollection, WithHeadings, ShouldAutoSi
 
     public function collection()
     {
-        return Client::select('sip','client_id','clients.name','address','cities.name as city_name','clients.phone_no','routeur_type','type','debit',DB::raw('DATE_FORMAT(clients.created_at, "%d-%m-%Y %H:%i")'))
+        return Client::select('sip','client_id','clients.name','address','cities.name as city_name','clients.phone_no','routeur_type','type','debit',DB::raw('DATE_FORMAT(clients.created_at, "%d-%m-%Y ")'),DB::raw('DATE_FORMAT(clients.created_at, "%H:%i") as creation_time'),)
         ->join('cities','cities.id','=','clients.city_id')
         ->where([['clients.status','Saisie'],['clients.statusSav',null]])
         ->get();

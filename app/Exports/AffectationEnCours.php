@@ -31,6 +31,7 @@ class AffectationEnCours implements FromCollection, WithHeadings, ShouldAutoSize
     {
         return [
             'Date de creation',
+            'Heure de creation',
             'Equipe',
             'Adresse',
             'SIP',
@@ -46,7 +47,7 @@ class AffectationEnCours implements FromCollection, WithHeadings, ShouldAutoSize
 
     public function collection()
     {
-        return Affectation::select(DB::raw('DATE_FORMAT(affectations.created_at, "%d-%m-%Y %H:%i")'), 'soustraitants.name as soustraitant_name', 'clients.address', 'clients.sip', 'clients.client_id', 'clients.routeur_type as routeur', 'cities.name as city_name', 'clients.name', 'clients.phone_no as phoneNumber', 'clients.debit', DB::raw("CONCAT(users.first_name,' ',users.last_name)"))
+        return Affectation::select(DB::raw('DATE_FORMAT(affectations.created_at, "%d-%m-%Y ")'),DB::raw('DATE_FORMAT(clients.created_at, "%H:%i") as creation_time'), 'soustraitants.name as soustraitant_name', 'clients.address', 'clients.sip', 'clients.client_id', 'clients.routeur_type as routeur', 'cities.name as city_name', 'clients.name', 'clients.phone_no as phoneNumber', 'clients.debit', DB::raw("CONCAT(users.first_name,' ',users.last_name)"))
             ->join('clients', 'clients.id', '=', 'affectations.client_id')
             ->join('cities', 'cities.id', '=', 'clients.city_id')
             ->join('techniciens', 'techniciens.id', '=', 'affectations.technicien_id')

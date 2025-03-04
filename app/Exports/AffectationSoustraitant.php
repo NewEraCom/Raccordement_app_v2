@@ -32,6 +32,7 @@ class AffectationSoustraitant implements FromCollection, WithHeadings, ShouldAut
     {
         return [
             'Date de creation',
+            'Heure de creation',
             'Adresse',
             'SIP',
             'ID',
@@ -52,7 +53,8 @@ class AffectationSoustraitant implements FromCollection, WithHeadings, ShouldAut
     public function collection()
     {
         return Affectation::select(
-            DB::raw('DATE_FORMAT(affectations.created_at, "%d-%m-%Y %H:%i")'), 
+            DB::raw('DATE_FORMAT(affectations.created_at, "%d-%m-%Y ")'),
+            DB::raw('DATE_FORMAT(clients.created_at, "%H:%i") as creation_time'), 
             'clients.address', 
             'clients.sip', 
             'clients.client_id', 

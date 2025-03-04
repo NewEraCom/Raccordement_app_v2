@@ -31,6 +31,7 @@ class SalesExport implements FromCollection, WithHeadings, ShouldAutoSize, WithT
     {
         return [
             'Date de creation',
+            'Heure de creation',
             'Equipe',
             'Adresse',
             'SIP',
@@ -70,7 +71,7 @@ class SalesExport implements FromCollection, WithHeadings, ShouldAutoSize, WithT
 
     public function collection()
     {
-        return Client::select(DB::raw('DATE_FORMAT(clients.created_at, "%d-%m-%Y %H:%i")'),'soustraitants.name as soustraitant_name','address','sip','clients.client_id','routeur_type as routeur','cities.name as city_name','clients.name','clients.phone_no as phoneNumber','clients.debit','clients.status as client_status','affectations.status as affectation_status')
+        return Client::select(DB::raw('DATE_FORMAT(clients.created_at, "%d-%m-%Y %H:%i")'),DB::raw('DATE_FORMAT(clients.created_at, "%H:%i")'),'soustraitants.name as soustraitant_name','address','sip','clients.client_id','routeur_type as routeur','cities.name as city_name','clients.name','clients.phone_no as phoneNumber','clients.debit','clients.status as client_status','affectations.status as affectation_status')
             ->join('cities', 'cities.id', '=', 'clients.city_id')
              ->leftJoin('affectations', function ($join) {
                 $join->on('clients.id', '=', 'affectations.client_id')
