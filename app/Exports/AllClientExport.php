@@ -84,6 +84,7 @@ class AllClientExport implements FromCollection, WithHeadings, ShouldAutoSize, W
     {
         return [
             'Date de creation',
+            'Heure de creation',
             'Equipe',
             'Adresse',
             'Type de demande',
@@ -95,10 +96,13 @@ class AllClientExport implements FromCollection, WithHeadings, ShouldAutoSize, W
             'Telephone',
             'Debit',
             'Etat Actuel',
+            'Temps de traitement (Jours)',
             'Affectation 1 - Date',
+            'Affectation 1 - Heure',
             'Affectation 1 - Status',
             'Affectation 1 - Soustraitant',
             'Affectation 2 - Date',
+            'Affectation 2 - Heure',
             'Affectation 2 - Status',
             'Affectation 2 - Technicien',
 
@@ -110,7 +114,8 @@ class AllClientExport implements FromCollection, WithHeadings, ShouldAutoSize, W
     {   
         return Client::select([
          
-            DB::raw('DATE_FORMAT(clients.created_at, "%d-%m-%Y %H:%i") as creation_date'),   
+            DB::raw('DATE_FORMAT(clients.created_at, "%d-%m-%Y") as creation_date'),
+            DB::raw('DATE_FORMAT(clients.created_at, "%H:%i") as creation_time'),  
             'st_initial.name as equipe',
             'clients.address',
             'clients.type',
@@ -122,14 +127,24 @@ class AllClientExport implements FromCollection, WithHeadings, ShouldAutoSize, W
             'clients.phone_no as telephone',
             'clients.debit',
             'clients.status as etat_actuel',
+            DB::raw('CASE 
+                WHEN MIN(CASE WHEN hist_rank.rank = 1 THEN affectation_histories.created_at END) IS NOT NULL THEN
+                    DATEDIFF(
+                        MIN(CASE WHEN hist_rank.rank = 1 THEN affectation_histories.created_at END),
+                        clients.created_at
+                    )
+                ELSE NULL
+            END as processing_time'),
     
             // Première affectation (Backoffice -> Soustraitant)
-            DB::raw('MAX(CASE WHEN hist_rank.rank = 1 THEN DATE_FORMAT(affectation_histories.created_at, "%d-%m-%Y %H:%i") END) as affectation1_date'),
+            DB::raw('MAX(CASE WHEN hist_rank.rank = 1 THEN DATE_FORMAT(affectation_histories.created_at, "%d-%m-%Y ") END) as affectation1_date'),
+            DB::raw('MAX(CASE WHEN hist_rank.rank = 1 THEN DATE_FORMAT(affectation_histories.created_at, "%H:%i") END) as affectation1_heure'),
             DB::raw('MAX(CASE WHEN hist_rank.rank = 1 THEN affectation_histories.status END) as affectation1_status'),
             DB::raw('MAX(CASE WHEN hist_rank.rank = 1 THEN st_aff1.name END) as affectation1_soustraitant'),
     
             // Deuxième affectation (Soustraitant -> Technicien)
-            DB::raw('MAX(CASE WHEN hist_rank.rank = 2 THEN DATE_FORMAT(affectation_histories.created_at, "%d-%m-%Y %H:%i") END) as affectation2_date'),
+            DB::raw('MAX(CASE WHEN hist_rank.rank = 2 THEN DATE_FORMAT(affectation_histories.created_at, "%d-%m-%Y") END) as affectation2_date'),
+            DB::raw('MAX(CASE WHEN hist_rank.rank = 2 THEN DATE_FORMAT(affectation_histories.created_at, " %H:%i") END) as affectation2_heure'),
             DB::raw('MAX(CASE WHEN hist_rank.rank = 2 THEN affectation_histories.status END) as affectation2_status'),
             DB::raw('MAX(CASE WHEN hist_rank.rank = 2 THEN CONCAT(users_aff2.first_name, " ", users_aff2.last_name) END) as affectation2_technicien'),
 
