@@ -39,7 +39,7 @@ class SendRecap extends Command
      */
     public function handle()
     {
-        Mail::to(['a.qandoussi@neweracom.ma','a.elamrani@neweracom.ma','f.smaili@neweracom.ma','h.jlidat@neweracom.ma','k.oubellouch@neweracom.ma','a.khyari@neweracom.ma','a.chahid@neweracom.ma'])->send(new RecapMail());
+        Mail::to(['a.qandoussi@neweracom.ma','a.elamrani@neweracom.ma','f.smaili@neweracom.ma','h.jlidat@neweracom.ma','a.zaoui@neweracom.ma'])->send(new RecapMail());
         return 1;
     }
 }

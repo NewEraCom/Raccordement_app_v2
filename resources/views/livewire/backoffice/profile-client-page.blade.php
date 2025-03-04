@@ -116,7 +116,6 @@
                                 value="{{ $client->offre }}">
                         </div>
                     </div>
-                    @unlessrole('sales')
                     <div class="row mb-2 align-middle">
                         <label for="inputEmail3" class="col-5 col-form-label fw-bold">Status du client</label>
                         <div class="col-7">
@@ -124,6 +123,8 @@
                                 value="{{ $client->status }}">
                         </div>
                     </div>
+                    @unlessrole('sales')
+                  
                     <div class="row mb-2 align-middle">
                         <label for="inputEmail3" class="col-5 col-form-label fw-bold">Date de création</label>
                         <div class="col-7">
@@ -153,16 +154,6 @@
                                 value="{{ $client->createdBy === null ? 'Auto' : $client->createdBy->getFullname() }}">
                         </div>
                     </div>
-                    @endunlessrole
-                    @if ($client->status == 'Affecté')
-                    <div class="row mb-2 align-middle">
-                        <label for="inputEmail3" class="col-5 col-form-label fw-bold">Type d'affectation</label>
-                        <div class="col-7">
-                            <input type="text" readonly class="form-control-plaintext" id="example-static"
-                                value="{{ $client->type_affectation }}">
-                        </div>
-                    </div>
-                    @endif
                     @if ($client->affectations->last() != null)
                     <div class="row mb-2 align-middle">
                         <label for="inputEmail3" class="col-5 col-form-label fw-bold">Affecter par</label>
@@ -172,6 +163,18 @@
                         </div>
                     </div>
                     @endif
+                    @if ($client->status == 'Affecté')
+                    <div class="row mb-2 align-middle">
+                        <label for="inputEmail3" class="col-5 col-form-label fw-bold">Type d'affectation</label>
+                        <div class="col-7">
+                            <input type="text" readonly class="form-control-plaintext" id="example-static"
+                                value="{{ $client->type_affectation }}">
+                        </div>
+                    </div>
+                    @endif
+                    @endunlessrole
+                 
+                
                 </div>
             </div>
         </div>

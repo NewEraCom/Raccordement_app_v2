@@ -155,7 +155,7 @@
                                         ,
                                         @endif
                                         @endforeach
-                                        - {{ $item->soustraitant->name }}
+                                        - {{ $item->soustraitant->name ?? '-' }}
                                     </span>
                                 </td>
                                 <td class="text-center">
