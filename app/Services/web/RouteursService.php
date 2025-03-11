@@ -12,7 +12,7 @@ class RouteursService
 {
     public static function returnRouteurs($routeur_status, $start_date, $end_date, $routeur,$client)
     {
-        return Routeur::with(['client', 'technicien'])
+        return Routeur::with(['client', 'technicien.soustraitant'])
             ->when((int)$routeur_status, function ($query, $routeur_status) {
                 return $query->where('status', (int)$routeur_status);
             })

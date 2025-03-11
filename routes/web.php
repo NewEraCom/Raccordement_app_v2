@@ -32,6 +32,7 @@ use App\Http\Livewire\Backoffice\StockPage;
 use App\Http\Livewire\Backoffice\StockSav;
 use App\Http\Livewire\Backoffice\TechnicienPage;
 use App\Http\Livewire\Backoffice\TechniciensPage;
+use App\Http\Livewire\Backoffice\ReportsPageView;
 use App\Http\Livewire\Controller\AffectationsPage as ControllerAffectationsPage;
 use App\Http\Livewire\Controller\IndexPage as ControllerIndexPage;
 use App\Http\Livewire\Controller\PlanificationPage;
@@ -88,7 +89,7 @@ Route::any('/logout', function () {
 })->name('logout');
 
 
-Route::middleware(['auth', 'role:admin|sav'])->name('admin.')->prefix('admin')->group(function () {
+Route::middleware(['auth', 'role:admin|sav|controller'])->name('admin.')->prefix('admin')->group(function () {
     Route::any('/dashboard', Dashboard::class)->name('dashboard');
     Route::any('/clients', ClientsPage::class)->name('clients');
     Route::any('/clients/{client}', ProfileClientPage::class)->name('clients.profile');
@@ -112,6 +113,7 @@ Route::middleware(['auth', 'role:admin|sav'])->name('admin.')->prefix('admin')->
     Route::any('/controle-qualite', ControleQaulitePage::class)->name('clients.controle');
     Route::any('/reports-client', ClientsRepports::class)->name('clients.reports');
     Route::any('/affectations2',AffectationsPage::class)->name('affectations');
+    Route::any('/reports',ReportsPageView::class)->name('reports');
 });
 
 Route::middleware(['auth', 'role:supervisor'])->name('supervisor.')->prefix('supervisor')->group(function () {
