@@ -233,6 +233,12 @@
                                 <span> Plaques </span>
                             </a>
                         </li>
+                        <li class="side-nav-item">
+                            <a href="{{ route('admin.reports') }}" class="side-nav-link fw-bold">
+                                <i class="uil-technology"></i>
+                                <span> Rapports </span>
+                            </a>
+                        </li>
 
                         <li class="side-nav-item">
                             <a data-bs-toggle="collapse" href="#sidebarStcok" aria-expanded="false"
@@ -384,6 +390,12 @@
                         <li class="side-nav-item">
                             <a href="{{ route('controller.reports') }}" class="side-nav-link fw-bold">
                                 <i class="uil-file-question-alt"></i>
+                                <span> Rapports </span>
+                            </a>
+                        </li>
+                        <li class="side-nav-item">
+                            <a href="{{ route('admin.reports') }}" class="side-nav-link fw-bold">
+                                <i class="uil-technology"></i>
                                 <span> Rapports </span>
                             </a>
                         </li>

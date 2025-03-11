@@ -152,7 +152,13 @@
                                     <td class="text-center">{{ $item->returnClientSip() }}</td>
                                     <td class="text-center">{{ $item->returnClientName() }}</td>
                                     <td class="text-center">
-                                        {{ $item->technicien ? $item->technicien->user->getFullname() : '-' }}</td>
+                                        <h5 class="font-14 my-1"> 
+                                            {{ $item->technicien ? $item->technicien->user->getFullname() : '-' }}
+                                        </h5>
+                                        <span class="text-muted font-13">
+                                        {{ $item->technicien->soustraitant->name ?? '-' }}
+                                        </span>   
+                                    </td>
                                     <td class="text-center">
                                         <span
                                             class="badge badge-{{ $item->getStatusColor() }}-lighten p-1 ps-2 pe-2">{{ $item->status == 0 ? 'Inactif' : ($item->status === 1 ? 'Actif' : 'Besoin de vérification') }}</span>

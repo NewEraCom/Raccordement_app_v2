@@ -6,6 +6,7 @@ use App\Charts\SoustraitantByCity;
 use App\Models\City;
 use App\Services\web\CitiesServices;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
 class ProfileCityPage extends Component

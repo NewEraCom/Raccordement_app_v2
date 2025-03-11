@@ -13,7 +13,7 @@ use Spatie\Enum\Laravel\Enum;
  */
 class ClientStatusEnum extends Enum
 {
-    public const NEW = 'Saisie';
+    public const NEW = 'Créé';
     public const AFFECTED = 'Affecté';
     public const DECLARED = 'Déclaré';
     public const VALIDATED = 'Validée';
