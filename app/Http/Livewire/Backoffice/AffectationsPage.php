@@ -18,12 +18,14 @@ use OneSignal;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Client;
+use App\Traits\SendSmsTrait;
 use Carbon\Carbon;
 
 
 class AffectationsPage extends Component
 {
     use WithPagination;
+    use SendSmsTrait;
     protected $paginationTheme = 'bootstrap';
 
     public $start_date = '', $end_date = '', $client_name, $client_sip, $client_status, $technicien;
@@ -88,7 +90,7 @@ class AffectationsPage extends Component
             }
 
             DB::commit();
-            $technicien = Technicien::find($this->technicien_affectation);
+            $technicien = Technicien::with('user')->find($this->technicien_affectation);
             $filedsh['include_player_ids'] = [$technicien->player_id];
             $message = $count > 1 ? $count . ' clients vous ont été affectés.' : 'Un client vous a été affecté.';
             /* OneSignal::sendPush($filedsh, $message);
@@ -103,6 +105,8 @@ class AffectationsPage extends Component
             $this->cause = '';
             $this->emit('success');
             $this->dispatchBrowserEvent('contentChanged', ['item' => 'Client affecté avec succès.']);
+
+            // $this->sendSms('+212'.$technicien->user->phone_no, $message);
         } catch (\Throwable $th) {
             DB::rollBack();
             dd($th->getMessage());

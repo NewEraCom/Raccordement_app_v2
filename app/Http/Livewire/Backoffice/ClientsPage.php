@@ -34,7 +34,7 @@ class ClientsPage extends Component
     use WithFileUploads;
     protected $paginationTheme = 'bootstrap';
 
-    public $client_name = '', $client_sip = '', $client_status = '', $technicien = '', $start_date = '', $end_date = '';
+    public $client_name = '', $client_sip = '', $client_status = '', $technicien = '', $start_date = '', $end_date = '', $city_id = '', $plaque_id = '';
     public $client_id = '', $selectedItems = [];
     public $file;
     public $technicien_affectation, $cause, $resetPage = false;
@@ -52,6 +52,11 @@ class ClientsPage extends Component
     public $search_term = '';
     public $affectation_id;
 
+    public function mount()
+    {
+        $this->city_id = request()->query('city', '');
+        $this->plaque_id = request()->query('plaque', '');
+    }
     public function export()
     {
         ini_set('memory_limit', '-1');
@@ -199,7 +204,7 @@ class ClientsPage extends Component
             DB::beginTransaction();
 
             Client::find($this->client_id)->update([
-                'status' => 'Saisie',
+                'status' => 'Créé',
                 'cause' => $this->cause,
                 'technicien_id' => null,
             ]);
@@ -328,7 +333,7 @@ class ClientsPage extends Component
                     'phone_no' => $this->new_phone,
                     'offre' => $this->new_offre,
                     'routeur_type' => $this->new_routeur,
-                    'status' =>  $tech == null ? 'Saisie' : 'Affecté',
+                    'status' =>  $tech == null ? 'Créé' : 'Affecté',
                     'created_by' => auth()->user()->id,
                     'promoteur' => $tech == null ? 0 : 1,
                 ]
@@ -423,7 +428,14 @@ class ClientsPage extends Component
                     $this->start_date, 
                     $this->end_date, 
                     null  // Retirez $this->client_id ici pour éviter la perte de données
-                )->paginate(15);
+                )
+                ->when($this->city_id, function($query) {
+                    return $query->where('city_id', $this->city_id);
+                })
+                ->when($this->plaque_id, function($query) {
+                    return $query->where('plaque_id', $this->plaque_id);
+                })
+                ->paginate(15);
                 break;
             case 'supervisor':
                 $clientsCount = ClientsSupervisorService::countClient($this->start_date, $this->end_date);
