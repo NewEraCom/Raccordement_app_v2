@@ -34,24 +34,28 @@ class ClientsRestantExport implements FromCollection, WithHeadings, ShouldAutoSi
             'Heure de creation',
         ];
     }
-
     public function registerEvents(): array
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
                 $lastRow = $event->sheet->getHighestRow();
-                $event->sheet->getStyle('A1:J1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
-                $event->sheet->getStyle('A1:J1')->getFont()->setBold(true);
-                $event->sheet->getStyle('A1:J1')->getFont()->getColor()->setARGB(\PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE);
-                $event->sheet->getStyle('A1:J1')->getFill()->getStartColor()->setARGB('002060');
-                $event->sheet->getStyle('A1:J' . $lastRow)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
-                $event->sheet->getStyle('A1:J' . $lastRow)->getFont()->setSize(10);
-                $event->sheet->getStyle('A1:J' . $lastRow)->getFont()->setName('Calibri');
-                $event->sheet->getStyle('A1:J' . $lastRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-                $event->sheet->getStyle('A1:J' . $lastRow)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+                $lastColumn = $event->sheet->getHighestColumn(); // Get the last column dynamically
+    
+                // Apply style to all headers (from A1 to the last column header)
+                $event->sheet->getStyle('A1:' . $lastColumn . '1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+                $event->sheet->getStyle('A1:' . $lastColumn . '1')->getFont()->setBold(true);
+                $event->sheet->getStyle('A1:' . $lastColumn . '1')->getFont()->getColor()->setARGB(\PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE);
+                $event->sheet->getStyle('A1:' . $lastColumn . '1')->getFill()->getStartColor()->setARGB('002060');
+    
+                // Apply other styles to the entire sheet (data and headers)
+                $event->sheet->getStyle('A1:' . $lastColumn . $lastRow)->getFont()->setSize(10);
+                $event->sheet->getStyle('A1:' . $lastColumn . $lastRow)->getFont()->setName('Calibri');
+                $event->sheet->getStyle('A1:' . $lastColumn . $lastRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                $event->sheet->getStyle('A1:' . $lastColumn . $lastRow)->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
             },
         ];
     }
+    
 
     public function title(): string
     {

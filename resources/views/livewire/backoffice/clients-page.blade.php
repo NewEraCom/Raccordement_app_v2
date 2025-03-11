@@ -278,7 +278,7 @@
                             <div class="form-floating">
                                 <select class="form-select" id="floatingSelect" wire:model="client_status">
                                     <option value="" selected>Tous</option>
-                                    <option value="Saisie">Saisie</option>
+                                    <option value="Saisie,Créé">Saisie,Créé</option>
                                     <option value="Affecté">Affecté</option>
                                     <option value="Déclaré">Déclaré</option>
                                     <option value="Validé">Validé</option>
