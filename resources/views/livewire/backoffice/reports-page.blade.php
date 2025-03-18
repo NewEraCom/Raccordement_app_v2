@@ -31,50 +31,10 @@
         
     </div>
 
-
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class=" fw-bold m-2">Rapport Blocages</h5>
-                </div>
-                <div class="card-body">
-                   
-                    <div class="row">
-                        <div class="col-12 col-sm-12 col-md-12 col-lg-3 col-xl-4 col-xxl-4 mb-1">
-                            <div class="form-floating">
-                                <input type="text" class="form-control" id="floatingInput"
-                                    placeholder="Ex : Nom, Ville, Téléphone, SIP Ou Code Plaque " wire:model="search_term" />
-                                <label for="floatingInput">Rechercher par nom ou note</label>
-                            </div>
-                        </div>
-                        
-                        
-                        <div class="col-12 col-sm-12 col-md-12 col-lg-3 col-xl-6 col-xxl-2 mb-1">
-                            <div class="form-floating">
-                                <input type="date" class="form-control" id="floatingInput" placeholder=""
-                                    wire:model="start_date" />
-                                <label for="floatingInput">Du</label>
-                            </div>
-                        </div>
-                        <div class="col-12 col-sm-12 col-md-12 col-lg-3 col-xl-6 col-xxl-2 mb-1">
-                            <div class="form-floating">
-                                <input type="date" class="form-control" id="floatingInput" placeholder=""
-                                    wire:model="end_date" />
-                                <label for="floatingInput">Au</label>
-                            </div>
-                        </div>
-                    </div>
-                    
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class="card">
-    <div class="card-header border-bottom d-flex">
-                    <h5 class="text-muted fw-bold d-none d-sm-none d-md-none d-lg-none d-xl-inline d-xxl-inline">
-                        Filtrage</h5>
+        <div class="card-header border-bottom d-flex">
+        <h5 class="text-muted fw-bold d-none d-sm-none d-md-none d-lg-none d-xl-inline d-xxl-inline">
+                        Rapport Blockage</h5>
                     <div class="ms-auto">
                         <div class="d-none d-sm-none d-md-none d-lg-inline d-xl-inline d-xxl-inline">
                         @if(count($selectedItems) > 0)
@@ -85,7 +45,42 @@
                         </div>
                         
                     </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12">
+                            <div class="row">
+                                <div class="col-12 col-sm-12 col-md-12 col-lg-3 col-xl-4 col-xxl-4 mb-1">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="floatingInput"
+                                            placeholder="Ex : Nom, Ville, Téléphone, SIP Ou Code Plaque " wire:model="search_term" />
+                                        <label for="floatingInput">Rechercher par nom ou note</label>
+                                    </div>
+                                </div>
+                                
+                                
+                                <div class="col-12 col-sm-12 col-md-12 col-lg-3 col-xl-6 col-xxl-2 mb-1">
+                                    <div class="form-floating">
+                                        <input type="date" class="form-control" id="floatingInput" placeholder=""
+                                            wire:model="start_date" />
+                                        <label for="floatingInput">Du</label>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-12 col-md-12 col-lg-3 col-xl-6 col-xxl-2 mb-1">
+                                    <div class="form-floating">
+                                        <input type="date" class="form-control" id="floatingInput" placeholder=""
+                                            wire:model="end_date" />
+                                        <label for="floatingInput">Au</label>
+                                    </div>
+                                </div>
+                            </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+    
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover table-centered table-nowrap mb-0">
@@ -153,14 +148,25 @@
         
     </div>
 
-
-    <div class="row">
+    <div class="card">
+        <div class="card-header border-bottom d-flex">
+        <h5 class="text-muted fw-bold d-none d-sm-none d-md-none d-lg-none d-xl-inline d-xxl-inline">
+                        Rapport Declarations</h5>
+                    <div class="ms-auto">
+                        <div class="d-none d-sm-none d-md-none d-lg-inline d-xl-inline d-xxl-inline">
+                        @if(count($selectedItems_dec) > 0)
+                        <button wire:click="downloadSelectedReportsDec" class="btn btn-primary">
+                            <i class="uil-download-alt"></i> Télécharger les rapports sélectionnés ({{ count($selectedItems_dec) }})
+                        </button>
+                        @endif    
+                        </div>
+                        
+                    </div>
+        </div>
+        <div class="card-body">
+        <div class="row">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class=" fw-bold m-2">Rapport Declarations</h5>
-                </div>
-                <div class="card-body">
+            
                    
                     <div class="row">
                         <div class="col-12 col-sm-12 col-md-12 col-lg-3 col-xl-4 col-xxl-4 mb-1">
@@ -187,11 +193,11 @@
                             </div>
                         </div>
                     </div>
-                    
-                </div>
-            </div>
         </div>
     </div>
+        </div>
+    </div>
+    
 
     <div class="card">
         <div class="card-body p-0">
@@ -211,8 +217,10 @@
                         @forelse ($declarations as $item)
                         <tr>
                             <td class="text-center">
+                            @if ($item->affectation->client->validations->count() != 0)
                                 <input type="checkbox" class="form-check-input" value="{{ $item->id }}"
                                     wire:model="selectedItems_dec">
+                            @endif
                             </td>
                             <td>
                                 <h5 class="font-14 my-1">{{ $item->affectation->client->name }}</h5>
@@ -237,13 +245,13 @@
 
                             
                             
-                            @role('controller')
+                            {{--@role('controller')--}}
                             <td class="text-end">
                                 <a class="btn btn-primary btn-sm shadow-none" target="_blank"
                                 href="{{ route('controller.client.report', $item) }}"><i class="uil-eye"></i>
                                 </a>
                             </td>
-                            @endrole
+                           {{--@endrole --}} 
                         </tr>
                         @empty
                         <tr>
