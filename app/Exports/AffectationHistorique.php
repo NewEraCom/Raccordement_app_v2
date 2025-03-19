@@ -18,13 +18,15 @@ class AffectationHistorique implements FromCollection, WithHeadings, ShouldAutoS
 {
     use Exportable;
 
-    protected $start_date, $end_date, $technicien;
+    protected $start_date, $end_date, $technicien,$plaque_id,$city_id;
 
-    public function __construct($technicien, $start_date, $end_date)
+    public function __construct($technicien, $start_date, $end_date,$plaque_id,$city_id)
     {
         $this->technicien = $technicien;
         $this->start_date = $start_date;
         $this->end_date = $end_date;
+        $this->plaque_id = $plaque_id;
+        $this->city_id = $city_id;
     }
 
     public function headings(): array
@@ -69,6 +71,12 @@ public function collection()
         })
         ->when($this->technicien, function ($query, $technicien) {
             return $query->where('t.id', $technicien);
+        })
+        ->when($this->plaque_id, function ($query) {
+            return $query->where('c.plaque_id', $this->plaque_id);
+        })
+        ->when($this->city_id, function ($query) {
+            return $query->where('c.city_id', $this->city_id);
         })
         ->whereNull('a.deleted_at')
         ->whereNull('c.deleted_at')

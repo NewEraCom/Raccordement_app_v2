@@ -18,14 +18,14 @@ use OneSignal;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Client;
-use App\Traits\SendSmsTrait;
+//use App\Traits\SendSmsTrait;
 use Carbon\Carbon;
 
 
 class AffectationsPage extends Component
 {
     use WithPagination;
-    use SendSmsTrait;
+  //  use SendSmsTrait;
     protected $paginationTheme = 'bootstrap';
 
     public $start_date = '', $end_date = '', $client_name, $client_sip, $client_status, $technicien;
@@ -106,7 +106,7 @@ class AffectationsPage extends Component
             $this->emit('success');
             $this->dispatchBrowserEvent('contentChanged', ['item' => 'Client affecté avec succès.']);
 
-            // $this->sendSms('+212'.$technicien->user->phone_no, $message);
+            $this->sendSms('+212'.$technicien->user->phone_no, $message);
         } catch (\Throwable $th) {
             DB::rollBack();
             dd($th->getMessage());

@@ -62,7 +62,7 @@ class ClientsPage extends Component
         ini_set('memory_limit', '-1');
         set_time_limit(0);
         $this->emit('success');
-        return (new ClientsExport($this->technicien, $this->start_date, $this->end_date))->download('clients_' . now()->format('d_m_Y_H_i_s') . '.xlsx');
+        return (new ClientsExport($this->technicien, $this->start_date, $this->end_date,$this->plaque_id,$this->city_id))->download('clients_' . now()->format('d_m_Y_H_i_s') . '.xlsx');
     }
 
     public function delete()

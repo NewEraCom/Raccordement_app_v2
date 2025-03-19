@@ -76,6 +76,58 @@ class ReportsPageView extends Component
         session()->flash('error', 'Une erreur est survenue lors de la création du fichier ZIP');
     }
 
+    public function downloadSelectedReportsDec()
+    {
+        if (empty($this->selectedItems_dec)) {
+            session()->flash('error', 'Veuillez sélectionner au moins un rapport');
+            return;
+        }
+
+        $zipFileName = 'rapports_declarations_' . now()->format('Y-m-d_H-i-s') . '.zip';
+        $zip = new ZipArchive();
+        $zipPath = storage_path('app/public/temp/' . $zipFileName);
+
+        if (!Storage::exists('public/temp')) {
+            Storage::makeDirectory('public/temp');
+        }
+
+        if ($zip->open($zipPath, ZipArchive::CREATE) === TRUE) {
+            foreach ($this->selectedItems_dec as $declarationId) {
+                $declaration = Declaration::with(['affectation.client'])->find($declarationId);
+
+                if ($declaration) {
+                    $pdf = PDF::loadView('pdf-rapport', ['client' => $declaration->affectation->client]);
+                    $pdfFileName = 'RAPPORT_DECLARATION_' . $declaration->affectation->client->name . '_' .
+                        $declaration->affectation->client->sip . '.pdf';
+
+                    $tempPdfPath = storage_path('app/public/temp/' . $pdfFileName);
+                    $pdf->save($tempPdfPath);
+
+                    $zip->addFile($tempPdfPath, $pdfFileName);
+                }
+            }
+
+            $zip->close();
+
+            // Clean up temporary PDF files
+            foreach ($this->selectedItems_dec as $declarationId) {
+                $declaration = Declaration::with(['affectation.client'])->find($declarationId);
+                if ($declaration) {
+                    $pdfFileName = 'RAPPORT_DECLARATION_' . $declaration->affectation->client->name . '_' .
+                        $declaration->affectation->client->sip . '.pdf';
+                    $tempPdfPath = storage_path('app/public/temp/' . $pdfFileName);
+                    if (file_exists($tempPdfPath)) {
+                        unlink($tempPdfPath);
+                    }
+                }
+            }
+
+            return response()->download($zipPath)->deleteFileAfterSend(true);
+        }
+
+        session()->flash('error', 'Une erreur est survenue lors de la création du fichier ZIP');
+    }
+
     public function render()
     {
         $data = Blocage::query()
@@ -117,7 +169,7 @@ class ReportsPageView extends Component
                 return $query->whereDate('created_at', '<=', $this->end_date_dec);
             })
             ->orderBy('created_at', 'DESC')
-            ->with('affectation.client', 'routeur')
+            ->with('affectation.client.validations', 'routeur')
             ->paginate(5);
 
         return view('livewire.backoffice.reports-page', compact('data', 'declarations'))->layout('layouts.app', [
