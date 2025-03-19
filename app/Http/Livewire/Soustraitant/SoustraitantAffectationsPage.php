@@ -10,6 +10,7 @@ use App\Models\Client;
 use App\Models\Soustraitant;
 use App\Models\Technicien;
 use App\Services\web\ClientsService;
+use App\Traits\SendSmsTrait;
 use Carbon\Carbon;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\Log;
 class SoustraitantAffectationsPage extends Component
 {
     use WithPagination;
+    use SendSmsTrait;
     protected $paginationTheme = 'bootstrap';
 
     public $start_date, $end_date, $technicien, $client_status, $client_sip;
@@ -58,6 +60,8 @@ class SoustraitantAffectationsPage extends Component
         $return = ClientsService::assigneTechnicien($data);
 
         $this->selectedItems = [];
+        $technician = Technicien::find($this->technicien_affectation);
+        $this->sendSms('+212'.$technician->user->phone_no, 'Bonjour ' . $technician->user->getFullname() . ', vous avez une nouvelle affectation.');
         $this->emit('success');
         if ($return) {
             $this->dispatchBrowserEvent('contentChanged', ['item' => 'Affectation effectuée avec succès.']);

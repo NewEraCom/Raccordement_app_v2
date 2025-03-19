@@ -21,14 +21,16 @@ class CanvaExport implements FromCollection, WithHeadings, ShouldAutoSize, WithT
 
     public $technicien;
     
-    public $start_date,$end_date;
+    public $start_date,$end_date,$plaque_id,$city_id;
 
-    public function __construct($start_date,$end_date, $technicien)
+    public function __construct($start_date,$end_date, $technicien,$plaque_id,$city_id)
     {
         $this->start_date = $start_date;
         $this->end_date = $end_date;
 
         $this->technicien = $technicien;
+        $this->plaque_id = $plaque_id;
+        $this->city_id = $city_id;
     }
 
     public function headings(): array
@@ -88,6 +90,12 @@ class CanvaExport implements FromCollection, WithHeadings, ShouldAutoSize, WithT
             ->leftJoin('routeurs','clients.id','=','routeurs.client_id')
             ->when($this->start_date && $this->end_date, function ($query) {
                 return $query->whereBetween('validations.created_at', [Carbon::parse($this->start_date)->startOfDay(), Carbon::parse($this->end_date)->endOfDay() ]);
+            })
+            ->when($this->plaque_id, function ($query) {
+                return $query->where('clients.plaque_id', $this->plaque_id);
+            })
+            ->when($this->city_id, function ($query) {
+                return $query->where('clients.city_id', $this->city_id);
             })
             ->whereNull('clients.statusSav')
             ->groupBy('clients.sip')

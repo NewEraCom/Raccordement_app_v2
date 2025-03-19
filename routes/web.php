@@ -143,7 +143,7 @@ Route::middleware(['auth', 'role:soustraitant'])->name('soustraitant.')->prefix(
     Route::any('/affectations', SoustraitantAffectationsPage::class)->name('affectations');
 });
 
-Route::middleware(['auth', 'role:controller'])->name('controller.')->prefix('controller')->group(function () {
+Route::middleware(['auth', 'role:controller|admin'])->name('controller.')->prefix('controller')->group(function () {
     Route::any('/dashboard', ControllerIndexPage::class)->name('dashboard');
     Route::any('/clients/{client}', ProfileClientPage::class)->name('clients.profile');
     Route::any('/client/report/{client}', ReportsPreviewPage::class)->name('client.report');

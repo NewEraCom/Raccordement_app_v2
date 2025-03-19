@@ -18,13 +18,15 @@ class AffectationPlanned implements FromCollection, WithHeadings, ShouldAutoSize
 {
     use Exportable;
 
-    protected $start_date, $end_date, $technicien;
+    protected $start_date, $end_date, $technicien,$plaque_id,$city_id;
 
-    public function __construct($technicien, $start_date, $end_date)
+    public function __construct($technicien, $start_date, $end_date,$plaque_id,$city_id)
     {
         $this->technicien = $technicien;
         $this->start_date = $start_date;
         $this->end_date = $end_date;
+        $this->plaque_id = $plaque_id;
+        $this->city_id = $city_id;
     }
 
     public function headings(): array
@@ -61,6 +63,12 @@ class AffectationPlanned implements FromCollection, WithHeadings, ShouldAutoSize
                 return $query->where('techniciens.id', $technicien);
             })->when($this->start_date && $this->end_date, function ($query) {
                 return $query->whereBetween('affectations.updated_at', [Carbon::parse($this->start_date)->startOfDay(), Carbon::parse($this->end_date)->endOfDay()]);
+            })
+            ->when($this->plaque_id, function ($query) {
+                return $query->where('clients.plaque_id', $this->plaque_id);
+            })
+            ->when($this->city_id, function ($query) {
+                return $query->where('clients.city_id', $this->city_id);
             })
             ->where('affectations.status', 'Planifié')
             ->where('affectations.deleted_at', null)

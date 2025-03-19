@@ -106,7 +106,7 @@ class AffectationsPage extends Component
             $this->emit('success');
             $this->dispatchBrowserEvent('contentChanged', ['item' => 'Client affecté avec succès.']);
 
-            // $this->sendSms('+212'.$technicien->user->phone_no, $message);
+            $this->sendSms('+212'.$technicien->user->phone_no, $message);
         } catch (\Throwable $th) {
             DB::rollBack();
             dd($th->getMessage());
