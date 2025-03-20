@@ -33,18 +33,27 @@
 
     <div class="card">
         <div class="card-header border-bottom d-flex">
-        <h5 class="text-muted fw-bold d-none d-sm-none d-md-none d-lg-none d-xl-inline d-xxl-inline">
-                        Rapport Declarations</h5>
-                    <div class="ms-auto">
-                        <div class="d-none d-sm-none d-md-none d-lg-inline d-xl-inline d-xxl-inline">
-                        @if(count($selectedItems_dec) > 0)
-                        <button wire:click="downloadSelectedReportsDec" class="btn btn-primary">
-                            <i class="uil-download-alt"></i> Télécharger les rapports sélectionnés ({{ count($selectedItems_dec) }})
+            <h5 class="text-muted fw-bold d-none d-sm-none d-md-none d-lg-none d-xl-inline d-xxl-inline">
+                Rapport Declarations
+            </h5>
+            <div class="ms-auto">
+                <div class="d-none d-sm-none d-md-none d-lg-inline d-xl-inline d-xxl-inline">
+                    @if(count($selectedItems_dec) > 0)
+                        <button wire:click="downloadSelectedReportsDec" class="btn btn-primary" wire:loading.attr="disabled">
+                            <!-- Default button content -->
+                            <span wire:loading.remove wire:target="downloadSelectedReportsDec">
+                                <i class="uil-download-alt"></i> Télécharger les rapports sélectionnés ({{ count($selectedItems_dec) }})
+                            </span>
+        
+                            <!-- Loading spinner and text -->
+                            <span wire:loading wire:target="downloadSelectedReportsDec">
+                                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                Chargement...
+                            </span>
                         </button>
-                        @endif    
-                        </div>
-                        
-                    </div>
+                    @endif
+                </div>
+            </div>
         </div>
         <div class="card-body">
         <div class="row">
@@ -157,16 +166,24 @@
         <div class="card-header border-bottom d-flex">
         <h5 class="text-muted fw-bold d-none d-sm-none d-md-none d-lg-none d-xl-inline d-xxl-inline">
                         Rapport Blockage</h5>
-                    <div class="ms-auto">
-                        <div class="d-none d-sm-none d-md-none d-lg-inline d-xl-inline d-xxl-inline">
-                        @if(count($selectedItems) > 0)
-                        <button wire:click="downloadSelectedReports" class="btn btn-primary">
-                            <i class="uil-download-alt"></i> Télécharger les rapports sélectionnés ({{ count($selectedItems) }})
-                        </button>
-                        @endif    
-                        </div>
+                        <div class="ms-auto">
+                            <div class="d-none d-sm-none d-md-none d-lg-inline d-xl-inline d-xxl-inline">
+                                @if(count($selectedItems) > 0)
+                                    <button wire:click="downloadSelectedReports" class="btn btn-primary" wire:loading.attr="disabled">
+                                        <!-- Default button content -->
+                                        <span wire:loading.remove wire:target="downloadSelectedReports">
+                                            <i class="uil-download-alt"></i> Télécharger les rapports sélectionnés ({{ count($selectedItems) }})
+                                        </span>
                         
-                    </div>
+                                        <!-- Loading spinner and text -->
+                                        <span wire:loading wire:target="downloadSelectedReports">
+                                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                            Chargement...
+                                        </span>
+                                    </button>
+                                @endif
+                            </div>
+                        </div>
         </div>
         <div class="card-body">
             <div class="row">
