@@ -330,7 +330,7 @@ public static function getClients($search_term, $client_status, $technicien, $st
                     preg_match('/\d{2}\.\d\.\d{2}/', $data['address'], $plaq_sp);
                     if ($plaq_sp != null) {
                         if (in_array($plaq_sp[0], $array_code)) {
-                            $tech = 91;
+                           $tech = 91;
                         }
                     }
 
@@ -351,7 +351,8 @@ public static function getClients($search_term, $client_status, $technicien, $st
                                     'name' => Str::title($data['name']),
                                     'address' => Str::title($data['address']),
                                     'lat' => $lat,
-                                    'technicien_id' => $tech == null ? null : $tech,
+                                 // 'technicien_id' => $tech == null ? null : $tech,
+                                    'technicien_id' => null ,
                                     'lng' => $lng,
                                     'city_id' => $data['city'],
                                     'plaque_id' => $data['plaque'],
@@ -359,7 +360,7 @@ public static function getClients($search_term, $client_status, $technicien, $st
                                     'sip' => '#'.$data['sip'],
                                     'phone_no' => $data['phone'],
                                     'routeur_type' => $data['routeur'],
-                                    'status' => $tech == null ? ClientStatusEnum::NEW : ClientStatusEnum::AFFECTED,
+                                    'status' => $tech == null ? ClientStatusEnum::NEW : ClientStatusEnum::HORS_PLAQUE,
                                     'promoteur' => $tech == null ? 0 : 1,
                                 ]);
                                 $cityIds[] = $data['city']; 
@@ -376,7 +377,7 @@ public static function getClients($search_term, $client_status, $technicien, $st
                             'name' => Str::title($data['name']),
                             'address' => Str::title($data['address']),
                             'lat' => $lat,
-                            'technicien_id' => $tech == null ? null : $tech,
+                            'technicien_id' => null ,
                             'lng' => $lng,
                             'city_id' => $data['city'],
                             'plaque_id' => $data['plaque'],
@@ -384,7 +385,7 @@ public static function getClients($search_term, $client_status, $technicien, $st
                             'sip' => $data['sip'],
                             'phone_no' => $data['phone'],
                             'routeur_type' => $data['routeur'],
-                            'status' => $tech == null ? ClientStatusEnum::NEW : ClientStatusEnum::AFFECTED,
+                            'status' => $tech == null ? ClientStatusEnum::NEW : ClientStatusEnum::HORS_PLAQUE,
                             'promoteur' => $tech == null ? 0 : 1,
                         ]);
                         $cityIds[] = $data['city'];

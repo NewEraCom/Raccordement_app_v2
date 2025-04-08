@@ -132,7 +132,7 @@
                             @forelse ($soustraitantStock as $item)
                             <tr>
                                 <td>
-                                    <h5 class="font-14 my-1 fw-bold">{{ $item->soustraitant->name }}</h5>
+                                    <h5 class="font-14 my-1 fw-bold">{{ $item->soustraitant->name ?? "-"}}</h5>
                                     <span class="text-muted font-13">Dernière mise à jour:
                                         {{ $item->updated_at->format('d-m-Y H:i') }}</span>
                                 </td>
