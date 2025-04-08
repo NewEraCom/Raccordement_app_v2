@@ -334,6 +334,7 @@
                                     <option value="Affecté">Affecté</option>
                                     <option value="Déclaré">Déclaré</option>
                                     <option value="Validé">Validé</option>
+                                    <option value="Hors Plaque">Hors Plaque</option>
                                     
                                 </select>
                                 <label for="floatingSelect">Statut du client</label>

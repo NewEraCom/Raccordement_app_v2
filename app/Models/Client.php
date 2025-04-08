@@ -120,6 +120,9 @@ class Client extends Model
             case 'Créé':
                 $data = 'primary';
                 break;
+            case 'Hors plaque':
+                $data = 'secondary';
+                break;
             case 'Bloqué':
                 $data = 'danger';
                 break;
