@@ -49,6 +49,7 @@ class RecapMail extends Mailable
         $clients_planned_all = Affectation::where('status', 'Planifié')->count();
         $pipe_orange = Pipe::whereDate('created_at', today()->subDay())->get('total');
         $pipe_app = Client::where('status', 'Saisie')->count() + Affectation::where('status', 'Bloqué')->count() + Affectation::where('status', 'Terminé')->count() + Affectation::where('status', 'Planifié')->count();
-        return $this->markdown('emails.recap-mail', compact('client_no_validations','todays', 'new_clients', 'clients_declarations', 'clients_validations', 'blocage_technique', 'blocage_clients', 'blocage_cancel_client', 'blocage_injoignable', 'clients_planned', 'clients_planned_all', 'pipe_orange', 'pipe_app'))->subject('Récapitulatif de l\'activité de raccordement (' . date('d-m-Y', strtotime(today()->subDay())) . ')')->from("declaration@neweracom.ma", "Neweraconnect");
+        $client_horsPlaque = Client::where('status', 'Hors Plaque')->count();
+        return $this->markdown('emails.recap-mail', compact('client_no_validations','todays', 'new_clients', 'clients_declarations', 'clients_validations', 'blocage_technique', 'blocage_clients', 'blocage_cancel_client', 'blocage_injoignable', 'clients_planned', 'clients_planned_all', 'pipe_orange', 'pipe_app','client_horsPlaque'))->subject('Récapitulatif de l\'activité de raccordement (' . date('d-m-Y', strtotime(today()->subDay())) . ')')->from("declaration@neweracom.ma", "Neweraconnect");
     }
 }

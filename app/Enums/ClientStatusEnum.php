@@ -18,4 +18,5 @@ class ClientStatusEnum extends Enum
     public const DECLARED = 'Déclaré';
     public const VALIDATED = 'Validée';
     public const HASH = '#';
+    public const HORS_PLAQUE = 'Hors Plaque';
 }
