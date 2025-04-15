@@ -461,7 +461,7 @@ class ClientsPage extends Component
                 $query->where('status', 1);
             })
             ->get();
-        $this->soustraitants = Soustraitant::get(['id', 'name']);
+            $this->soustraitants = Soustraitant::where('status', 1)->get(['id', 'name']);
         $cities = City::get(['id', 'name']);
         $blocages = Blocage::groupBy('cause')->get('cause');
     
