@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class FeedBackSav extends Model
 {
     use HasFactory;
-    protected $table = "feed_back_savs";
+    protected $table = "feedback_sav";
     protected $fillable = ['sav_ticket_id', 'root_cause', 'unite', 'type', 'before_picture', 'after_picture'];
     public function savTicket()
     {

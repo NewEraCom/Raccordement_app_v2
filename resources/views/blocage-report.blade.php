@@ -48,7 +48,12 @@
         </table>
     </div>
     <div class="row text-center">
-        @foreach ($blocage->blocagePictures as $item)
+    @php
+        $sortedImages = $blocage->blocagePictures->sortBy(function ($item) use ($imageOrder) {
+            return array_search($item->image, $imageOrder);
+        });
+    @endphp
+    @foreach ($sortedImages as $item)
             <div class="column" style="width: 48%; margin: 1%;">
                 <p>{{ $item->image }}</p>
                 @if ($item->image_url)
