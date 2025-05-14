@@ -279,6 +279,7 @@
                                 <select class="form-select" id="floatingSelect" wire:model="client_status">
                                     <option value="" selected>Tous</option>
                                     <option value="Saisie">Saisie</option>
+                                    <option value="Créé">Créé</option>
                                     <option value="Affecté">Affecté</option>
                                     <option value="Déclaré">Déclaré</option>
                                     <option value="Validé">Validé</option>
@@ -333,6 +334,7 @@
                                     <option value="Affecté">Affecté</option>
                                     <option value="Déclaré">Déclaré</option>
                                     <option value="Validé">Validé</option>
+                                    <option value="Hors Plaque">Hors Plaque</option>
                                     
                                 </select>
                                 <label for="floatingSelect">Statut du client</label>

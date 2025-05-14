@@ -83,18 +83,21 @@ class AffectationBlocage implements FromCollection, WithHeadings, ShouldAutoSize
         return [
             AfterSheet::class => function (AfterSheet $event) {
                 $lastRow = $event->sheet->getHighestRow();
-                $event->sheet->getStyle('A1:M1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
-                $event->sheet->getStyle('A1:M1')->getFont()->setBold(true);
-                $event->sheet->getStyle('A1:M1')->getFont()->getColor()->setARGB(\PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE);
-                $event->sheet->getStyle('A1:M1')->getFill()->getStartColor()->setARGB('002060');
-                $event->sheet->getStyle('A1:M' . $lastRow)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
-                $event->sheet->getStyle('A1:M' . $lastRow)->getFont()->setSize(10);
-                $event->sheet->getStyle('A1:M' . $lastRow)->getFont()->setName('Calibri');
-                $event->sheet->getStyle('A1:M' . $lastRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-                $event->sheet->getStyle('A1:M' . $lastRow)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+                $lastColumn = $event->sheet->getHighestColumn(); // Get the last column dynamically
+    
+                // Style for all headers
+                $event->sheet->getStyle('A1:' . $lastColumn . '1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+                $event->sheet->getStyle('A1:' . $lastColumn . '1')->getFont()->setBold(true);
+                $event->sheet->getStyle('A1:' . $lastColumn . '1')->getFont()->getColor()->setARGB(\PhpOffice\PhpSpreadsheet\Style\Color::COLOR_WHITE);
+                $event->sheet->getStyle('A1:' . $lastColumn . '1')->getFill()->getStartColor()->setARGB('002060');
+                $event->sheet->getStyle('A1:' . $lastColumn . $lastRow)->getFont()->setSize(10);
+                $event->sheet->getStyle('A1:' . $lastColumn . $lastRow)->getFont()->setName('Calibri');
+                $event->sheet->getStyle('A1:' . $lastColumn . $lastRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                $event->sheet->getStyle('A1:' . $lastColumn . $lastRow)->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
             },
         ];
     }
+    
 
 
     public function title(): string

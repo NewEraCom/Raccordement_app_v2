@@ -33,6 +33,9 @@ class ReportsPageView extends Component
         'Chambre (Fermé)',
         'Chambre (Ouvert)',
     ];
+    protected $paginationThemeBlocage = 'bootstrap';
+    protected $paginationThemeDeclaration = 'bootstrap';
+
 
 
 
@@ -81,7 +84,7 @@ class ReportsPageView extends Component
                     }
                 }
             }
-
+            $this->selectedItems = [];
             return response()->download($zipPath)->deleteFileAfterSend(true);
         }
 
@@ -133,7 +136,7 @@ class ReportsPageView extends Component
                     }
                 }
             }
-
+            $this->selectedItems_dec = [];
             return response()->download($zipPath)->deleteFileAfterSend(true);
         }
 
@@ -158,20 +161,21 @@ class ReportsPageView extends Component
             })
             ->orderBy('created_at', 'DESC')
             ->with('affectation.client', 'affectation.technicien.user')
-            ->paginate(5);
+            ->paginate(5, ['*'], 'blocage_page');
 
-        $declarations = Declaration::query()
+            $declarations = Declaration::query()
             ->when($this->search_term_dec, function ($query) {
                 $search_term_dec = $this->search_term_dec;
-                return $query->whereHas('affectation.client', function ($q) use ($search_term_dec) {
-                    $q->where('name', 'like', '%' . $search_term_dec . '%');
-                });
-            })
-            ->when($this->search_term_dec, function ($query) {
-                $search_term_dec = $this->search_term_dec;
-                return $query->whereHas('routeur', function ($q) use ($search_term_dec) {
-                    $q->where('sn_gpon', 'like', '%' . $search_term_dec . '%');
-                    $q->where('sn_mac', 'like', '%' . $search_term_dec . '%');
+                return $query->where(function ($q) use ($search_term_dec) {
+                    // Filter by client name
+                    $q->whereHas('affectation.client', function ($q) use ($search_term_dec) {
+                        $q->where('name', 'like', '%' . $search_term_dec . '%');
+                    })
+                    // Filter by routeur's sn_gpon or sn_mac
+                    ->orWhereHas('routeur', function ($q) use ($search_term_dec) {
+                        $q->where('sn_gpon', 'like', '%' . $search_term_dec . '%')
+                          ->orWhere('sn_mac', 'like', '%' . $search_term_dec . '%');
+                    });
                 });
             })
             ->when($this->start_date_dec, function ($query) {
@@ -182,7 +186,7 @@ class ReportsPageView extends Component
             })
             ->orderBy('created_at', 'DESC')
             ->with('affectation.client.validations', 'routeur')
-            ->paginate(5);
+            ->paginate(5, ['*'], 'declaration_page');
 
         return view('livewire.backoffice.reports-page', compact('data', 'declarations'))->layout('layouts.app', [
             'title' => 'Rapports',
