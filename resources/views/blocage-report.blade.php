@@ -47,28 +47,36 @@
             </tr>
         </table>
     </div>
-    <div class="row text-center">
-        @foreach ($blocage->blocagePictures as $item)
-            <div class="column" style="width: 48%; margin: 1%;">
-                <p>{{ $item->image }}</p>
-                @if ($item->image_url)
-                    <img src="{{ asset('storage/' . $item->image_url) }}" alt="{{ $item->image }}" style="width: 100%; height: auto;">
-                @else
-                    <img src="data:image/png;base64,{{ $item->image_data }}" alt="{{ $item->image }}" style="width: 100%; height: auto;">
-                @endif
+    <div class="row p-2 ps-3 pe-3 mt-3">
+                <div class="col-12">
+               
+                @foreach ($sortedImages as $item)
+                    <div class="text-center">
+                        @if ($item->image_url)
+                            {{-- Display the image from storage --}}
+                            <img src="{{ public_path('storage/' . $item->image_url) }}" width="550" alt="{{ $item->image }}">
+                        @else
+                            {{-- Display the image as base64 if image_url is not available --}}
+                            <img src="data:image/png;base64,{{ $item->image_data }}" width="550" alt="{{ $item->image }}">
+                        @endif
+                        <h4 class="mt-2">{{ $item->image }}</h4>
+                    </div>
+                @endforeach
+                </div>
             </div>
-        @endforeach
-    </div>
     
 
 </div>
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700&display=swap');
-
-    . {
+    /* @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700&display=swap'); */
+    body {
+        font-size: 12px !important;
+        font-family: Arial, sans-serif;
+    }
+    /* . {
         font-size: 12px !important;
         font-family: 'Montserrat';
-    }
+    } */
 
     .column {
         float: left;

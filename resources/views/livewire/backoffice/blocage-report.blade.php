@@ -63,18 +63,23 @@
             </div>
             <div class="row p-2 ps-3 pe-3">
                 <div class="col-12">
-                    @foreach ($blocage->blocagePictures as $item)
-                        <div class="text-center mb-4">
-                            @if ($item->image_url)
-                                {{-- Display the image from storage --}}
-                                <img src="{{ asset('storage/' . $item->image_url) }}" width="550" alt="Image">
-                            @else
-                                {{-- Display the image as base64 if image_url is not available --}}
-                                <img src="data:image/png;base64,{{ $item->image_data }}" width="550">
-                            @endif
-                            <h4 class="mt-2">{{ $item->image }}</h4>
-                        </div>
-                    @endforeach
+                @php
+                    $sortedImages = $blocage->blocagePictures->sortBy(function ($item) use ($imageOrder) {
+                        return array_search($item->image, $imageOrder);
+                    });
+                @endphp
+                @foreach ($sortedImages as $item)
+                    <div class="text-center mb-4">
+                        @if ($item->image_url)
+                            {{-- Display the image from storage --}}
+                            <img src="{{ asset('storage/' . $item->image_url) }}" width="550" alt="{{ $item->image }}">
+                        @else
+                            {{-- Display the image as base64 if image_url is not available --}}
+                            <img src="data:image/png;base64,{{ $item->image_data }}" width="550" alt="{{ $item->image }}">
+                        @endif
+                        <h4 class="mt-2">{{ $item->image }}</h4>
+                    </div>
+                @endforeach
                 </div>
             </div>
             

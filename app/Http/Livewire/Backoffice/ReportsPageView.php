@@ -20,6 +20,19 @@ class ReportsPageView extends Component
     public $search_term_dec;
     public $selectedItems = [];
     public $selectedItems_dec = [];
+    public $imageOrder = [
+        'Photo façade',
+        'PBI (Fermé)',
+        'PBI (Ouvert)',
+        'Splitter 1',
+        'Splitter 2',
+        'PBO (Fermé)',
+        'PBO (Ouvert)',
+        'Splitter 3',
+        'Splitter 4',
+        'Chambre (Fermé)',
+        'Chambre (Ouvert)',
+    ];
     protected $paginationThemeBlocage = 'bootstrap';
     protected $paginationThemeDeclaration = 'bootstrap';
 
@@ -46,7 +59,7 @@ class ReportsPageView extends Component
                 $blocage = Blocage::with(['affectation.client'])->find($blocageId);
 
                 if ($blocage) {
-                    $pdf = PDF::loadView('blocage-report', ['blocage' => $blocage]);
+                    $pdf = PDF::loadView('blocage-report', ['blocage' => $blocage, 'imageOrder' => $this->imageOrder]);
                     $pdfFileName = 'RAPPORT_BLOCAGE_' . $blocage->affectation->client->name . '_' .
                         $blocage->affectation->client->sip . '.pdf';
 

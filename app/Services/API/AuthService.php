@@ -35,7 +35,6 @@ class AuthService
             // Create and return a Bearer token
             $token = $user->createToken('neweraconnect')->plainTextToken;
 
-
             return response()->json([
                 'success' => true,
                 'message' => 'User authenticated successfully',
