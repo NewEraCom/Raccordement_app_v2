@@ -22,7 +22,13 @@ class BlocageController extends Controller
             'Chambre (Fermé)',
             'Chambre (Ouvert)',
         ];
-        $pdf = PDF::loadView('blocage-report',compact('blocage','imageOrder'));
-        return $pdf->download('RAPPORT_BLOCAGE_'.$blocage->affectation->client->name.'_'.$blocage->affectation->client->sip.'.pdf');
+
+        // Sort images
+        $sortedImages = $blocage->blocagePictures->sortBy(function ($item) use ($imageOrder) {
+            return array_search($item->image, $imageOrder);
+        });
+
+        $pdf = PDF::loadView('blocage-report', compact('blocage', 'imageOrder', 'sortedImages'));
+        return $pdf->download('RAPPORT_BLOCAGE_' . $blocage->affectation->client->name . '_' . $blocage->affectation->client->sip . '.pdf');
     }
 }
